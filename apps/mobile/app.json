@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "CampoFlow",
+    "slug": "campoflow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "campoflow",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B5E20"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kreativae.campoflow",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Usar Face ID para entrar no CampoFlow"
+      }
+    },
+    "android": {
+      "package": "com.kreativae.campoflow",
+      "adaptiveIcon": {
+        "backgroundColor": "#1B5E20",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-secure-store",
+      "expo-sharing",
+      "expo-web-browser",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Usar Face ID para entrar no CampoFlow"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "campoflow"
+      }
+    }
+  }
+}
