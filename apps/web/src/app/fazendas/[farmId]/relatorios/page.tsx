@@ -1,14 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { BarChart3 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import { useAuth } from '@/lib/auth-context';
-import { apiDownload, ApiError } from '@/lib/api';
+import { apiFetch, apiDownload, ApiError } from '@/lib/api';
 
 type ReportType = 'rebanho' | 'financeiro' | 'sanidade' | 'reproducao' | 'custos';
 type ReportFormat = 'csv' | 'xlsx' | 'pdf';
+
+interface Pasture {
+  id: string;
+  name: string;
+}
 
 const TYPE_OPTIONS: { value: ReportType; label: string }[] = [
   { value: 'rebanho', label: 'Rebanho' },
@@ -24,6 +29,41 @@ const FORMAT_OPTIONS: { value: ReportFormat; label: string }[] = [
   { value: 'pdf', label: 'PDF' },
 ];
 
+const CATEGORY_OPTIONS = [
+  { value: '', label: 'Todas' },
+  { value: 'BEZERRO', label: 'Bezerro' },
+  { value: 'BEZERRA', label: 'Bezerra' },
+  { value: 'NOVILHO', label: 'Novilho' },
+  { value: 'NOVILHA', label: 'Novilha' },
+  { value: 'GARROTE', label: 'Garrote' },
+  { value: 'BOI', label: 'Boi' },
+  { value: 'VACA', label: 'Vaca' },
+  { value: 'TOURO', label: 'Touro' },
+  { value: 'MATRIZ', label: 'Matriz' },
+];
+
+const SEX_OPTIONS = [
+  { value: '', label: 'Todos' },
+  { value: 'MALE', label: 'Macho' },
+  { value: 'FEMALE', label: 'Fêmea' },
+];
+
+const PERFORMANCE_OPTIONS = [
+  { value: '', label: 'Todos' },
+  { value: 'CABECEIRA', label: 'Cabeceira' },
+  { value: 'MEIO', label: 'Meio' },
+  { value: 'FUNDO', label: 'Fundo' },
+];
+
+const REPRO_OPTIONS = [
+  { value: '', label: 'Todos' },
+  { value: 'COM_EVENTO', label: 'Com evento reprodutivo' },
+  { value: 'SEM_EVENTO', label: 'Sem evento reprodutivo' },
+  { value: 'PRENHE', label: 'Prenhe (diagnóstico positivo)' },
+];
+
+const selectClasses = 'mt-1 block rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10';
+
 export default function ReportsPage() {
   const { farmId } = useParams<{ farmId: string }>();
   const { user, accessToken, loading } = useAuth();
@@ -37,13 +77,32 @@ export default function ReportsPage() {
   const [herdBirthMonth, setHerdBirthMonth] = useState('');
   const [herdPerformance, setHerdPerformance] = useState('');
   const [herdSortByGain, setHerdSortByGain] = useState('');
+  const [herdCategory, setHerdCategory] = useState('');
+  const [herdSex, setHerdSex] = useState('');
+  const [herdPastureId, setHerdPastureId] = useState('');
+  const [herdVaccination, setHerdVaccination] = useState('');
+  const [herdReproStatus, setHerdReproStatus] = useState('');
+  const [herdStartDate, setHerdStartDate] = useState('');
+  const [herdEndDate, setHerdEndDate] = useState('');
+
+  const [pastures, setPastures] = useState<Pasture[]>([]);
+
+  const loadPastures = useCallback(async () => {
+    if (!accessToken) return;
+    try {
+      const data = await apiFetch<Pasture[]>(`/fazendas/${farmId}/pastagens`, { token: accessToken });
+      setPastures(data);
+    } catch { /* ignore */ }
+  }, [farmId, accessToken]);
 
   useEffect(() => {
     if (loading) return;
     if (!user) {
       router.replace('/entrar');
+      return;
     }
-  }, [loading, user, router]);
+    void loadPastures();
+  }, [loading, user, router, loadPastures]);
 
   async function handleDownload(reportType: ReportType, reportFormat: ReportFormat) {
     const key = `${reportType}-${reportFormat}`;
@@ -55,6 +114,13 @@ export default function ReportsPage() {
         if (herdBirthMonth) url += `&birthMonth=${herdBirthMonth}`;
         if (herdPerformance) url += `&performance=${herdPerformance}`;
         if (herdSortByGain) url += `&sortByGain=${herdSortByGain}`;
+        if (herdCategory) url += `&category=${herdCategory}`;
+        if (herdSex) url += `&sex=${herdSex}`;
+        if (herdPastureId) url += `&pastureId=${encodeURIComponent(herdPastureId)}`;
+        if (herdVaccination) url += `&vaccination=${encodeURIComponent(herdVaccination)}`;
+        if (herdReproStatus) url += `&reproStatus=${herdReproStatus}`;
+        if (herdStartDate) url += `&startDate=${herdStartDate}`;
+        if (herdEndDate) url += `&endDate=${herdEndDate}`;
       }
       await apiDownload(url, `${reportType}.${reportFormat}`, accessToken);
     } catch (err) {
@@ -97,7 +163,7 @@ export default function ReportsPage() {
           <select
             value={type}
             onChange={(e) => setType(e.target.value as ReportType)}
-            className="mt-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className={selectClasses}
           >
             {TYPE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -112,7 +178,7 @@ export default function ReportsPage() {
           <select
             value={format}
             onChange={(e) => setFormat(e.target.value as ReportFormat)}
-            className="mt-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className={selectClasses}
           >
             {FORMAT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -132,33 +198,89 @@ export default function ReportsPage() {
       </div>
 
       {type === 'rebanho' && (
-        <div className="mb-8 flex flex-wrap items-end gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-          <p className="w-full text-xs font-semibold uppercase tracking-wide text-gray-500">Filtros do relatório de rebanho</p>
-          <div>
-            <label className="text-xs font-medium text-gray-600">Mês de nascimento</label>
-            <select value={herdBirthMonth} onChange={(e) => setHerdBirthMonth(e.target.value)} className="mt-1 block rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15">
-              <option value="">Todos</option>
-              {['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'].map((m, i) => (
-                <option key={i + 1} value={i + 1}>{m}</option>
-              ))}
-            </select>
+        <div className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+          <p className="w-full text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">Personalizar relatório de rebanho</p>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            <div>
+              <label className="text-xs font-medium text-gray-600">Categoria</label>
+              <select value={herdCategory} onChange={(e) => setHerdCategory(e.target.value)} className={selectClasses}>
+                {CATEGORY_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">Sexo</label>
+              <select value={herdSex} onChange={(e) => setHerdSex(e.target.value)} className={selectClasses}>
+                {SEX_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">Pasto</label>
+              <select value={herdPastureId} onChange={(e) => setHerdPastureId(e.target.value)} className={selectClasses}>
+                <option value="">Todos</option>
+                {pastures.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">Desempenho</label>
+              <select value={herdPerformance} onChange={(e) => setHerdPerformance(e.target.value)} className={selectClasses}>
+                {PERFORMANCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">Mês de nascimento</label>
+              <select value={herdBirthMonth} onChange={(e) => setHerdBirthMonth(e.target.value)} className={selectClasses}>
+                <option value="">Todos</option>
+                {['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'].map((m, i) => (
+                  <option key={i + 1} value={i + 1}>{m}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">Vacinação</label>
+              <input
+                type="text"
+                placeholder="Ex: Raiva, Aftosa..."
+                value={herdVaccination}
+                onChange={(e) => setHerdVaccination(e.target.value)}
+                className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">Reprodução</label>
+              <select value={herdReproStatus} onChange={(e) => setHerdReproStatus(e.target.value)} className={selectClasses}>
+                {REPRO_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">Ordenar por ganho</label>
+              <select value={herdSortByGain} onChange={(e) => setHerdSortByGain(e.target.value)} className={selectClasses}>
+                <option value="">Padrão</option>
+                <option value="desc">Maior ganho primeiro</option>
+                <option value="asc">Menor ganho primeiro</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label className="text-xs font-medium text-gray-600">Desempenho</label>
-            <select value={herdPerformance} onChange={(e) => setHerdPerformance(e.target.value)} className="mt-1 block rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15">
-              <option value="">Todos</option>
-              <option value="CABECEIRA">Cabeceira</option>
-              <option value="MEIO">Meio</option>
-              <option value="FUNDO">Fundo</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs font-medium text-gray-600">Ordenar por ganho</label>
-            <select value={herdSortByGain} onChange={(e) => setHerdSortByGain(e.target.value)} className="mt-1 block rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15">
-              <option value="">Padrão</option>
-              <option value="desc">Maior ganho primeiro</option>
-              <option value="asc">Menor ganho primeiro</option>
-            </select>
+
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div>
+              <label className="text-xs font-medium text-gray-600">Período — de</label>
+              <input
+                type="date"
+                value={herdStartDate}
+                onChange={(e) => setHerdStartDate(e.target.value)}
+                className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">Período — até</label>
+              <input
+                type="date"
+                value={herdEndDate}
+                onChange={(e) => setHerdEndDate(e.target.value)}
+                className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              />
+            </div>
           </div>
         </div>
       )}

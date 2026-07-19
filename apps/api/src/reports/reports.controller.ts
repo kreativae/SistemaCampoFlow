@@ -50,6 +50,13 @@ export class ReportsController {
     @Query('birthMonth') birthMonth: string | undefined,
     @Query('performance') performance: string | undefined,
     @Query('sortByGain') sortByGain: string | undefined,
+    @Query('category') category: string | undefined,
+    @Query('sex') sex: string | undefined,
+    @Query('pastureId') pastureId: string | undefined,
+    @Query('vaccination') vaccination: string | undefined,
+    @Query('reproStatus') reproStatus: string | undefined,
+    @Query('startDate') startDate: string | undefined,
+    @Query('endDate') endDate: string | undefined,
     @Res() res: Response,
   ) {
     if (!VALID_TYPES.includes(type as ReportType)) {
@@ -69,6 +76,13 @@ export class ReportsController {
       birthMonth: birthMonth ? parseInt(birthMonth, 10) : undefined,
       performance,
       sortByGain: sortByGain as 'asc' | 'desc' | undefined,
+      category,
+      sex,
+      pastureId,
+      vaccination,
+      reproStatus,
+      startDate,
+      endDate,
     });
 
     const buffer =

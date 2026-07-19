@@ -1,6 +1,6 @@
 'use client';
 
-import { Pencil, Wallet, X } from 'lucide-react';
+import { ArrowDownCircle, ArrowUpCircle, Check, Clock, Pencil, Undo2, Wallet, X } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import Modal from '@/components/Modal';
 
@@ -45,6 +45,8 @@ export default function FinancePage() {
   const router = useRouter();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  // No mobile o formulário começa fechado para não empurrar a lista para baixo.
+  const [showCreateMobile, setShowCreateMobile] = useState(false);
   const [cashFlow, setCashFlow] = useState<CashFlowBucket[]>([]);
   const [granularity, setGranularity] = useState<'daily' | 'weekly' | 'monthly'>('monthly');
   const [txFilter, setTxFilter] = useState<'day' | 'week' | 'month' | 'year' | 'all'>('all');
@@ -74,21 +76,43 @@ export default function FinancePage() {
     if (txFilter === 'all') return transactions;
     const now = new Date();
     const start = new Date(now);
+    const end = new Date(now);
     if (txFilter === 'day') {
       start.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
     } else if (txFilter === 'week') {
       const day = now.getDay();
       start.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
       start.setHours(0, 0, 0, 0);
+      end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
     } else if (txFilter === 'month') {
       start.setDate(1);
       start.setHours(0, 0, 0, 0);
+      end.setMonth(now.getMonth() + 1, 0);
+      end.setHours(23, 59, 59, 999);
     } else {
       start.setMonth(0, 1);
       start.setHours(0, 0, 0, 0);
+      end.setMonth(11, 31);
+      end.setHours(23, 59, 59, 999);
     }
-    return transactions.filter((t) => new Date(t.dueDate) >= start);
+    return transactions.filter((t) => {
+      const ref = new Date(t.paidAt ?? t.dueDate);
+      return ref >= start && ref <= end;
+    });
   }, [transactions, txFilter]);
+
+  const summary = useMemo(() => {
+    const receita = filteredTransactions
+      .filter((t) => t.type === 'RECEITA')
+      .reduce((s, t) => s + t.amount, 0);
+    const despesa = filteredTransactions
+      .filter((t) => t.type === 'DESPESA')
+      .reduce((s, t) => s + t.amount, 0);
+    const pendentes = filteredTransactions.filter((t) => !t.paidAt).length;
+    return { receita, despesa, saldo: receita - despesa, pendentes };
+  }, [filteredTransactions]);
 
   const loadTransactions = useCallback(async () => {
     try {
@@ -206,6 +230,19 @@ export default function FinancePage() {
     }
   }
 
+  async function handleMarkUnpaid(transactionId: string) {
+    setError(null);
+    try {
+      await apiFetch(`/fazendas/${farmId}/lancamentos/${transactionId}/desfazer-pagamento`, {
+        method: 'PATCH',
+        token: accessToken,
+      });
+      await loadData();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Erro ao desfazer pagamento');
+    }
+  }
+
   function startEdit(t: Transaction) {
     setEditingTx(t);
     setEditType(t.type);
@@ -283,16 +320,23 @@ export default function FinancePage() {
         </p>
       ) : (
         <>
+          <button
+            type="button"
+            onClick={() => setShowCreateMobile((v) => !v)}
+            className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 sm:hidden"
+          >
+            {showCreateMobile ? 'Fechar formulário' : '+ Novo lançamento'}
+          </button>
           <form
             onSubmit={handleCreate}
-            className="mb-8 grid grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid-cols-4"
+            className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid sm:grid-cols-4`}
           >
             <div>
               <label className="text-xs font-medium text-gray-600">Tipo</label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as TransactionType)}
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               >
                 {TYPE_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -307,7 +351,7 @@ export default function FinancePage() {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as TransactionCategory)}
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               >
                 {CATEGORY_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -325,7 +369,7 @@ export default function FinancePage() {
                 required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               />
             </div>
 
@@ -336,7 +380,7 @@ export default function FinancePage() {
                 required
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               />
             </div>
 
@@ -346,7 +390,7 @@ export default function FinancePage() {
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               />
             </div>
 
@@ -358,7 +402,7 @@ export default function FinancePage() {
                 <select
                   value={cropCycleId}
                   onChange={(e) => setCropCycleId(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 >
                   <option value="">Sem vínculo</option>
                   {cropCycles.map((c) => (
@@ -402,7 +446,7 @@ export default function FinancePage() {
               <select
                 value={granularity}
                 onChange={(e) => setGranularity(e.target.value as 'daily' | 'weekly' | 'monthly')}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               >
                 {GRANULARITY_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -439,10 +483,43 @@ export default function FinancePage() {
             )}
           </section>
 
+          <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                <ArrowUpCircle size={14} className="text-emerald-500" />
+                Receita
+              </div>
+              <p className="mt-1 text-lg font-bold tabular-nums text-emerald-600">{formatCurrency(summary.receita)}</p>
+            </div>
+            <div className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                <ArrowDownCircle size={14} className="text-red-500" />
+                Despesa
+              </div>
+              <p className="mt-1 text-lg font-bold tabular-nums text-red-500">{formatCurrency(summary.despesa)}</p>
+            </div>
+            <div className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                <Wallet size={14} className="text-gray-400" />
+                Saldo
+              </div>
+              <p className={`mt-1 text-lg font-bold tabular-nums ${summary.saldo >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                {formatCurrency(summary.saldo)}
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                <Clock size={14} className="text-amber-500" />
+                Pendentes
+              </div>
+              <p className="mt-1 text-lg font-bold tabular-nums text-amber-600">{summary.pendentes}</p>
+            </div>
+          </div>
+
           <section>
-            <div className="mb-3 flex items-center justify-between">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-gray-800">Lançamentos</h2>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {([['day', 'Dia'], ['week', 'Semana'], ['month', 'Mês'], ['year', 'Ano'], ['all', 'Todos']] as const).map(([val, label]) => (
                   <button
                     key={val}
@@ -475,39 +552,80 @@ export default function FinancePage() {
                 {filteredTransactions.map((t) => (
                   <li
                     key={t.id}
-                    className="flex flex-col gap-2 rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                    className="flex items-center gap-4 rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3"
                   >
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {t.type === 'RECEITA' ? '+ ' : '- '}
-                        {formatCurrency(t.amount)} · {t.category}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Vencimento: {new Date(t.dueDate).toLocaleDateString('pt-BR')}
-                        {t.description ? ` · ${t.description}` : ''}
-                        {t.paidAt ? ' · pago' : ' · pendente'}
+                    <span
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                        t.type === 'RECEITA' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
+                      }`}
+                    >
+                      {t.type === 'RECEITA' ? (
+                        <ArrowUpCircle size={20} strokeWidth={1.8} />
+                      ) : (
+                        <ArrowDownCircle size={20} strokeWidth={1.8} />
+                      )}
+                    </span>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate font-medium text-gray-900">
+                          {t.description || t.category}
+                        </p>
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            t.paidAt
+                              ? 'bg-emerald-50 text-emerald-600'
+                              : 'bg-amber-50 text-amber-600'
+                          }`}
+                        >
+                          {t.paidAt ? <Check size={10} /> : <Clock size={10} />}
+                          {t.paidAt ? 'Pago' : 'Pendente'}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        {new Date(t.dueDate).toLocaleDateString('pt-BR')} · {t.category}
                       </p>
                     </div>
-                    <div className="flex gap-3">
+
+                    <p
+                      className={`shrink-0 text-right text-sm font-bold tabular-nums ${
+                        t.type === 'RECEITA' ? 'text-emerald-600' : 'text-red-500'
+                      }`}
+                    >
+                      {t.type === 'RECEITA' ? '+' : '-'}{formatCurrency(t.amount)}
+                    </p>
+
+                    <div className="flex shrink-0 items-center gap-1">
                       <button
                         onClick={() => startEdit(t)}
-                        className="text-xs font-medium text-emerald-700 hover:underline"
+                        className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                        title="Editar"
                       >
-                        Editar
+                        <Pencil size={15} />
                       </button>
-                      {!t.paidAt && (
+                      {!t.paidAt ? (
                         <button
                           onClick={() => handleMarkPaid(t.id)}
-                          className="text-xs font-medium text-emerald-700 hover:underline"
+                          className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-emerald-50 hover:text-emerald-600"
+                          title="Marcar como pago"
                         >
-                          Marcar como pago
+                          <Check size={15} />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleMarkUnpaid(t.id)}
+                          className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
+                          title="Marcar como pendente"
+                        >
+                          <Undo2 size={15} />
                         </button>
                       )}
                       <button
                         onClick={() => handleDelete(t.id)}
-                        className="text-xs font-medium text-red-600 hover:underline"
+                        className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                        title="Excluir"
                       >
-                        Excluir
+                        <X size={15} />
                       </button>
                     </div>
                   </li>
@@ -544,7 +662,7 @@ export default function FinancePage() {
                   <select
                     value={editType}
                     onChange={(e) => setEditType(e.target.value as TransactionType)}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   >
                     {TYPE_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -558,7 +676,7 @@ export default function FinancePage() {
                   <select
                     value={editCategory}
                     onChange={(e) => setEditCategory(e.target.value as TransactionCategory)}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   >
                     {CATEGORY_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -575,7 +693,7 @@ export default function FinancePage() {
                     required
                     value={editAmount}
                     onChange={(e) => setEditAmount(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                 </div>
                 <div>
@@ -585,7 +703,7 @@ export default function FinancePage() {
                     required
                     value={editDueDate}
                     onChange={(e) => setEditDueDate(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                 </div>
                 <div className="col-span-2">
@@ -594,7 +712,7 @@ export default function FinancePage() {
                     type="text"
                     value={editDescription}
                     onChange={(e) => setEditDescription(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                 </div>
               </div>
@@ -603,7 +721,7 @@ export default function FinancePage() {
                 <button
                   type="button"
                   onClick={() => setEditingTx(null)}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                 >
                   Cancelar
                 </button>

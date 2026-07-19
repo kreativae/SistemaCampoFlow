@@ -27,11 +27,29 @@ export class ReportsService {
       birthMonth?: number;
       performance?: string;
       sortByGain?: 'asc' | 'desc';
+      category?: string;
+      sex?: string;
+      pastureId?: string;
+      vaccination?: string;
+      reproStatus?: string;
+      startDate?: string;
+      endDate?: string;
     },
   ): Promise<ReportTable> {
     switch (type) {
       case 'rebanho':
-        return this.buildHerdReport(farmId, options);
+        return this.buildHerdReport(farmId, {
+          birthMonth: options?.birthMonth,
+          performance: options?.performance,
+          sortByGain: options?.sortByGain,
+          category: options?.category,
+          sex: options?.sex,
+          pastureId: options?.pastureId,
+          vaccination: options?.vaccination,
+          reproStatus: options?.reproStatus,
+          startDate: options?.startDate,
+          endDate: options?.endDate,
+        });
       case 'financeiro':
         return this.buildFinanceReport(farmId);
       case 'sanidade':
@@ -59,17 +77,32 @@ export class ReportsService {
 
   private async buildHerdReport(
     farmId: string,
-    filters?: { birthMonth?: number; performance?: string; sortByGain?: 'asc' | 'desc' },
+    filters?: {
+      birthMonth?: number;
+      performance?: string;
+      sortByGain?: 'asc' | 'desc';
+      category?: string;
+      sex?: string;
+      pastureId?: string;
+      vaccination?: string;
+      reproStatus?: string;
+      startDate?: string;
+      endDate?: string;
+    },
   ): Promise<ReportTable> {
+    const where: any = { farmId, active: true };
+    if (filters?.performance) where.performance = filters.performance;
+    if (filters?.category) where.category = filters.category;
+    if (filters?.sex) where.sex = filters.sex;
+    if (filters?.pastureId) where.pastureId = filters.pastureId;
+
     const animals = await this.prisma.animal.findMany({
-      where: {
-        farmId,
-        active: true,
-        ...(filters?.performance ? { performance: filters.performance as any } : {}),
-      },
+      where,
       include: {
         pasture: { select: { name: true } },
         weighings: { orderBy: { weighedAt: 'asc' } },
+        vaccinations: { select: { vaccineName: true, administeredAt: true } },
+        reproductiveEvents: { select: { type: true, result: true, eventDate: true }, orderBy: { eventDate: 'desc' } },
       },
       orderBy: { earTag: 'asc' },
     });
@@ -92,18 +125,46 @@ export class ReportsService {
       return '36+ meses';
     };
 
+    const startMs = filters?.startDate ? new Date(filters.startDate).getTime() : null;
+    const endMs = filters?.endDate ? new Date(filters.endDate + 'T23:59:59').getTime() : null;
+
     let rows = animals
       .filter((a) => {
-        if (filters?.birthMonth && a.birthDate) {
-          return a.birthDate.getMonth() + 1 === filters.birthMonth;
+        if (filters?.birthMonth) {
+          if (!a.birthDate) return false;
+          if (a.birthDate.getMonth() + 1 !== filters.birthMonth) return false;
         }
-        return !filters?.birthMonth;
+        if (startMs || endMs) {
+          const refDate = a.birthDate ?? a.entryDate;
+          if (!refDate) return false;
+          const ref = refDate.getTime();
+          if (startMs && ref < startMs) return false;
+          if (endMs && ref > endMs) return false;
+        }
+        if (filters?.vaccination) {
+          const hasVaccine = a.vaccinations.some(
+            (v) => v.vaccineName.toLowerCase().includes(filters.vaccination!.toLowerCase()),
+          );
+          if (!hasVaccine) return false;
+        }
+        if (filters?.reproStatus) {
+          if (filters.reproStatus === 'COM_EVENTO') {
+            if (a.reproductiveEvents.length === 0) return false;
+          } else if (filters.reproStatus === 'SEM_EVENTO') {
+            if (a.reproductiveEvents.length > 0) return false;
+          } else if (filters.reproStatus === 'PRENHE') {
+            const lastDiag = a.reproductiveEvents.find((e) => e.type === 'DIAGNOSTICO_PRENHEZ');
+            if (!lastDiag || lastDiag.result !== 'PRENHE') return false;
+          }
+        }
+        return true;
       })
       .map((a) => {
         const ws = a.weighings;
         const gainKg =
           ws.length >= 2 ? ws[ws.length - 1].weightKg - ws[0].weightKg : 0;
         const refDate = a.birthDate ?? a.entryDate;
+        const lastRepro = a.reproductiveEvents[0];
         return {
           row: [
             a.earTag,
@@ -115,6 +176,10 @@ export class ReportsService {
             ageCategoryLabel(refDate),
             performanceLabel[a.performance ?? ''] ?? '-',
             ws.length >= 2 ? Number(gainKg.toFixed(1)) : '-',
+            a.vaccinations.length > 0
+              ? a.vaccinations.map((v) => v.vaccineName).join(', ')
+              : '-',
+            lastRepro ? `${lastRepro.type}${lastRepro.result ? ' (' + lastRepro.result + ')' : ''}` : '-',
           ] as (string | number)[],
           gainKg,
         };
@@ -132,7 +197,7 @@ export class ReportsService {
       title: 'Relatório de Rebanho',
       headers: [
         'Brinco', 'Categoria', 'Sexo', 'Raça', 'Peso (kg)', 'Pasto',
-        'Faixa Etária', 'Desempenho', 'Ganho Total (kg)',
+        'Faixa Etária', 'Desempenho', 'Ganho Total (kg)', 'Vacinações', 'Último Evento Reprodutivo',
       ],
       rows: rows.map((r) => r.row),
     };

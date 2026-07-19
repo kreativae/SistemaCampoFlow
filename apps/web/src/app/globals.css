@@ -24,6 +24,66 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Seleção de texto na identidade da marca */
+::selection {
+  background: #d1fae5; /* emerald-100 */
+  color: #064e3b; /* emerald-900 */
+}
+
+/* Botões clicáveis por padrão (Tailwind v4 usa cursor:default) */
+button:not(:disabled),
+[role='button']:not(:disabled) {
+  cursor: pointer;
+}
+
+/* Anel de foco consistente para navegação por teclado */
+:focus-visible {
+  outline: 2px solid #059669; /* emerald-600 */
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none; /* campos já têm ring próprio */
+}
+
+/* Números alinhados em tabelas e campos */
+input,
+td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Autofill do Chrome sem o amarelo padrão */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  -webkit-text-fill-color: #1c211e;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Scrollbar fina e discreta em toda a aplicação */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d6dad6 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #d6dad6;
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #b8beb8;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Entrada suave de páginas e cards */
@@ -104,6 +164,18 @@ input[type='date'],
 input[type='time'],
 input[type='datetime-local'] {
   color-scheme: light;
+}
+input[type='date']::-webkit-calendar-picker-indicator,
+input[type='time']::-webkit-calendar-picker-indicator,
+input[type='datetime-local']::-webkit-calendar-picker-indicator {
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
+  cursor: pointer;
+}
+input[type='date']:hover::-webkit-calendar-picker-indicator,
+input[type='time']:hover::-webkit-calendar-picker-indicator,
+input[type='datetime-local']:hover::-webkit-calendar-picker-indicator {
+  opacity: 0.8;
 }
 
 /* Placeholder mais suave */

@@ -223,6 +223,8 @@ export default function AnimalsPage() {
   const { toastSuccess } = useToast();
 
   const [animals, setAnimals] = useState<Animal[]>([]);
+  // No mobile o formulário começa fechado para não empurrar a lista para baixo.
+  const [showCreateMobile, setShowCreateMobile] = useState(false);
   const [pastures, setPastures] = useState<Pasture[]>([]);
   const [vaccinations, setVaccinations] = useState<VaccinationRecordSummary[]>([]);
   const [reproductiveEvents, setReproductiveEvents] = useState<ReproductiveEventSummary[]>(
@@ -237,6 +239,7 @@ export default function AnimalsPage() {
   const [category, setCategory] = useState<AnimalCategory>('VACA');
   const [breed, setBreed] = useState('');
   const [pastureId, setPastureId] = useState('');
+  const [birthDate, setBirthDate] = useState('');
   const [entryDate, setEntryDate] = useState('');
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -354,12 +357,14 @@ export default function AnimalsPage() {
           category,
           breed: breed || undefined,
           pastureId: pastureId || undefined,
+          birthDate: birthDate || undefined,
           entryDate: entryDate || undefined,
         },
       });
       setEarTag('');
       setBreed('');
       setPastureId('');
+      setBirthDate('');
       setEntryDate('');
       await loadData();
       toastSuccess('Animal cadastrado.');
@@ -634,9 +639,16 @@ export default function AnimalsPage() {
         </p>
       )}
 
+      <button
+        type="button"
+        onClick={() => setShowCreateMobile((v) => !v)}
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 sm:hidden"
+      >
+        {showCreateMobile ? 'Fechar formulário' : '+ Novo animal'}
+      </button>
       <form
         onSubmit={handleCreate}
-        className="mb-8 grid grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid-cols-3"
+        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid sm:grid-cols-3`}
       >
         <div className="col-span-2 sm:col-span-1">
           <label className="text-xs font-medium text-gray-600">Brinco</label>
@@ -645,7 +657,7 @@ export default function AnimalsPage() {
             required
             value={earTag}
             onChange={(e) => setEarTag(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
 
@@ -654,7 +666,7 @@ export default function AnimalsPage() {
           <select
             value={sex}
             onChange={(e) => setSex(e.target.value as AnimalSex)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           >
             {SEX_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>
@@ -669,7 +681,7 @@ export default function AnimalsPage() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as AnimalCategory)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           >
             {CATEGORY_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>
@@ -685,7 +697,7 @@ export default function AnimalsPage() {
             type="text"
             value={breed}
             onChange={(e) => setBreed(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
 
@@ -694,7 +706,7 @@ export default function AnimalsPage() {
           <select
             value={pastureId}
             onChange={(e) => setPastureId(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           >
             <option value="">— Sem pasto —</option>
             {pastures.map((p) => (
@@ -706,12 +718,22 @@ export default function AnimalsPage() {
         </div>
 
         <div>
+          <label className="text-xs font-medium text-gray-600">Data de nascimento</label>
+          <input
+            type="date"
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+          />
+        </div>
+
+        <div>
           <label className="text-xs font-medium text-gray-600">Data de entrada</label>
           <input
             type="date"
             value={entryDate}
             onChange={(e) => setEntryDate(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
 
@@ -734,7 +756,7 @@ export default function AnimalsPage() {
           <p className="mt-1 text-sm text-gray-500">Comece cadastrando seu primeiro animal usando o formulário acima.</p>
         </div>
       ) : (
-        <div className="flex gap-6">
+        <div className="flex flex-col gap-3 lg:flex-row lg:gap-6">
           {/* ── Sidebar de filtros (sticky no desktop, drawer no mobile) ── */}
           {/* Botão mobile para abrir filtros */}
           <div className="lg:hidden mb-3">
@@ -815,7 +837,7 @@ export default function AnimalsPage() {
                 Selecionar todos
               </label>
 
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-gray-400">
                   <Search size={14} />
                 </span>
@@ -824,7 +846,7 @@ export default function AnimalsPage() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar por brinco..."
-                  className="w-48 rounded-lg border border-gray-300 py-1.5 pl-8 pr-2 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="w-full rounded-lg border border-gray-300 py-1.5 pl-8 pr-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10 sm:w-48"
                 />
               </div>
             </div>
@@ -874,53 +896,53 @@ export default function AnimalsPage() {
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">{dealFormType === 'VENDA' ? 'Comprador' : 'Frigorífico'}</label>
-                      <input type="text" value={dealCounterparty} onChange={(e) => setDealCounterparty(e.target.value)} placeholder={dealFormType === 'VENDA' ? 'Nome do comprador' : 'Nome do frigorífico'} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+                      <input type="text" value={dealCounterparty} onChange={(e) => setDealCounterparty(e.target.value)} placeholder={dealFormType === 'VENDA' ? 'Nome do comprador' : 'Nome do frigorífico'} className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">Preço por</label>
                       <div className="flex gap-2">
-                        <select value={dealPriceUnit} onChange={(e) => setDealPriceUnit(e.target.value as 'ANIMAL' | 'ARROBA')} className="rounded-lg border border-gray-300 px-2 py-2 text-sm">
+                        <select value={dealPriceUnit} onChange={(e) => setDealPriceUnit(e.target.value as 'ANIMAL' | 'ARROBA')} className="rounded-lg border border-gray-200 bg-white px-2 py-2 text-sm">
                           <option value="ARROBA">Arroba</option>
                           <option value="ANIMAL">Animal</option>
                         </select>
-                        <input type="number" step="0.01" value={dealPricePerUnit} onChange={(e) => setDealPricePerUnit(e.target.value)} placeholder="R$ 0,00" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+                        <input type="number" step="0.01" value={dealPricePerUnit} onChange={(e) => setDealPricePerUnit(e.target.value)} placeholder="R$ 0,00" className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" />
                       </div>
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">Data</label>
-                      <input type="date" value={dealDate} onChange={(e) => setDealDate(e.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+                      <input type="date" value={dealDate} onChange={(e) => setDealDate(e.target.value)} className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">Frete (R$)</label>
-                      <input type="number" step="0.01" value={dealFreightCost} onChange={(e) => setDealFreightCost(e.target.value)} placeholder="0,00" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+                      <input type="number" step="0.01" value={dealFreightCost} onChange={(e) => setDealFreightCost(e.target.value)} placeholder="0,00" className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">Comissão (%)</label>
-                      <input type="number" step="0.1" value={dealCommission} onChange={(e) => setDealCommission(e.target.value)} placeholder="0" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+                      <input type="number" step="0.1" value={dealCommission} onChange={(e) => setDealCommission(e.target.value)} placeholder="0" className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" />
                     </div>
                     {dealFormType === 'ABATE' && (
                       <>
                         <div>
                           <label className="block text-xs font-medium text-gray-600 mb-1">Rendimento carcaça (%)</label>
-                          <input type="number" step="0.1" value={dealCarcassYield} onChange={(e) => setDealCarcassYield(e.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+                          <input type="number" step="0.1" value={dealCarcassYield} onChange={(e) => setDealCarcassYield(e.target.value)} className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" />
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-gray-600 mb-1">Preço peso vivo (R$/kg)</label>
-                          <input type="number" step="0.01" value={dealLiveWeightPrice} onChange={(e) => setDealLiveWeightPrice(e.target.value)} placeholder="0,00" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+                          <input type="number" step="0.01" value={dealLiveWeightPrice} onChange={(e) => setDealLiveWeightPrice(e.target.value)} placeholder="0,00" className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" />
                         </div>
                       </>
                     )}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">Observações</label>
-                    <input type="text" value={dealNotes} onChange={(e) => setDealNotes(e.target.value)} placeholder="Observações (opcional)" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+                    <input type="text" value={dealNotes} onChange={(e) => setDealNotes(e.target.value)} placeholder="Observações (opcional)" className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" />
                   </div>
                   <div className="flex items-center justify-between border-t border-gray-100 pt-3">
                     <p className="text-xs text-gray-500">
                       Animais: <b>{selectedAnimals.length}</b> · Peso: <b>{selectedTotalWeightKg.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} kg</b> · Arrobas: <b>{(selectedTotalWeightKg / 15).toFixed(1)}</b>
                     </p>
                     <div className="flex gap-2">
-                      <button type="button" onClick={() => setDealFormType(null)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
+                      <button type="button" onClick={() => setDealFormType(null)} className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
                       <button type="submit" disabled={dealSaving} className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors ${dealFormType === 'VENDA' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-600 hover:bg-orange-700'} disabled:opacity-50`}>
                         {dealSaving ? 'Salvando...' : dealFormType === 'VENDA' ? 'Criar Venda' : 'Criar Abate'}
                       </button>
@@ -1006,7 +1028,7 @@ export default function AnimalsPage() {
             <select
               value={movePastureId}
               onChange={(e) => setMovePastureId(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+              className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
             >
               <option value="">— Sem pasto —</option>
               {pastures.map((p) => (
@@ -1019,7 +1041,7 @@ export default function AnimalsPage() {
               <button
                 type="button"
                 onClick={() => setMoveModalOpen(false)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 Cancelar
               </button>
@@ -1065,7 +1087,7 @@ export default function AnimalsPage() {
                   type="text"
                   value={editEarTag}
                   onChange={(e) => setEditEarTag(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
               <div>
@@ -1073,7 +1095,7 @@ export default function AnimalsPage() {
                 <select
                   value={editCategory}
                   onChange={(e) => setEditCategory(e.target.value as AnimalCategory)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 >
                   {CATEGORY_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
@@ -1088,7 +1110,7 @@ export default function AnimalsPage() {
                   type="text"
                   value={editBreed}
                   onChange={(e) => setEditBreed(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
               <div>
@@ -1096,7 +1118,7 @@ export default function AnimalsPage() {
                 <select
                   value={editPastureId}
                   onChange={(e) => setEditPastureId(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 >
                   <option value="">— Sem pasto —</option>
                   {pastures.map((p) => (
@@ -1112,7 +1134,7 @@ export default function AnimalsPage() {
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
               <div>
@@ -1121,7 +1143,7 @@ export default function AnimalsPage() {
                   type="text"
                   value={editRfid}
                   onChange={(e) => setEditRfid(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
               <div>
@@ -1129,7 +1151,7 @@ export default function AnimalsPage() {
                 <select
                   value={editSex}
                   onChange={(e) => setEditSex(e.target.value as AnimalSex)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 >
                   {SEX_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
@@ -1146,7 +1168,7 @@ export default function AnimalsPage() {
                   type="date"
                   value={editBirthDate}
                   onChange={(e) => setEditBirthDate(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
               <div>
@@ -1158,7 +1180,7 @@ export default function AnimalsPage() {
                   step="0.1"
                   value={editCurrentWeightKg}
                   onChange={(e) => setEditCurrentWeightKg(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
               <div>
@@ -1166,7 +1188,7 @@ export default function AnimalsPage() {
                 <select
                   value={editPerformance}
                   onChange={(e) => setEditPerformance(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 >
                   <option value="">— Sem classificação —</option>
                   {PERFORMANCE_OPTIONS.map((opt) => (
@@ -1182,7 +1204,7 @@ export default function AnimalsPage() {
                   type="date"
                   value={editEntryDate}
                   onChange={(e) => setEditEntryDate(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
             </div>
@@ -1198,7 +1220,7 @@ export default function AnimalsPage() {
                 <button
                   type="button"
                   onClick={() => setEditingId(null)}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                 >
                   Cancelar
                 </button>

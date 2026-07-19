@@ -33,13 +33,13 @@ export default function Modal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-gray-950/35 px-4 backdrop-blur-[3px]"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        className={`animate-fade-up flex max-h-[90vh] w-full ${maxWidth} flex-col overflow-hidden rounded-2xl bg-white shadow-2xl`}
+        className={`animate-fade-up flex max-h-[90vh] w-full ${maxWidth} flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-16px_rgba(6,30,20,0.28)] ring-1 ring-gray-950/5`}
       >
         {children}
       </div>

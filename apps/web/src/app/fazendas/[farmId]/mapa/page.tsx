@@ -72,6 +72,8 @@ export default function FarmMapPage() {
   const [editType, setEditType] = useState<MapFeatureType>('PASTAGEM');
   const [editGeometryType, setEditGeometryType] = useState<GeometryType>('PONTO');
   const [editCoordinatesText, setEditCoordinatesText] = useState('');
+  const [editDrawing, setEditDrawing] = useState(false);
+  const [editDrawnPoints, setEditDrawnPoints] = useState<[number, number][] | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [savingLocation, setSavingLocation] = useState(false);
@@ -147,19 +149,30 @@ export default function FarmMapPage() {
     setEditType(feature.type);
     setEditGeometryType(feature.geometryType);
     setEditCoordinatesText(feature.coordinates.map(([lat, lng]) => `${lat}, ${lng}`).join('\n'));
+    setEditDrawing(false);
+    setEditDrawnPoints(null);
   }
 
   async function handleSaveEdit(featureId: string) {
     setSaving(true);
     setError(null);
     try {
-      const coordinates = parseCoordinates(editCoordinatesText);
+      let coordinates: [number, number][];
+      let finalGeometryType = editGeometryType;
+      if (editDrawnPoints && editDrawnPoints.length >= 3) {
+        coordinates = editDrawnPoints;
+        finalGeometryType = 'POLIGONO';
+      } else {
+        coordinates = parseCoordinates(editCoordinatesText);
+      }
       await apiFetch(`/fazendas/${farmId}/elementos-mapa/${featureId}`, {
         method: 'PATCH',
         token: accessToken,
-        body: { name: editName, type: editType, geometryType: editGeometryType, coordinates },
+        body: { name: editName, type: editType, geometryType: finalGeometryType, coordinates },
       });
       setEditingId(null);
+      setEditDrawing(false);
+      setEditDrawnPoints(null);
       await loadData();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao atualizar elemento do mapa');
@@ -290,7 +303,7 @@ export default function FarmMapPage() {
             value={cityQuery}
             onChange={(e) => handleCityQueryChange(e.target.value)}
             placeholder="Ex.: Uberaba, MG"
-            className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           {citySearching && <p className="mt-1 text-xs text-gray-400">Buscando...</p>}
           {cityResults.length > 0 && (
@@ -317,7 +330,7 @@ export default function FarmMapPage() {
               <button
                 type="button"
                 onClick={() => setShowMap(false)}
-                className="mb-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
+                className="mb-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
               >
                 Minimizar mapa
               </button>
@@ -338,7 +351,7 @@ export default function FarmMapPage() {
           <button
             type="button"
             onClick={() => setShowMap(true)}
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
           >
             Mostrar mapa
           </button>
@@ -359,7 +372,7 @@ export default function FarmMapPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Ex.: Talhão Norte"
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               />
             </div>
 
@@ -368,7 +381,7 @@ export default function FarmMapPage() {
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as MapFeatureType)}
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               >
                 {TYPE_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -384,7 +397,7 @@ export default function FarmMapPage() {
                 <select
                   value={geometryType}
                   onChange={(e) => setGeometryType(e.target.value as GeometryType)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 >
                   <option value="PONTO">Ponto</option>
                   <option value="POLIGONO">Polígono</option>
@@ -447,7 +460,7 @@ export default function FarmMapPage() {
                 value={coordinatesText}
                 onChange={(e) => setCoordinatesText(e.target.value)}
                 placeholder={geometryType === 'PONTO' ? '-15.793889, -47.882778' : '-15.79, -47.88\n-15.80, -47.87\n-15.79, -47.86'}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               />
             )}
           </div>
@@ -484,7 +497,7 @@ export default function FarmMapPage() {
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                   <div>
@@ -492,7 +505,7 @@ export default function FarmMapPage() {
                     <select
                       value={editType}
                       onChange={(e) => setEditType(e.target.value as MapFeatureType)}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       {TYPE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -506,20 +519,65 @@ export default function FarmMapPage() {
                     <select
                       value={editGeometryType}
                       onChange={(e) => setEditGeometryType(e.target.value as GeometryType)}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       <option value="PONTO">Ponto</option>
                       <option value="POLIGONO">Polígono</option>
                     </select>
                   </div>
                   <div className="col-span-full">
-                    <label className="text-xs font-medium text-gray-600">Coordenadas</label>
-                    <textarea
-                      rows={3}
-                      value={editCoordinatesText}
-                      onChange={(e) => setEditCoordinatesText(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
-                    />
+                    <div className="mb-2 flex items-center justify-between">
+                      <label className="text-xs font-medium text-gray-600">Localização no mapa</label>
+                      {!editDrawing ? (
+                        <button
+                          type="button"
+                          onClick={() => setEditDrawing(true)}
+                          className="text-xs font-medium text-emerald-700 hover:underline"
+                        >
+                          Redesenhar croqui no mapa
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => { setEditDrawing(false); setEditDrawnPoints(null); }}
+                          className="text-xs font-medium text-gray-500 hover:underline"
+                        >
+                          Editar coordenadas manualmente
+                        </button>
+                      )}
+                    </div>
+
+                    {editDrawing ? (
+                      <div>
+                        {editDrawnPoints && editDrawnPoints.length >= 3 ? (
+                          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                            <p className="text-sm text-emerald-800">
+                              Novo croqui definido com {editDrawnPoints.length} pontos.
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => { setEditDrawnPoints(null); }}
+                              className="mt-1 text-xs font-medium text-emerald-700 hover:underline"
+                            >
+                              Redesenhar
+                            </button>
+                          </div>
+                        ) : (
+                          <BoundaryDrawer
+                            center={center}
+                            onSave={(boundaries) => setEditDrawnPoints(boundaries)}
+                            onCancel={() => { setEditDrawing(false); setEditDrawnPoints(null); }}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <textarea
+                        rows={3}
+                        value={editCoordinatesText}
+                        onChange={(e) => setEditCoordinatesText(e.target.value)}
+                        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      />
+                    )}
                   </div>
                   <div className="col-span-full flex gap-2">
                     <button
@@ -533,7 +591,7 @@ export default function FarmMapPage() {
                     <button
                       type="button"
                       onClick={() => setEditingId(null)}
-                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
                     >
                       Cancelar
                     </button>

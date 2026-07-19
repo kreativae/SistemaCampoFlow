@@ -128,6 +128,8 @@ export interface AuditLog {
   method: string;
   path: string;
   statusCode: number;
+  requestBody: Record<string, unknown> | null;
+  ipAddress: string | null;
   createdAt: string;
 }
 
