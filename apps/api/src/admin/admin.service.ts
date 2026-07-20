@@ -384,6 +384,13 @@ export class AdminService {
       where: { user: { accountId } },
     });
     await this.prisma.subscription.deleteMany({ where: { accountId } });
+    // Tabelas que referenciam User diretamente precisam ser limpas antes do
+    // deleteMany de usuários (FK sem cascade no schema).
+    await this.prisma.notification.deleteMany({
+      where: { user: { accountId } },
+    });
+    await this.prisma.workLog.deleteMany({ where: { user: { accountId } } });
+    await this.prisma.shift.deleteMany({ where: { user: { accountId } } });
     await this.prisma.user.deleteMany({ where: { accountId } });
     await this.prisma.account.delete({ where: { id: accountId } });
 
@@ -503,10 +510,4 @@ export class AdminService {
     return { items, total, page, pageSize };
   }
 
-  // TEMPORÁRIO: apaga todo o histórico de auditoria (usado para limpar o lixo de
-  // dados de teste). Remover quando não for mais necessário.
-  async clearAuditLogs() {
-    const { count } = await this.prisma.auditLog.deleteMany({});
-    return { deleted: count };
-  }
 }
