@@ -5,7 +5,7 @@ import type { Pasture } from '../lib/types';
 export function usePastures(farmId: string) {
   return useQuery({
     queryKey: ['pastures', farmId],
-    queryFn: () => apiFetch<Pasture[]>(`/farms/${farmId}/pastures`),
+    queryFn: () => apiFetch<Pasture[]>(`/fazendas/${farmId}/pastagens`),
     enabled: !!farmId,
   });
 }
@@ -13,7 +13,7 @@ export function usePastures(farmId: string) {
 export function usePasture(farmId: string, pastureId: string) {
   return useQuery({
     queryKey: ['pasture', farmId, pastureId],
-    queryFn: () => apiFetch<Pasture>(`/farms/${farmId}/pastures/${pastureId}`),
+    queryFn: () => apiFetch<Pasture>(`/fazendas/${farmId}/pastagens/${pastureId}`),
     enabled: !!farmId && !!pastureId,
   });
 }
@@ -21,7 +21,16 @@ export function usePasture(farmId: string, pastureId: string) {
 export function useCreatePasture(farmId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Pasture>) => apiFetch<Pasture>(`/farms/${farmId}/pastures`, { method: 'POST', body: data }),
+    mutationFn: (data: Partial<Pasture>) => apiFetch<Pasture>(`/fazendas/${farmId}/pastagens`, { method: 'POST', body: data }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['pastures', farmId] }),
+  });
+}
+
+export function useUpdatePasture(farmId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }: Partial<Pasture> & { id: string }) =>
+      apiFetch<Pasture>(`/fazendas/${farmId}/pastagens/${id}`, { method: 'PATCH', body: data }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['pastures', farmId] }),
   });
 }
@@ -29,7 +38,7 @@ export function useCreatePasture(farmId: string) {
 export function useDeletePasture(farmId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (pastureId: string) => apiFetch(`/farms/${farmId}/pastures/${pastureId}`, { method: 'DELETE' }),
+    mutationFn: (pastureId: string) => apiFetch(`/fazendas/${farmId}/pastagens/${pastureId}`, { method: 'DELETE' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['pastures', farmId] }),
   });
 }

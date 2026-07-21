@@ -347,6 +347,13 @@ export class AuthService {
     return this.toSafeUser(updated);
   }
 
+  async savePushToken(userId: string, token: string) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { expoPushToken: token },
+    });
+  }
+
   async changePassword(
     userId: string,
     currentPassword: string,

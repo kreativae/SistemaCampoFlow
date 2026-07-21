@@ -35,6 +35,8 @@ export default function DocumentsPage() {
   const router = useRouter();
 
   const [documents, setDocuments] = useState<FarmDocument[]>([]);
+  // No mobile o formulário começa fechado para não empurrar a lista.
+  const [showCreateMobile, setShowCreateMobile] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -167,16 +169,23 @@ export default function DocumentsPage() {
         </p>
       )}
 
+      <button
+        type="button"
+        onClick={() => setShowCreateMobile((v) => !v)}
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 sm:hidden"
+      >
+        {showCreateMobile ? 'Fechar formulário' : '+ Enviar documento'}
+      </button>
       <form
         onSubmit={handleUpload}
-        className="mb-8 flex flex-wrap items-end gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4"
+        className={`${showCreateMobile ? 'flex' : 'hidden'} mb-8 flex-wrap items-end gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:flex`}
       >
         <div>
           <label className="text-xs font-medium text-gray-600">Categoria</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as DocumentCategory)}
-            className="mt-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           >
             {CATEGORY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -221,7 +230,7 @@ export default function DocumentsPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value as DocumentCategory | '')}
-              className="rounded-lg border border-gray-300 px-2 py-1 text-sm"
+              className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
             >
               <option value="">Todas as categorias</option>
               {CATEGORY_OPTIONS.map((opt) => (

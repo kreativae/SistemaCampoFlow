@@ -129,6 +129,16 @@ export class AuthController {
     );
   }
 
+  @Post('push-token')
+  @UseGuards(JwtAuthGuard)
+  async registerPushToken(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() body: { token: string; platform?: string },
+  ) {
+    await this.authService.savePushToken(user.id, body.token);
+    return { success: true };
+  }
+
   @Get('google/status')
   googleStatus() {
     return { enabled: this.authService.isGoogleConfigured() };

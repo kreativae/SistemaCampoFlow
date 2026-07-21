@@ -305,14 +305,14 @@ export default function PastureDetailPage() {
             required
             value={headCount}
             onChange={(e) => setHeadCount(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           <input
             type="text"
             placeholder="Observações (opcional)"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           <button
             type="submit"
@@ -348,7 +348,7 @@ export default function PastureDetailPage() {
                         max={o.headCount}
                         value={exitQuantity}
                         onChange={(e) => setExitQuantity(e.target.value)}
-                        className="mt-1 w-28 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                        className="mt-1 w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       />
                     </div>
                     <div>
@@ -358,7 +358,7 @@ export default function PastureDetailPage() {
                       <select
                         value={exitDestinationId}
                         onChange={(e) => setExitDestinationId(e.target.value)}
-                        className="mt-1 w-44 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                        className="mt-1 w-44 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       >
                         <option value="">— Não mover —</option>
                         {pastures.map((p) => (
@@ -376,7 +376,7 @@ export default function PastureDetailPage() {
                         type="text"
                         value={exitNotes}
                         onChange={(e) => setExitNotes(e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                        className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       />
                     </div>
                   </div>
@@ -392,7 +392,7 @@ export default function PastureDetailPage() {
                     <button
                       type="button"
                       onClick={() => setExitingId(null)}
-                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
                     >
                       Cancelar
                     </button>
@@ -552,7 +552,7 @@ function OccupationEditForm({
             min={1}
             value={headCount}
             onChange={(e) => onHeadCountChange(e.target.value)}
-            className="mt-1 w-28 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
         <div>
@@ -561,7 +561,7 @@ function OccupationEditForm({
             type="date"
             value={enteredAt}
             onChange={(e) => onEnteredAtChange(e.target.value)}
-            className="mt-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
         {showExitedAt && (
@@ -571,7 +571,7 @@ function OccupationEditForm({
               type="date"
               value={exitedAt}
               onChange={(e) => onExitedAtChange(e.target.value)}
-              className="mt-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+              className="mt-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
             />
           </div>
         )}
@@ -581,7 +581,7 @@ function OccupationEditForm({
             type="text"
             value={notes}
             onChange={(e) => onNotesChange(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
       </div>
@@ -597,7 +597,7 @@ function OccupationEditForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
         >
           Cancelar
         </button>

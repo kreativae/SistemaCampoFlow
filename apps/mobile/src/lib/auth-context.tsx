@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { apiFetch, ApiError } from './api';
+import { apiFetch, ApiError, setGlobalToken, setOnTokenRefreshed } from './api';
 import type { AuthResponse, User } from './types';
 
 const AUTH_KEY = 'campoflow.auth';
@@ -39,6 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (raw) {
           const stored = JSON.parse(raw);
           setAccessToken(stored.accessToken);
+          setGlobalToken(stored.accessToken);
           setUser(stored.user);
         }
       } catch {
@@ -52,7 +53,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const persist = useCallback(async (data: AuthResponse) => {
     setUser(data.user ?? null);
     setAccessToken(data.accessToken ?? null);
+    setGlobalToken(data.accessToken ?? null);
     await SecureStore.setItemAsync(AUTH_KEY, JSON.stringify(data));
+  }, []);
+
+  useEffect(() => {
+    setOnTokenRefreshed(async (newAccessToken, newRefreshToken) => {
+      setAccessToken(newAccessToken);
+      const raw = await SecureStore.getItemAsync(AUTH_KEY);
+      const stored = raw ? JSON.parse(raw) : {};
+      stored.accessToken = newAccessToken;
+      stored.refreshToken = newRefreshToken;
+      await SecureStore.setItemAsync(AUTH_KEY, JSON.stringify(stored));
+    });
+    return () => setOnTokenRefreshed(null);
   }, []);
 
   const login = useCallback(async (email: string, password: string, mfaCode?: string) => {
@@ -87,6 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     setUser(null);
     setAccessToken(null);
+    setGlobalToken(null);
     await SecureStore.deleteItemAsync(AUTH_KEY);
   }, []);
 

@@ -52,6 +52,8 @@ export default function AgendaPage() {
   const confirm = useConfirm();
 
   const [events, setEvents] = useState<AgendaEvent[]>([]);
+  // No mobile o formulário começa fechado para não empurrar a lista.
+  const [showCreateMobile, setShowCreateMobile] = useState(false);
   const [alerts, setAlerts] = useState<AgendaAlert[]>([]);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -189,9 +191,16 @@ export default function AgendaPage() {
         </div>
       )}
 
+      <button
+        type="button"
+        onClick={() => setShowCreateMobile((v) => !v)}
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 sm:hidden"
+      >
+        {showCreateMobile ? 'Fechar formulário' : '+ Novo evento'}
+      </button>
       <form
         onSubmit={handleCreate}
-        className="mb-8 grid grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid-cols-4"
+        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid sm:grid-cols-4`}
       >
         <div className="col-span-2">
           <label className="text-xs font-medium text-gray-600">Título</label>
@@ -200,7 +209,7 @@ export default function AgendaPage() {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
 
@@ -209,7 +218,7 @@ export default function AgendaPage() {
           <select
             value={type}
             onChange={(e) => setType(e.target.value as AgendaEventType)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           >
             {TYPE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -226,7 +235,7 @@ export default function AgendaPage() {
             required
             value={scheduledDate}
             onChange={(e) => setScheduledDate(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
 

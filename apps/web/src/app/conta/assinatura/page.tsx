@@ -290,7 +290,7 @@ function SubscriptionContent() {
                       ) : (
                         <Link
                           href="/suporte"
-                          className="block rounded-lg border border-gray-300 px-3 py-2 text-center text-sm font-medium text-gray-700 hover:bg-gray-50"
+                          className="block rounded-lg border border-gray-200 bg-white px-3 py-2 text-center text-sm font-medium text-gray-700 hover:bg-gray-50"
                         >
                           Falar com vendas
                         </Link>

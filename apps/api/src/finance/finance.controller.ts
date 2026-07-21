@@ -59,6 +59,14 @@ export class FinanceController {
     return this.financeService.markPaid(farmId, transactionId);
   }
 
+  @Patch('lancamentos/:transactionId/desfazer-pagamento')
+  markUnpaid(
+    @Param('farmId') farmId: string,
+    @Param('transactionId') transactionId: string,
+  ) {
+    return this.financeService.markUnpaid(farmId, transactionId);
+  }
+
   @Delete('lancamentos/:transactionId')
   remove(
     @Param('farmId') farmId: string,

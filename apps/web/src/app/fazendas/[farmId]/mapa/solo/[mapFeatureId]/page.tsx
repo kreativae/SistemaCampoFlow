@@ -307,7 +307,7 @@ export default function SoilAnalysisPage() {
             required
             value={collectedAt}
             onChange={(e) => setCollectedAt(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
         <div>
@@ -317,7 +317,7 @@ export default function SoilAnalysisPage() {
             value={areaLabel}
             onChange={(e) => setAreaLabel(e.target.value)}
             placeholder="Ex.: Talhão 3"
-            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
         </div>
         {FIELD_DEFS.map(({ key, label }) => (
@@ -328,7 +328,7 @@ export default function SoilAnalysisPage() {
               step="0.01"
               value={form[key] ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-              className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+              className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
             />
           </div>
         ))}
@@ -359,7 +359,7 @@ export default function SoilAnalysisPage() {
             <select
               value={chartField}
               onChange={(e) => setChartField(e.target.value as keyof SoilAnalysis)}
-              className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
             >
               {FIELD_DEFS.map(({ key, label }) => (
                 <option key={key} value={key}>
@@ -393,7 +393,7 @@ export default function SoilAnalysisPage() {
                             type="date"
                             value={editCollectedAt}
                             onChange={(e) => setEditCollectedAt(e.target.value)}
-                            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                           />
                         </div>
                         <div>
@@ -402,7 +402,7 @@ export default function SoilAnalysisPage() {
                             type="text"
                             value={editAreaLabel}
                             onChange={(e) => setEditAreaLabel(e.target.value)}
-                            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                           />
                         </div>
                         {FIELD_DEFS.map(({ key, label }) => (
@@ -415,7 +415,7 @@ export default function SoilAnalysisPage() {
                               onChange={(e) =>
                                 setEditForm((f) => ({ ...f, [key]: e.target.value }))
                               }
-                              className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                              className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                             />
                           </div>
                         ))}
@@ -425,7 +425,7 @@ export default function SoilAnalysisPage() {
                             type="text"
                             value={editNotes}
                             onChange={(e) => setEditNotes(e.target.value)}
-                            className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                           />
                         </div>
                       </div>
@@ -441,7 +441,7 @@ export default function SoilAnalysisPage() {
                         <button
                           type="button"
                           onClick={() => setEditingId(null)}
-                          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                          className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
                         >
                           Cancelar
                         </button>

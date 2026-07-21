@@ -169,7 +169,7 @@ export default function SecurityPage() {
                 required
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               />
             </div>
             <button

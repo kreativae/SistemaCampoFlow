@@ -110,7 +110,7 @@ export default function FarmDashboardPage() {
         </p>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             <MetricCard
               label="Total de animais"
               value={dashboard.totalAnimals.toLocaleString('pt-BR')}
@@ -185,7 +185,7 @@ export default function FarmDashboardPage() {
       {resumo && (
         <section className="mt-10">
           <h2 className="mb-4 text-lg font-semibold tracking-tight text-gray-900">Resumo geral</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             <SummaryCard
               title="Reprodução"
               href={`/fazendas/${farmId}/reproducao`}
@@ -293,7 +293,7 @@ function MetricCard({
     tone === 'warning' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-700';
 
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md">
+    <div className="rounded-xl border border-gray-200/80 bg-white p-4 sm:p-5 shadow-sm transition-shadow duration-200 hover:shadow-md">
       <div className="flex items-start justify-between">
         <p className="text-sm font-medium text-gray-500">{label}</p>
         <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${chipColor}`}>

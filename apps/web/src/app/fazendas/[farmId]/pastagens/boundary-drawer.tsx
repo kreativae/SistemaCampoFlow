@@ -195,7 +195,7 @@ export default function BoundaryDrawer({
           value={searchQuery}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Buscar cidade ou região..."
-          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
         />
         {searching && <p className="mt-1 text-xs text-gray-400">Buscando...</p>}
         {searchResults.length > 0 && (
@@ -249,7 +249,7 @@ export default function BoundaryDrawer({
             type="button"
             onClick={handleUndo}
             disabled={points.length === 0}
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40"
           >
             Desfazer ponto
           </button>
@@ -257,14 +257,14 @@ export default function BoundaryDrawer({
             type="button"
             onClick={handleClear}
             disabled={points.length === 0}
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-40"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-40"
           >
             Limpar
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
           >
             Cancelar
           </button>

@@ -238,6 +238,29 @@ export class BillingService {
         break;
       }
 
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as {
+          subscription?: string;
+          customer_email?: string;
+          attempt_count?: number;
+        };
+        if (invoice.subscription) {
+          const record = await this.prisma.subscription.findFirst({
+            where: { stripeSubscriptionId: invoice.subscription },
+          });
+          if (record) {
+            await this.prisma.subscription.update({
+              where: { id: record.id },
+              data: { status: SubscriptionStatus.PAST_DUE },
+            });
+            this.logger.warn(
+              `Pagamento falhou para conta ${record.accountId} (tentativa ${invoice.attempt_count ?? '?'}) — status atualizado para PAST_DUE`,
+            );
+          }
+        }
+        break;
+      }
+
       default:
         this.logger.log(`Evento Stripe ignorado: ${event.type}`);
     }

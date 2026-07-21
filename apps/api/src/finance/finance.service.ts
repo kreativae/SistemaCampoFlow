@@ -62,6 +62,14 @@ export class FinanceService {
     });
   }
 
+  async markUnpaid(farmId: string, transactionId: string) {
+    await this.findOne(farmId, transactionId);
+    return this.prisma.transaction.update({
+      where: { id: transactionId },
+      data: { paidAt: null },
+    });
+  }
+
   async remove(farmId: string, transactionId: string) {
     await this.findOne(farmId, transactionId);
     await this.prisma.transaction.delete({ where: { id: transactionId } });

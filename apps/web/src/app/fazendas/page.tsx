@@ -195,7 +195,7 @@ export default function FarmsPage() {
           required
           value={newFarmName}
           onChange={(e) => setNewFarmName(e.target.value)}
-          className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-colors duration-150 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+          className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm transition-colors duration-150 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
         />
         <button
           type="submit"
@@ -229,7 +229,7 @@ export default function FarmsPage() {
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="flex-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm transition-colors duration-150 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="flex-1 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm transition-colors duration-150 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
                 <button
                   type="button"
@@ -242,7 +242,7 @@ export default function FarmsPage() {
                 <button
                   type="button"
                   onClick={() => setEditingId(null)}
-                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-gray-50"
+                  className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-gray-50"
                 >
                   Cancelar
                 </button>

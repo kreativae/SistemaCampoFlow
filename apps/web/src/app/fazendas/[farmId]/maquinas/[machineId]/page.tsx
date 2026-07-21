@@ -304,7 +304,7 @@ export default function MachineDetailPage() {
             required
             value={maintenanceDescription}
             onChange={(e) => setMaintenanceDescription(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           <input
             type="number"
@@ -312,7 +312,7 @@ export default function MachineDetailPage() {
             placeholder="Custo (R$)"
             value={maintenanceCost}
             onChange={(e) => setMaintenanceCost(e.target.value)}
-            className="w-32 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="w-32 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           <input
             type="number"
@@ -320,7 +320,7 @@ export default function MachineDetailPage() {
             placeholder="Horímetro"
             value={maintenanceHourMeter}
             onChange={(e) => setMaintenanceHourMeter(e.target.value)}
-            className="w-32 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="w-32 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           <label className="flex items-center gap-1.5 text-sm text-gray-600 whitespace-nowrap">
             <input
@@ -350,13 +350,13 @@ export default function MachineDetailPage() {
                     type="date"
                     value={editMaintenanceDate}
                     onChange={(e) => setEditMaintenanceDate(e.target.value)}
-                    className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <input
                     type="text"
                     value={editMaintenanceDescription}
                     onChange={(e) => setEditMaintenanceDescription(e.target.value)}
-                    className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <input
                     type="number"
@@ -364,7 +364,7 @@ export default function MachineDetailPage() {
                     placeholder="Custo (R$)"
                     value={editMaintenanceCost}
                     onChange={(e) => setEditMaintenanceCost(e.target.value)}
-                    className="w-28 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <input
                     type="number"
@@ -372,7 +372,7 @@ export default function MachineDetailPage() {
                     placeholder="Horímetro"
                     value={editMaintenanceHourMeter}
                     onChange={(e) => setEditMaintenanceHourMeter(e.target.value)}
-                    className="w-28 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <button
                     type="button"
@@ -385,7 +385,7 @@ export default function MachineDetailPage() {
                   <button
                     type="button"
                     onClick={() => setEditingMaintenanceId(null)}
-                    className="rounded-lg border border-gray-300 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
                   >
                     Cancelar
                   </button>
@@ -429,7 +429,7 @@ export default function MachineDetailPage() {
             required
             value={fuelLiters}
             onChange={(e) => setFuelLiters(e.target.value)}
-            className="w-28 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           <input
             type="number"
@@ -437,7 +437,7 @@ export default function MachineDetailPage() {
             placeholder="Custo (R$)"
             value={fuelCost}
             onChange={(e) => setFuelCost(e.target.value)}
-            className="w-32 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="w-32 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           <input
             type="number"
@@ -445,7 +445,7 @@ export default function MachineDetailPage() {
             placeholder="Horímetro"
             value={fuelHourMeter}
             onChange={(e) => setFuelHourMeter(e.target.value)}
-            className="w-32 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+            className="w-32 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
           />
           <label className="flex items-center gap-1.5 text-sm text-gray-600 whitespace-nowrap">
             <input
@@ -475,7 +475,7 @@ export default function MachineDetailPage() {
                     type="date"
                     value={editFuelDate}
                     onChange={(e) => setEditFuelDate(e.target.value)}
-                    className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <input
                     type="number"
@@ -483,7 +483,7 @@ export default function MachineDetailPage() {
                     placeholder="Litros"
                     value={editFuelLiters}
                     onChange={(e) => setEditFuelLiters(e.target.value)}
-                    className="w-24 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="w-24 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <input
                     type="number"
@@ -491,7 +491,7 @@ export default function MachineDetailPage() {
                     placeholder="Custo (R$)"
                     value={editFuelCost}
                     onChange={(e) => setEditFuelCost(e.target.value)}
-                    className="w-28 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <input
                     type="number"
@@ -499,7 +499,7 @@ export default function MachineDetailPage() {
                     placeholder="Horímetro"
                     value={editFuelHourMeter}
                     onChange={(e) => setEditFuelHourMeter(e.target.value)}
-                    className="w-28 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <button
                     type="button"
@@ -512,7 +512,7 @@ export default function MachineDetailPage() {
                   <button
                     type="button"
                     onClick={() => setEditingFuelId(null)}
-                    className="rounded-lg border border-gray-300 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
                   >
                     Cancelar
                   </button>

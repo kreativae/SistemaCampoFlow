@@ -82,6 +82,7 @@ export default function AdminAccountsPage() {
   const [savingId, setSavingId] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deletingBulk, setDeletingBulk] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [expandedDetail, setExpandedDetail] = useState<AccountDetail | null>(null);
   const [loadingExpanded, setLoadingExpanded] = useState(false);
@@ -229,6 +230,41 @@ export default function AdminAccountsPage() {
     }
   }
 
+  async function handleDeleteOne(account: AccountSummary) {
+    const confirmed = await confirm({
+      title: `Excluir "${account.name}"`,
+      message:
+        'ATENÇÃO: excluir esta conta é IRREVERSÍVEL.\n\n' +
+        'Propriedades, usuários, tickets e assinatura desta conta serão apagados ' +
+        'permanentemente, e a assinatura no Stripe será cancelada.',
+      confirmLabel: 'Excluir definitivamente',
+      danger: true,
+      requireText: 'EXCLUIR',
+      requireTextLabel: 'Para confirmar, digite EXCLUIR',
+    });
+    if (!confirmed) return;
+
+    setDeletingId(account.id);
+    setError(null);
+    try {
+      await apiFetch('/admin/contas', {
+        method: 'DELETE',
+        token: accessToken,
+        body: { accountIds: [account.id] },
+      });
+      setSelected((prev) => {
+        const next = new Set(prev);
+        next.delete(account.id);
+        return next;
+      });
+      await loadAccounts();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Erro ao excluir conta');
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   if (fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
@@ -246,7 +282,7 @@ export default function AdminAccountsPage() {
           <h1 className="text-2xl font-semibold text-gray-900">Contas e assinaturas</h1>
           <p className="text-sm text-gray-500">
             Visão restrita à equipe da plataforma. Alterar plano/status aqui não passa pelo
-            Alterar plano/status aqui não passa pelo Stripe — use só para suporte (conta de cortesia, corrigir assinatura travada,
+            Stripe — use só para suporte (conta de cortesia, corrigir assinatura travada,
             reativação manual).
           </p>
         </div>
@@ -304,7 +340,7 @@ export default function AdminAccountsPage() {
               type="button"
               onClick={handleRefreshQuotations}
               disabled={refreshingQuotations}
-              className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-40"
+              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-40"
             >
               {refreshingQuotations ? 'Atualizando...' : 'Atualizar cotações agora'}
             </button>
@@ -336,7 +372,7 @@ export default function AdminAccountsPage() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Buscar por nome, e-mail de cobrança ou de usuário"
-            className="w-full max-w-md rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
+            className="w-full max-w-md rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
           />
           <button
             type="submit"
@@ -351,7 +387,7 @@ export default function AdminAccountsPage() {
             setPage(1);
             setStatusFilter(e.target.value as SubscriptionStatus | '');
           }}
-          className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
+          className="rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
         >
           <option value="">Todos os status</option>
           {STATUS_OPTIONS.map((s) => (
@@ -366,7 +402,7 @@ export default function AdminAccountsPage() {
             setPage(1);
             setPlanFilter(e.target.value as PlanTier | '');
           }}
-          className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
+          className="rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
         >
           <option value="">Todos os planos</option>
           {PLAN_OPTIONS.map((p) => (
@@ -384,7 +420,131 @@ export default function AdminAccountsPage() {
             : 'Nenhuma conta cadastrada ainda.'}
         </p>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        {/* Lista em cards — mobile */}
+        <div className="space-y-3 sm:hidden">
+          {accounts.map((account) => (
+            <div key={account.id} className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
+              <div className="flex items-start justify-between gap-2">
+                <label className="flex min-w-0 items-start gap-2">
+                  <input
+                    type="checkbox"
+                    className="mt-1 shrink-0"
+                    checked={selected.has(account.id)}
+                    onChange={(e) => toggleSelected(account.id, e.target.checked)}
+                  />
+                  <span className="min-w-0">
+                    <Link
+                      href={`/admin/contas/${account.id}`}
+                      className="block truncate font-medium text-gray-900 hover:underline"
+                    >
+                      {account.name}
+                    </Link>
+                    <span className="block truncate text-xs text-gray-400">{account.billingEmail}</span>
+                  </span>
+                </label>
+                <div className="flex shrink-0 items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => toggleExpanded(account.id)}
+                    className="text-xs font-medium text-emerald-700 hover:underline"
+                  >
+                    {expandedId === account.id ? 'Ocultar' : 'Visualizar'}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={deletingId === account.id}
+                    onClick={() => handleDeleteOne(account)}
+                    className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
+                  >
+                    {deletingId === account.id ? 'Excluindo...' : 'Excluir'}
+                  </button>
+                </div>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <label className="block text-xs font-medium text-gray-500">
+                  Plano
+                  <select
+                    value={account.planTier ?? ''}
+                    disabled={savingId === account.id}
+                    onChange={(e) => handleUpdate(account.id, 'planTier', e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm font-normal text-gray-900 shadow-xs focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  >
+                    {PLAN_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block text-xs font-medium text-gray-500">
+                  Status
+                  <select
+                    value={account.status ?? ''}
+                    disabled={savingId === account.id}
+                    onChange={(e) => handleUpdate(account.id, 'status', e.target.value)}
+                    className={`mt-1 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm font-normal shadow-xs focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10 ${statusBadgeClass(account.status)}`}
+                  >
+                    {STATUS_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {SUBSCRIPTION_STATUS_LABEL[opt]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <p className="mt-2 text-xs text-gray-500">
+                {account.farmsUsed} fazenda(s) · {account.owner?.email ?? 'sem responsável'} · criada em{' '}
+                {new Date(account.createdAt).toLocaleDateString('pt-BR')}
+              </p>
+              {expandedId === account.id && (
+                <div className="mt-3 rounded-lg bg-gray-50 p-3">
+                  {loadingExpanded ? (
+                    <p className="text-xs text-gray-500">Carregando...</p>
+                  ) : expandedDetail ? (
+                    <div className="grid grid-cols-2 gap-3 text-xs text-gray-700">
+                      <div>
+                        <p className="font-medium text-gray-500">Fim do teste</p>
+                        <p>
+                          {expandedDetail.subscription?.trialEndsAt
+                            ? new Date(expandedDetail.subscription.trialEndsAt).toLocaleDateString('pt-BR')
+                            : '—'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-500">Fim do período atual</p>
+                        <p>
+                          {expandedDetail.subscription?.currentPeriodEnd
+                            ? new Date(expandedDetail.subscription.currentPeriodEnd).toLocaleDateString('pt-BR')
+                            : '—'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-500">Membros</p>
+                        <p>{expandedDetail.users.length}</p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-500">Último pagamento</p>
+                        <p>
+                          {expandedDetail.paymentHistory[0]
+                            ? `${paymentStatusLabel(expandedDetail.paymentHistory[0].status)} · ${new Date(
+                                expandedDetail.paymentHistory[0].dateCreated,
+                              ).toLocaleDateString('pt-BR')}`
+                            : '—'}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-red-700">Erro ao carregar detalhes.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Tabela — desktop/tablet */}
+        <div className="hidden overflow-x-auto sm:block">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-gray-200 text-xs uppercase tracking-wide text-gray-500">
@@ -396,11 +556,11 @@ export default function AdminAccountsPage() {
                 />
               </th>
               <th className="py-2">Conta</th>
-              <th className="py-2">Responsável</th>
-              <th className="py-2">Fazendas</th>
+              <th className="hidden py-2 md:table-cell">Responsável</th>
+              <th className="hidden py-2 sm:table-cell">Fazendas</th>
               <th className="py-2">Plano</th>
               <th className="py-2">Status</th>
-              <th className="py-2">Criada em</th>
+              <th className="hidden py-2 lg:table-cell">Criada em</th>
               <th className="py-2" />
             </tr>
           </thead>
@@ -424,14 +584,14 @@ export default function AdminAccountsPage() {
                     </Link>
                     <p className="text-xs text-gray-400">{account.billingEmail}</p>
                   </td>
-                  <td className="py-2 text-gray-600">{account.owner?.email ?? '—'}</td>
-                  <td className="py-2">{account.farmsUsed}</td>
+                  <td className="hidden py-2 text-gray-600 md:table-cell">{account.owner?.email ?? '—'}</td>
+                  <td className="hidden py-2 sm:table-cell">{account.farmsUsed}</td>
                   <td className="py-2">
                     <select
                       value={account.planTier ?? ''}
                       disabled={savingId === account.id}
                       onChange={(e) => handleUpdate(account.id, 'planTier', e.target.value)}
-                      className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       {PLAN_OPTIONS.map((opt) => (
                         <option key={opt} value={opt}>
@@ -445,7 +605,7 @@ export default function AdminAccountsPage() {
                       value={account.status ?? ''}
                       disabled={savingId === account.id}
                       onChange={(e) => handleUpdate(account.id, 'status', e.target.value)}
-                      className={`rounded border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15 ${statusBadgeClass(account.status)}`}
+                      className={`rounded border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10 ${statusBadgeClass(account.status)}`}
                     >
                       {STATUS_OPTIONS.map((opt) => (
                         <option key={opt} value={opt}>
@@ -454,17 +614,27 @@ export default function AdminAccountsPage() {
                       ))}
                     </select>
                   </td>
-                  <td className="py-2 text-gray-500">
+                  <td className="hidden py-2 text-gray-500 lg:table-cell">
                     {new Date(account.createdAt).toLocaleDateString('pt-BR')}
                   </td>
                   <td className="py-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleExpanded(account.id)}
-                      className="text-xs font-medium text-emerald-700 hover:underline"
-                    >
-                      {expandedId === account.id ? 'Ocultar' : 'Visualizar'}
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => toggleExpanded(account.id)}
+                        className="text-xs font-medium text-emerald-700 hover:underline"
+                      >
+                        {expandedId === account.id ? 'Ocultar' : 'Visualizar'}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={deletingId === account.id}
+                        onClick={() => handleDeleteOne(account)}
+                        className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
+                      >
+                        {deletingId === account.id ? 'Excluindo...' : 'Excluir'}
+                      </button>
+                    </div>
                   </td>
                 </tr>
                 {expandedId === account.id && (
@@ -522,6 +692,7 @@ export default function AdminAccountsPage() {
           </tbody>
         </table>
         </div>
+        </>
       )}
 
       {total > 0 && (
@@ -534,7 +705,7 @@ export default function AdminAccountsPage() {
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="rounded-lg border border-gray-300 px-3 py-1 hover:bg-gray-100 disabled:opacity-40"
+              className="rounded-lg border border-gray-200 bg-white px-3 py-1 hover:bg-gray-100 disabled:opacity-40"
             >
               Anterior
             </button>
@@ -542,7 +713,7 @@ export default function AdminAccountsPage() {
               type="button"
               onClick={() => setPage((p) => p + 1)}
               disabled={page * pageSize >= total}
-              className="rounded-lg border border-gray-300 px-3 py-1 hover:bg-gray-100 disabled:opacity-40"
+              className="rounded-lg border border-gray-200 bg-white px-3 py-1 hover:bg-gray-100 disabled:opacity-40"
             >
               Próxima
             </button>

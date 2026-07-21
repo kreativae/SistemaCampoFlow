@@ -122,7 +122,7 @@ export default function AdminSaudePage() {
           </span>
           <button
             onClick={() => void load()}
-            className="rounded-lg border border-gray-300 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs text-gray-600 hover:bg-gray-50"
           >
             Atualizar
           </button>

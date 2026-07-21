@@ -663,7 +663,7 @@ export default function NegociosPage() {
                 <select
                   value={dealType}
                   onChange={(e) => setDealType(e.target.value as DealType)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 >
                   <option value="VENDA">Venda</option>
                   <option value="COMPRA">Compra</option>
@@ -677,7 +677,7 @@ export default function NegociosPage() {
                   type="date"
                   value={dealDate}
                   onChange={(e) => setDealDate(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   required
                 />
               </div>
@@ -690,7 +690,7 @@ export default function NegociosPage() {
                   value={counterparty}
                   onChange={(e) => setCounterparty(e.target.value)}
                   placeholder={dealType === 'ABATE' ? 'Nome do frigorífico' : 'Nome ou empresa'}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
             </div>
@@ -708,7 +708,7 @@ export default function NegociosPage() {
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
                       placeholder="0"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       required={draftItems.length === 0}
                     />
                   </div>
@@ -723,7 +723,7 @@ export default function NegociosPage() {
                           value={installmentCount}
                           onChange={(e) => setInstallmentCount(e.target.value)}
                           placeholder="1"
-                          className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                          className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                           required
                         />
                       </div>
@@ -736,7 +736,7 @@ export default function NegociosPage() {
                           value={installmentValue}
                           onChange={(e) => setInstallmentValue(e.target.value)}
                           placeholder="0,00"
-                          className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                          className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                           required
                         />
                       </div>
@@ -759,7 +759,7 @@ export default function NegociosPage() {
                         value={totalValue}
                         onChange={(e) => setTotalValue(e.target.value)}
                         placeholder="0,00"
-                        className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                        className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                         required
                       />
                     </div>
@@ -785,7 +785,7 @@ export default function NegociosPage() {
                     <select
                       value={priceUnit}
                       onChange={(e) => setPriceUnit(e.target.value as 'ANIMAL' | 'ARROBA')}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       <option value="ARROBA">Arroba (@)</option>
                       <option value="ANIMAL">Animal</option>
@@ -802,7 +802,7 @@ export default function NegociosPage() {
                       value={pricePerUnit}
                       onChange={(e) => setPricePerUnit(e.target.value)}
                       placeholder="0,00"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       required
                     />
                   </div>
@@ -820,7 +820,7 @@ export default function NegociosPage() {
                       value={liveWeightPricePerKg}
                       onChange={(e) => setLiveWeightPricePerKg(e.target.value)}
                       placeholder="0,00"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       required
                     />
                   </div>
@@ -834,7 +834,7 @@ export default function NegociosPage() {
                       value={carcassYieldPercent}
                       onChange={(e) => setCarcassYieldPercent(e.target.value)}
                       placeholder="52"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       required
                     />
                   </div>
@@ -851,7 +851,7 @@ export default function NegociosPage() {
                     <select
                       value={slaughterFrequency}
                       onChange={(e) => setSlaughterFrequency(e.target.value as 'TRIMESTRAL' | 'SEMESTRAL')}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       <option value="TRIMESTRAL">Trimestral</option>
                       <option value="SEMESTRAL">Semestral</option>
@@ -873,7 +873,7 @@ export default function NegociosPage() {
                       value={funruralPercent}
                       onChange={(e) => setFunruralPercent(e.target.value)}
                       placeholder="1.5"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                   <div>
@@ -886,7 +886,7 @@ export default function NegociosPage() {
                       value={senarPercent}
                       onChange={(e) => setSenarPercent(e.target.value)}
                       placeholder="0.2"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                 </>
@@ -901,7 +901,7 @@ export default function NegociosPage() {
                   value={freightCost}
                   onChange={(e) => setFreightCost(e.target.value)}
                   placeholder="0,00"
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
               <div>
@@ -914,7 +914,7 @@ export default function NegociosPage() {
                   value={commissionPercent}
                   onChange={(e) => setCommissionPercent(e.target.value)}
                   placeholder="0"
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                 />
               </div>
             </div>
@@ -936,7 +936,7 @@ export default function NegociosPage() {
                           setGrainMoistureBasePercent('14');
                         }
                       }}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       {['Soja', 'Milho', 'Café', 'Trigo', 'Arroz', 'Sorgo', 'Algodão', 'Feijão'].map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -952,7 +952,7 @@ export default function NegociosPage() {
                       value={grainQuantity}
                       onChange={(e) => setGrainQuantity(e.target.value)}
                       placeholder="0"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       required
                     />
                   </div>
@@ -961,7 +961,7 @@ export default function NegociosPage() {
                     <select
                       value={grainUnit}
                       onChange={(e) => setGrainUnit(e.target.value as 'SACA60' | 'KG' | 'TONELADA')}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       <option value="SACA60">Saca 60kg</option>
                       <option value="KG">kg</option>
@@ -977,7 +977,7 @@ export default function NegociosPage() {
                       value={pricePerUnit}
                       onChange={(e) => setPricePerUnit(e.target.value)}
                       placeholder="0,00"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                       required
                     />
                   </div>
@@ -993,7 +993,7 @@ export default function NegociosPage() {
                       value={grainMoisturePercent}
                       onChange={(e) => setGrainMoisturePercent(e.target.value)}
                       placeholder="14"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                   <div>
@@ -1006,7 +1006,7 @@ export default function NegociosPage() {
                       value={grainMoistureBasePercent}
                       onChange={(e) => setGrainMoistureBasePercent(e.target.value)}
                       placeholder="14"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                   <div>
@@ -1019,7 +1019,7 @@ export default function NegociosPage() {
                       value={grainImpurityPercent}
                       onChange={(e) => setGrainImpurityPercent(e.target.value)}
                       placeholder="0"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                   <div>
@@ -1031,7 +1031,7 @@ export default function NegociosPage() {
                       value={grainGrossWeightKg}
                       onChange={(e) => setGrainGrossWeightKg(e.target.value)}
                       placeholder="0"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                 </div>
@@ -1041,7 +1041,7 @@ export default function NegociosPage() {
                     <select
                       value={grainSaleModality}
                       onChange={(e) => setGrainSaleModality(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       <option value="BALCAO">Balcão</option>
                       <option value="CONTRATO_FUTURO">Contrato futuro</option>
@@ -1056,7 +1056,7 @@ export default function NegociosPage() {
                       value={grainWarehouse}
                       onChange={(e) => setGrainWarehouse(e.target.value)}
                       placeholder="Nome do armazém"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                   <div>
@@ -1066,7 +1066,7 @@ export default function NegociosPage() {
                       value={grainTicketRef}
                       onChange={(e) => setGrainTicketRef(e.target.value)}
                       placeholder="Placa ou ticket"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                   <div>
@@ -1074,7 +1074,7 @@ export default function NegociosPage() {
                     <select
                       value={selectedCropCycleId}
                       onChange={(e) => setSelectedCropCycleId(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     >
                       <option value="">Nenhuma</option>
                       {cropCycles.map((cc) => (
@@ -1093,7 +1093,7 @@ export default function NegociosPage() {
                       value={totalValue}
                       onChange={(e) => setTotalValue(e.target.value)}
                       placeholder="Calculado automaticamente"
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                     />
                   </div>
                   <div>
@@ -1123,7 +1123,7 @@ export default function NegociosPage() {
                         value={installmentCount}
                         onChange={(e) => setInstallmentCount(e.target.value)}
                         placeholder="1"
-                        className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                        className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                         required
                       />
                     </div>
@@ -1136,7 +1136,7 @@ export default function NegociosPage() {
                         value={installmentValue}
                         onChange={(e) => setInstallmentValue(e.target.value)}
                         placeholder="0,00"
-                        className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                        className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                         required
                       />
                     </div>
@@ -1152,7 +1152,7 @@ export default function NegociosPage() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
               />
             </div>
 
@@ -1175,7 +1175,7 @@ export default function NegociosPage() {
                   <button
                     type="button"
                     onClick={addManualItem}
-                    className="rounded-lg border border-gray-300 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
                   >
                     Adicionar manualmente
                   </button>
@@ -1190,7 +1190,7 @@ export default function NegociosPage() {
                     value={animalSearch}
                     onChange={(e) => setAnimalSearch(e.target.value)}
                     placeholder="Buscar por brinco ou nome..."
-                    className="mb-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/15"
+                    className="mb-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
                   />
                   <div className="max-h-48 overflow-x-auto overflow-y-auto">
                     {filteredAnimals.length === 0 ? (
@@ -1284,7 +1284,7 @@ export default function NegociosPage() {
                                   value={item.earTag}
                                   onChange={(e) => updateItem(idx, 'earTag', e.target.value)}
                                   placeholder="Brinco"
-                                  className="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm"
+                                  className="w-28 rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
                                   required
                                 />
                               )}
@@ -1296,7 +1296,7 @@ export default function NegociosPage() {
                                 value={item.weightKg ?? ''}
                                 onChange={(e) => updateItem(idx, 'weightKg', e.target.value)}
                                 placeholder="—"
-                                className="w-24 rounded-lg border border-gray-300 px-2 py-1 text-sm"
+                                className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
                               />
                             </td>
                             {dealType === 'ABATE' ? (
@@ -1578,7 +1578,7 @@ export default function NegociosPage() {
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as DealType | '')}
-          className="rounded-lg border border-gray-300 px-2 py-1 text-sm"
+          className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
         >
           <option value="">Todos os tipos</option>
           <option value="VENDA">Vendas</option>
@@ -1589,7 +1589,7 @@ export default function NegociosPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as DealStatus | '')}
-          className="rounded-lg border border-gray-300 px-2 py-1 text-sm"
+          className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
         >
           <option value="">Todos os status</option>
           <option value="RASCUNHO">Rascunho</option>

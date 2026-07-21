@@ -1,0 +1,78 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-campoflow}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-campoflow}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-campoflow}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-campoflow}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-campoflow}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
+      NODE_ENV: production
+      MERCADOPAGO_ACCESS_TOKEN: ${MERCADOPAGO_ACCESS_TOKEN:-}
+      MERCADOPAGO_PUBLIC_KEY: ${MERCADOPAGO_PUBLIC_KEY:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost/api}
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost/api}
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+      - web
+
+volumes:
+  pgdata:
+  redisdata:

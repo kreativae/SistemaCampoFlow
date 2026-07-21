@@ -93,10 +93,37 @@ export class FarmsService {
       this.prisma.reproductiveEvent.deleteMany({
         where: { animal: { farmId } },
       }),
+      this.prisma.dealItem.deleteMany({ where: { deal: { farmId } } }),
+      this.prisma.deal.deleteMany({ where: { farmId } }),
+      this.prisma.pastureOccupation.deleteMany({
+        where: { pasture: { farmId } },
+      }),
       this.prisma.animal.deleteMany({ where: { farmId } }),
       this.prisma.pasture.deleteMany({ where: { farmId } }),
+      this.prisma.machineMaintenance.deleteMany({
+        where: { machine: { farmId } },
+      }),
+      this.prisma.machineFuelRecord.deleteMany({
+        where: { machine: { farmId } },
+      }),
       this.prisma.machine.deleteMany({ where: { farmId } }),
+      this.prisma.supplyMovement.deleteMany({
+        where: { supply: { farmId } },
+      }),
       this.prisma.supply.deleteMany({ where: { farmId } }),
+      this.prisma.cropApplication.deleteMany({
+        where: { cropCycle: { farmId } },
+      }),
+      this.prisma.cropCostEntry.deleteMany({
+        where: { cropCycle: { farmId } },
+      }),
+      this.prisma.cropCycle.deleteMany({ where: { farmId } }),
+      this.prisma.timeEntry.deleteMany({
+        where: { employee: { farmId } },
+      }),
+      this.prisma.employee.deleteMany({ where: { farmId } }),
+      this.prisma.contact.deleteMany({ where: { farmId } }),
+      this.prisma.farmInvite.deleteMany({ where: { farmId } }),
       this.prisma.soilAnalysis.deleteMany({ where: { farmId } }),
       this.prisma.mapFeature.deleteMany({ where: { farmId } }),
       this.prisma.transaction.deleteMany({ where: { farmId } }),

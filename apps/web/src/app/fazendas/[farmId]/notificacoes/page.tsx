@@ -164,7 +164,7 @@ export default function NotificationsPage() {
             <button
               onClick={handleGenerate}
               disabled={generating}
-              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 disabled:opacity-50"
             >
               {generating ? 'Gerando...' : 'Verificar alertas'}
             </button>

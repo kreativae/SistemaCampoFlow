@@ -18,12 +18,13 @@ export default function AppLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: '#1B5E20' },
+        headerStyle: { backgroundColor: '#0B3D20' },
         headerTintColor: '#fff',
-        headerTitleStyle: { fontWeight: '600' },
+        headerTitleStyle: { fontWeight: '700' },
+        headerBackTitle: 'Voltar',
       }}
     >
-      <Stack.Screen name="fazendas/index" options={{ title: 'Minhas Fazendas' }} />
+      <Stack.Screen name="fazendas/index" options={{ headerShown: false }} />
       <Stack.Screen name="fazendas/[farmId]" options={{ headerShown: false }} />
       <Stack.Screen name="conta/perfil" options={{ title: 'Perfil' }} />
       <Stack.Screen name="conta/assinatura" options={{ title: 'Assinatura' }} />
