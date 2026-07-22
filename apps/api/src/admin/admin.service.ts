@@ -335,7 +335,7 @@ export class AdminService {
   }
 
   // Support override: lets platform staff fix a stuck subscription, grant a comp
-  // plan, or manually reactivate an account without going through Mercado Pago.
+  // plan, or manually reactivate an account without going through Stripe.
   async updateSubscription(accountId: string, dto: UpdateSubscriptionDto) {
     const subscription = await this.prisma.subscription.findUnique({
       where: { accountId },
@@ -354,7 +354,7 @@ export class AdminService {
   }
 
   // Full teardown of a customer account from the support side: cancels the
-  // Mercado Pago subscription, removes every farm (reusing FarmsService.remove()
+  // Stripe subscription, removes every farm (reusing FarmsService.remove()
   // for its per-farm cascade + storage cleanup), then the account's own rows.
   // Irreversible — the web confirmation requires typing the account name.
   async deleteAccount(accountId: string) {

@@ -20,9 +20,7 @@ export const SUBSCRIPTION_STATUS_LABEL: Record<SubscriptionStatus, string> = {
   SUSPENDED: 'Suspensa',
 };
 
-// Mercado Pago's own payment status field comes back in English from their API —
-// translate the common values for display; fall back to the raw value for any
-// status MP introduces later that we haven't mapped yet.
+// Payment status labels in Portuguese for display.
 const PAYMENT_STATUS_LABEL: Record<string, string> = {
   approved: 'Aprovado',
   authorized: 'Autorizado',
@@ -101,18 +99,6 @@ export interface MfaSetupResponse {
   qrCodeDataUrl: string;
 }
 
-export type MercadoPagoConfigSource = 'banco' | 'variavel_de_ambiente' | 'nenhum';
-
-export interface MercadoPagoConfigStatus {
-  configured: boolean;
-  source: MercadoPagoConfigSource;
-  accessTokenMasked: string | null;
-  publicKey: string | null;
-  webhookSecretSet: boolean;
-  billingRedirectUrl: string | null;
-  webhookEndpointUrl: string;
-  nodeEnv: string;
-}
 
 export interface AccountListResponse {
   items: AccountSummary[];
@@ -176,21 +162,6 @@ export interface PlatformHealth {
   };
 }
 
-export type MercadoPagoLogEvent =
-  | 'CREATE_SUBSCRIPTION'
-  | 'CANCEL_SUBSCRIPTION'
-  | 'WEBHOOK'
-  | 'PAYMENT_HISTORY_FETCH'
-  | 'CONFIG_UPDATED';
-
-export interface MercadoPagoLog {
-  id: string;
-  event: MercadoPagoLogEvent;
-  preapprovalId: string | null;
-  success: boolean;
-  message: string;
-  createdAt: string;
-}
 
 export type TicketStatus = 'ABERTO' | 'EM_ANDAMENTO' | 'RESOLVIDO' | 'FECHADO';
 export type TicketPriority = 'BAIXA' | 'MEDIA' | 'ALTA';

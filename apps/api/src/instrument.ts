@@ -1,7 +1,7 @@
 // Must be the very first import in main.ts so Sentry can auto-instrument every
 // other module (DB calls, HTTP, etc.) before they're loaded. Without SENTRY_DSN
 // configured (the default in dev), Sentry.init() is skipped entirely — same
-// optional-by-default pattern as EmailService/MercadoPagoService.
+// optional-by-default pattern as EmailService/StripeService.
 import * as Sentry from '@sentry/nestjs';
 
 const dsn = process.env.SENTRY_DSN;

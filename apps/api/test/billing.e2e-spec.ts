@@ -108,7 +108,7 @@ describe('Billing (e2e)', () => {
     expect((res.body as { message: string }).message).toMatch(/2 fazenda/);
   });
 
-  it('rejects checkout when Mercado Pago is not configured', async () => {
+  it('rejects checkout when Stripe is not configured', async () => {
     await request(app.getHttpServer())
       .post('/conta/assinatura/checkout')
       .set('Authorization', `Bearer ${accessToken}`)
