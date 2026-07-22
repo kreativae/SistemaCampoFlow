@@ -7,19 +7,13 @@ ARG NEXT_PUBLIC_API_URL=http://localhost/api
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build && \
-    if [ -f .next/standalone/server.js ]; then \
-      echo "standalone OK"; \
-    else \
-      echo "=== standalone contents ===" && \
-      find .next/standalone -name "server.js" 2>/dev/null && \
-      ls -la .next/standalone/; \
-    fi
+    find .next/standalone -name "server.js" -type f
 
 FROM node:22-alpine AS production
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/standalone/app ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
