@@ -49,6 +49,8 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-}
       SENTRY_DSN: ${SENTRY_DSN:-}
+      WEB_BASE_URL: ${WEB_BASE_URL:-https://campoflow.com.br}
+      API_PUBLIC_URL: ${API_PUBLIC_URL:-https://campoflow.com.br/api}
       WEB_BILLING_REDIRECT_URL: ${WEB_BILLING_REDIRECT_URL:-https://campoflow.com.br/conta/assinatura}
       R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:-}
       R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}

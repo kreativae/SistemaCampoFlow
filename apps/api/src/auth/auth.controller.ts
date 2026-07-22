@@ -160,9 +160,10 @@ export class AuthController {
     const { accessToken, refreshToken } =
       await this.authService.loginWithGoogle(req.user);
 
+    const webBase = process.env.WEB_BASE_URL || 'http://localhost:3100';
     const redirectBase =
       process.env.WEB_OAUTH_REDIRECT_URL ||
-      'http://localhost:3100/oauth/callback';
+      `${webBase}/oauth/callback`;
     const redirectUrl = `${redirectBase}?accessToken=${encodeURIComponent(
       accessToken,
     )}&refreshToken=${encodeURIComponent(refreshToken)}`;

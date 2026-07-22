@@ -244,9 +244,10 @@ export class AuthService {
         },
       });
 
+      const webBase = process.env.WEB_BASE_URL || 'http://localhost:3100';
       const resetBase =
         process.env.WEB_PASSWORD_RESET_URL ||
-        'http://localhost:3100/redefinir-senha';
+        `${webBase}/redefinir-senha`;
       const resetUrl = `${resetBase}?token=${encodeURIComponent(rawToken)}`;
 
       if (this.emailService.isConfigured()) {

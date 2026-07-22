@@ -103,9 +103,10 @@ export class BillingService {
       );
     }
 
+    const webBase = process.env.WEB_BASE_URL || 'http://localhost:3100';
     const baseUrl =
       process.env.WEB_BILLING_REDIRECT_URL ||
-      'http://localhost:3100/conta/assinatura';
+      `${webBase}/conta/assinatura`;
 
     const result = await this.stripe.createCheckoutSession({
       priceId: plan.stripePriceId,

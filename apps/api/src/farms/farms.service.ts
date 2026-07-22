@@ -204,9 +204,10 @@ export class FarmsService {
       },
     });
 
-    const webBase =
-      process.env.WEB_INVITE_URL || 'http://localhost:3100/convites/aceitar';
-    const acceptUrl = `${webBase}?token=${encodeURIComponent(rawToken)}`;
+    const webBaseUrl = process.env.WEB_BASE_URL || 'http://localhost:3100';
+    const inviteBase =
+      process.env.WEB_INVITE_URL || `${webBaseUrl}/convites/aceitar`;
+    const acceptUrl = `${inviteBase}?token=${encodeURIComponent(rawToken)}`;
 
     if (this.emailService.isConfigured()) {
       await this.emailService.send(
