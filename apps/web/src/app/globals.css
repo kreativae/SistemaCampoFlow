@@ -57,6 +57,15 @@ td {
   font-variant-numeric: tabular-nums;
 }
 
+/* Impede zoom automático do iOS ao focar inputs */
+@supports (-webkit-touch-callout: none) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 /* Autofill do Chrome sem o amarelo padrão */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
