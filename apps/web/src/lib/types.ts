@@ -75,7 +75,12 @@ export interface AccountDetail {
   name: string;
   billingEmail: string;
   document: string | null;
-  farms: { id: string; name: string; createdAt: string }[];
+  farms: {
+    id: string;
+    name: string;
+    createdAt: string;
+    memberships: { role: string; user: { id: string; name: string; email: string } }[];
+  }[];
   users: { id: string; email: string; name: string; isAccountAdmin: boolean }[];
   subscription: {
     planTier: PlanTier;

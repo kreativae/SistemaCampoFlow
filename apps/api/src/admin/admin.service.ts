@@ -253,7 +253,19 @@ export class AdminService {
       where: { id: accountId },
       include: {
         subscription: true,
-        farms: { select: { id: true, name: true, createdAt: true } },
+        farms: {
+          select: {
+            id: true,
+            name: true,
+            createdAt: true,
+            memberships: {
+              select: {
+                role: true,
+                user: { select: { id: true, name: true, email: true } },
+              },
+            },
+          },
+        },
         users: {
           select: { id: true, email: true, name: true, isAccountAdmin: true },
         },

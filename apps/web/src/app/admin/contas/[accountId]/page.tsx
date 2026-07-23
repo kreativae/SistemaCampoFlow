@@ -483,17 +483,34 @@ export default function AdminAccountDetailPage() {
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">Propriedades</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">Propriedades e membros</h2>
         {account.farms.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma propriedade cadastrada.</p>
         ) : (
-          <ul className="space-y-1 text-sm text-gray-700">
+          <ul className="space-y-3">
             {account.farms.map((farm) => (
-              <li key={farm.id}>
-                {farm.name} ·{' '}
-                <span className="text-gray-400">
-                  desde {new Date(farm.createdAt).toLocaleDateString('pt-BR')}
-                </span>
+              <li key={farm.id} className="rounded-lg border border-gray-200 p-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-900">{farm.name}</span>
+                  <span className="text-xs text-gray-400">
+                    desde {new Date(farm.createdAt).toLocaleDateString('pt-BR')}
+                  </span>
+                </div>
+                {farm.memberships.length > 0 ? (
+                  <ul className="mt-2 space-y-1">
+                    {farm.memberships.map((m) => (
+                      <li key={m.user.id} className="flex items-center gap-2 text-sm">
+                        <span className="text-gray-700">{m.user.name}</span>
+                        <span className="text-gray-400">({m.user.email})</span>
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                          {m.role}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-1 text-xs text-gray-400">Nenhum membro vinculado</p>
+                )}
               </li>
             ))}
           </ul>
