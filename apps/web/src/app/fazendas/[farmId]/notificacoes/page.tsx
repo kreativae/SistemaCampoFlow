@@ -235,7 +235,7 @@ export default function NotificationsPage() {
                     ? 'border-emerald-300 bg-emerald-50/50'
                     : n.read
                       ? 'border-gray-200/80 bg-white shadow-sm'
-                      : 'border-blue-200 bg-blue-50'
+                      : 'border-emerald-200 bg-emerald-50'
                 }`}
               >
                 <div className="flex items-start pt-1">
@@ -253,7 +253,7 @@ export default function NotificationsPage() {
                         {SOURCE_LABELS[n.source]}
                       </span>
                       {!n.read && (
-                        <span className="rounded-lg bg-blue-600 px-2 py-0.5 text-xs text-white">
+                        <span className="rounded-lg bg-emerald-600 px-2 py-0.5 text-xs text-white">
                           Nova
                         </span>
                       )}
