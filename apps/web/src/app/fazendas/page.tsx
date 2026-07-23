@@ -140,7 +140,7 @@ export default function FarmsPage() {
             <p className="text-sm text-gray-500">Olá, {user.name}</p>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex w-full flex-wrap items-center gap-x-5 gap-y-2 sm:w-auto sm:gap-4">
           <Link
             href="/conta/perfil"
             className="text-sm font-medium text-emerald-700 transition-colors hover:text-emerald-900"
@@ -223,7 +223,7 @@ export default function FarmsPage() {
             editingId === farm.id ? (
               <li
                 key={farm.id}
-                className="flex items-center gap-2 rounded-xl border border-emerald-600 bg-white px-4 py-3 shadow-sm"
+                className="flex flex-wrap items-center gap-2 rounded-xl border border-emerald-600 bg-white px-4 py-3 shadow-sm"
               >
                 <input
                   type="text"
@@ -250,18 +250,18 @@ export default function FarmsPage() {
             ) : (
               <li
                 key={farm.id}
-                className="group flex items-center justify-between rounded-xl border border-gray-200/80 bg-white px-4 py-3.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md"
+                className="group flex flex-wrap items-center justify-between gap-y-2 rounded-xl border border-gray-200/80 bg-white px-4 py-3.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md"
               >
                 <Link href={`/fazendas/${farm.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 transition-colors duration-200 group-hover:bg-emerald-100">
                     <MapPinned size={18} strokeWidth={1.9} />
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate font-semibold text-gray-900">{farm.name}</span>
+                    <span className="line-clamp-2 font-semibold text-gray-900">{farm.name}</span>
                     <span className="block text-sm text-gray-500">{farm.type}</span>
                   </span>
                 </Link>
-                <div className="flex items-center gap-3">
+                <div className="ml-auto flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => startEdit(farm)}

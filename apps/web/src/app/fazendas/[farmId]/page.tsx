@@ -304,7 +304,7 @@ function MetricCard({
         {value}
         {unit && <span className="ml-1 text-base font-normal text-gray-400">{unit}</span>}
       </p>
-      {footer && <p className="mt-2 truncate text-xs text-gray-500">{footer}</p>}
+      {footer && <p className="mt-2 line-clamp-2 text-xs text-gray-500">{footer}</p>}
     </div>
   );
 }
@@ -339,7 +339,7 @@ function SummaryCard({
             </span>
           )}
         </span>
-        <span className="mt-0.5 block truncate text-sm text-gray-500">{text}</span>
+        <span className="mt-0.5 line-clamp-2 text-sm text-gray-500">{text}</span>
       </span>
     </Link>
   );

@@ -62,7 +62,7 @@ const REPRO_OPTIONS = [
   { value: 'PRENHE', label: 'Prenhe (diagnóstico positivo)' },
 ];
 
-const selectClasses = 'mt-1 block rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10';
+const selectClasses = 'mt-1 block w-full max-w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10';
 
 export default function ReportsPage() {
   const { farmId } = useParams<{ farmId: string }>();
