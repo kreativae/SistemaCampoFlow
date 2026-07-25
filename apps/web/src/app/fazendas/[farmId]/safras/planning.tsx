@@ -98,31 +98,31 @@ export function PlantingCalculator({
   }
 
   return (
-    <section className="mb-6 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-      <h2 className="mb-1 font-semibold text-gray-800">Calculadora de plantio</h2>
+    <section className="mb-6 rounded-2xl border border-gray-200/70 bg-white p-5">
+      <h2 className="mb-1 font-bold tracking-tight text-gray-900">Calculadora de plantio</h2>
       <p className="mb-3 text-xs text-gray-500">
         Estime sementes, adubo e o custo para um talhão a partir do tamanho da área.
       </p>
       <form onSubmit={handleCalc} className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <div>
-          <label className="text-xs font-medium text-gray-600">Área (ha)</label>
+          <label className="text-sm font-medium text-gray-700">Área (ha)</label>
           <input
             type="number"
             step="0.01"
             required
             value={area}
             onChange={(e) => setArea(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Cultura (preenche semente)</label>
+          <label className="text-sm font-medium text-gray-700">Cultura (preenche semente)</label>
           <select
             onChange={(e) => {
               const ref = references.find((r) => r.key === e.target.value);
               if (ref?.seedRateKgPerHa != null) setSeedRate(String(ref.seedRateKgPerHa));
             }}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             <option value="">—</option>
             {references.map((r) => (
@@ -133,56 +133,56 @@ export function PlantingCalculator({
           </select>
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Semente (kg/ha)</label>
+          <label className="text-sm font-medium text-gray-700">Semente (kg/ha)</label>
           <input
             type="number"
             step="0.1"
             value={seedRate}
             onChange={(e) => setSeedRate(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Preço semente (R$/kg)</label>
+          <label className="text-sm font-medium text-gray-700">Preço semente (R$/kg)</label>
           <input
             type="number"
             step="0.01"
             value={seedPrice}
             onChange={(e) => setSeedPrice(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Adubo (kg/ha)</label>
+          <label className="text-sm font-medium text-gray-700">Adubo (kg/ha)</label>
           <input
             type="number"
             step="0.1"
             value={fertRate}
             onChange={(e) => setFertRate(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Preço adubo (R$/kg)</label>
+          <label className="text-sm font-medium text-gray-700">Preço adubo (R$/kg)</label>
           <input
             type="number"
             step="0.01"
             value={fertPrice}
             onChange={(e) => setFertPrice(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
         <div className="col-span-full">
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? 'Calculando...' : 'Calcular'}
           </button>
         </div>
       </form>
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
       {result && (
         <div className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
           <Metric label="Semente total" value={result.seedTotalKg != null ? `${result.seedTotalKg} kg` : '—'} />
@@ -199,7 +199,7 @@ export function PlantingCalculator({
 
 function Metric({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className={`rounded border p-2 ${highlight ? 'border-emerald-300 bg-emerald-50' : 'border-gray-200'}`}>
+    <div className={`rounded-xl border p-2 ${highlight ? 'border-emerald-300 bg-emerald-50' : 'border-gray-200'}`}>
       <p className="text-xs text-gray-500">{label}</p>
       <p className="font-semibold text-gray-900">{value}</p>
     </div>
@@ -226,13 +226,13 @@ export function CropRotation({ farmId, token }: { farmId: string; token: string 
   }
 
   return (
-    <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+    <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-gray-800">Rotação de culturas por talhão</h2>
+        <h2 className="font-bold tracking-tight text-gray-900">Rotação de culturas por talhão</h2>
         <button
           type="button"
           onClick={load}
-          className="text-sm font-medium text-emerald-700 hover:underline"
+          className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
         >
           {groups ? 'Atualizar' : 'Ver rotação'}
         </button>
@@ -246,7 +246,7 @@ export function CropRotation({ farmId, token }: { farmId: string; token: string 
       {groups && groups.length > 0 && (
         <ul className="mt-3 space-y-3">
           {groups.map((g) => (
-            <li key={g.mapFeatureId} className="rounded-lg border border-gray-100 p-3">
+            <li key={g.mapFeatureId} className="rounded-xl border border-gray-100 p-3">
               <p className="font-medium text-gray-900">{g.label}</p>
               <p className="mt-1 text-sm text-gray-600">
                 {g.history
@@ -367,19 +367,19 @@ export function CropPlanning({
 
   return (
     <div className="space-y-4">
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
 
       {/* #3 Janela de plantio */}
       {window && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-          <p className="mb-1 text-xs font-semibold text-gray-600">Janela de plantio (ZARC simplificado)</p>
+        <div className="rounded-xl bg-gray-100/60 p-3">
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Janela de plantio (ZARC simplificado)</p>
           {window.recognized ? (
             <p className="text-sm">
               Recomendado: <span className="font-medium">{window.recommendedLabel}</span>{' '}
               <span
-                className={`ml-1 rounded-lg px-1.5 py-0.5 text-xs font-medium ${
+                className={`ml-1 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                   window.withinWindow
-                    ? 'bg-emerald-100 text-emerald-700'
+                    ? 'bg-emerald-100 text-emerald-800'
                     : 'bg-amber-100 text-amber-800'
                 }`}
               >
@@ -395,8 +395,8 @@ export function CropPlanning({
 
       {/* #1 Recomendação de adubação e calagem */}
       {rec && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-          <p className="mb-1 text-xs font-semibold text-gray-600">
+        <div className="rounded-xl bg-gray-100/60 p-3">
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
             Recomendação de adubação e calagem
           </p>
           {rec.fertilizer ? (
@@ -429,13 +429,13 @@ export function CropPlanning({
       )}
 
       {/* #4 Caderno de campo */}
-      <div className="rounded-lg border border-gray-200 p-3">
-        <p className="mb-2 text-xs font-semibold text-gray-600">Caderno de campo (aplicações)</p>
+      <div className="rounded-xl border border-gray-200/70 bg-white p-3">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Caderno de campo (aplicações)</p>
         <form onSubmit={handleAddApplication} className="grid grid-cols-2 gap-2">
           <select
             value={appType}
             onChange={(e) => setAppType(e.target.value as CropApplicationType)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             {APPLICATION_TYPES.map((o) => (
               <option key={o.value} value={o.value}>
@@ -449,7 +449,7 @@ export function CropPlanning({
             placeholder="Produto"
             value={product}
             onChange={(e) => setProduct(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="number"
@@ -457,14 +457,14 @@ export function CropPlanning({
             placeholder="Dose/ha"
             value={dosePerHa}
             onChange={(e) => setDosePerHa(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="text"
             placeholder="Unidade (kg/ha, L/ha)"
             value={doseUnit}
             onChange={(e) => setDoseUnit(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="number"
@@ -472,32 +472,32 @@ export function CropPlanning({
             placeholder="Preço unit. (R$)"
             value={unitPrice}
             onChange={(e) => setUnitPrice(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="date"
             value={appliedAt}
             onChange={(e) => setAppliedAt(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="number"
             placeholder="Carência (dias)"
             value={carencia}
             onChange={(e) => setCarencia(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="text"
             placeholder="Responsável"
             value={responsible}
             onChange={(e) => setResponsible(e.target.value)}
-            className="col-span-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="col-span-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <button
             type="submit"
             disabled={saving}
-            className="col-span-2 rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="col-span-2 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {saving ? 'Salvando...' : 'Registrar aplicação'}
           </button>
@@ -523,7 +523,7 @@ export function CropPlanning({
                 <button
                   type="button"
                   onClick={() => handleDeleteApplication(a.id)}
-                  className="shrink-0 text-xs font-medium text-red-600 hover:underline"
+                  className="shrink-0 text-xs font-semibold text-red-600 hover:text-red-800"
                 >
                   Excluir
                 </button>
@@ -618,16 +618,16 @@ export function CropClosing({
 
   return (
     <div className="space-y-4">
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
 
       {closing && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+        <div className="rounded-xl bg-gray-100/60 p-3">
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs font-semibold text-gray-600">Resultado da safra</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Resultado da safra</p>
             <button
               type="button"
               onClick={() => void load()}
-              className="text-xs font-medium text-emerald-700 hover:underline"
+              className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
             >
               Atualizar
             </button>
@@ -683,13 +683,13 @@ export function CropClosing({
         </div>
       )}
 
-      <div className="rounded-lg border border-gray-200 p-3">
-        <p className="mb-2 text-xs font-semibold text-gray-600">Custos manuais da safra</p>
+      <div className="rounded-xl border border-gray-200/70 bg-white p-3">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Custos manuais da safra</p>
         <form onSubmit={handleAddCost} className="grid grid-cols-2 gap-2">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as CropCostCategory)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             {COST_CATEGORIES.map((o) => (
               <option key={o.value} value={o.value}>
@@ -704,7 +704,7 @@ export function CropClosing({
             placeholder="Valor (R$)"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="text"
@@ -712,12 +712,12 @@ export function CropClosing({
             placeholder="Descrição"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="col-span-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="col-span-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <button
             type="submit"
             disabled={saving}
-            className="col-span-2 rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="col-span-2 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {saving ? 'Salvando...' : 'Adicionar custo'}
           </button>
@@ -735,7 +735,7 @@ export function CropClosing({
                 <button
                   type="button"
                   onClick={() => handleDeleteCost(e.id)}
-                  className="shrink-0 text-xs font-medium text-red-600 hover:underline"
+                  className="shrink-0 text-xs font-semibold text-red-600 hover:text-red-800"
                 >
                   Excluir
                 </button>
@@ -772,13 +772,13 @@ export function CropHistory({ farmId, token }: { farmId: string; token: string |
   }
 
   return (
-    <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+    <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-gray-800">Histórico de safras (custos e resultados)</h2>
+        <h2 className="font-bold tracking-tight text-gray-900">Histórico de safras (custos e resultados)</h2>
         <button
           type="button"
           onClick={load}
-          className="text-sm font-medium text-emerald-700 hover:underline"
+          className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
         >
           {rows ? 'Atualizar' : 'Ver histórico'}
         </button>
@@ -791,7 +791,7 @@ export function CropHistory({ farmId, token }: { farmId: string; token: string |
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-gray-200 text-xs uppercase text-gray-500">
+              <tr className="border-b border-gray-200 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                 <th className="py-1 pr-3">Cultura</th>
                 <th className="py-1 pr-3">Plantio</th>
                 <th className="py-1 pr-3">Produtiv.</th>
@@ -803,7 +803,7 @@ export function CropHistory({ farmId, token }: { farmId: string; token: string |
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-b border-gray-100">
+                <tr key={r.id} className="border-b border-gray-100 transition-colors hover:bg-gray-50/70">
                   <td className="py-1.5 pr-3 font-medium text-gray-900">
                     {r.cropName}
                     {r.variety ? ` (${r.variety})` : ''}

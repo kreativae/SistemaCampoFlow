@@ -65,19 +65,19 @@ function QuickCreatePopup({
   return (
     <Popup position={point} eventHandlers={{ remove: onClose }} closeButton>
       <div className="w-48 space-y-2">
-        <p className="text-xs font-medium text-gray-600">Novo elemento neste ponto</p>
+        <p className="text-sm font-medium text-gray-700">Novo elemento neste ponto</p>
         <input
           type="text"
           autoFocus
           placeholder="Nome"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+          className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
         />
         <select
           value={type}
           onChange={(e) => setType(e.target.value as MapFeatureType)}
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+          className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
         >
           {QUICK_TYPE_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -90,7 +90,7 @@ function QuickCreatePopup({
           type="button"
           disabled={saving}
           onClick={handleSubmit}
-          className="w-full rounded-lg bg-emerald-700 px-2 py-1 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+          className="w-full rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
         >
           {saving ? 'Salvando...' : 'Criar'}
         </button>

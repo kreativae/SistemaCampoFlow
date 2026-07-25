@@ -35,23 +35,23 @@ function AcceptInviteContent() {
   }
 
   if (loading) {
-    return <p className="text-sm text-gray-500">Carregando...</p>;
+    return <p className="text-sm text-gray-400">Carregando...</p>;
   }
 
   return (
     <main className="flex flex-1 items-center justify-center px-4">
-      <div className="w-full max-w-sm space-y-4 rounded-xl border border-gray-200/80 bg-white shadow-sm p-8">
+      <div className="w-full max-w-sm space-y-4 rounded-2xl border border-gray-200/70 bg-white p-8">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">CampoFlow</h1>
+          <h1 className="text-3xl font-bold tracking-[-0.02em] text-gray-900">CampoFlow</h1>
           <p className="text-sm text-gray-500">Convite para colaborar</p>
         </div>
 
         {!token ? (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
             Link de convite inválido.
           </p>
         ) : done ? (
-          <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800" role="status">
+          <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800" role="status">
             Convite aceito! Redirecionando...
           </p>
         ) : !user ? (
@@ -61,20 +61,20 @@ function AcceptInviteContent() {
               volte a este link para aceitar.
             </p>
             {error && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+              <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
                 {error}
               </p>
             )}
             <div className="flex gap-2">
               <Link
                 href="/entrar"
-                className="flex-1 rounded-lg bg-emerald-700 px-3 py-2 text-center text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800"
+                className="flex-1 rounded-full bg-emerald-700 px-5 py-2.5 text-center text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98]"
               >
                 Entrar
               </Link>
               <Link
                 href="/cadastrar"
-                className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-center text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex-1 rounded-full bg-gray-900/5 px-5 py-2.5 text-center text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
               >
                 Cadastrar-se
               </Link>
@@ -87,14 +87,14 @@ function AcceptInviteContent() {
               o convite com esta conta.
             </p>
             {error && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+              <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
                 {error}
               </p>
             )}
             <button
               onClick={handleAccept}
               disabled={submitting}
-              className="w-full rounded-lg bg-emerald-700 px-3 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+              className="w-full rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
             >
               {submitting ? 'Aceitando...' : 'Aceitar convite'}
             </button>
@@ -110,7 +110,7 @@ export default function AcceptInvitePage() {
     <Suspense
       fallback={
         <main className="flex flex-1 items-center justify-center">
-          <p className="text-gray-500">Carregando...</p>
+          <p className="text-sm text-gray-400">Carregando...</p>
         </main>
       }
     >

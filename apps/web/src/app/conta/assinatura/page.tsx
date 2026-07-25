@@ -14,11 +14,11 @@ import {
 } from '@/lib/types';
 
 const STATUS_COLOR: Record<SubscriptionStatus, string> = {
-  TRIALING: 'bg-blue-100 text-blue-800',
+  TRIALING: 'bg-emerald-100 text-emerald-800',
   ACTIVE: 'bg-emerald-100 text-emerald-800',
   PAST_DUE: 'bg-amber-100 text-amber-800',
-  CANCELED: 'bg-gray-100 text-gray-700',
-  SUSPENDED: 'bg-red-100 text-red-800',
+  CANCELED: 'bg-gray-100 text-gray-600',
+  SUSPENDED: 'bg-red-100 text-red-700',
 };
 
 interface PlanCard {
@@ -155,7 +155,7 @@ function SubscriptionContent() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -167,32 +167,32 @@ function SubscriptionContent() {
   return (
     <main className="animate-fade-up mx-auto w-full max-w-3xl flex-1 px-4 py-10">
       <header className="mb-6">
-        <Link href="/fazendas" className="text-sm text-emerald-700 hover:underline">
+        <Link href="/fazendas" className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
           ← Propriedades
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Minha assinatura</h1>
+        <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">Minha assinatura</h1>
         <p className="text-sm text-gray-500">
           Gerencie seu plano, pagamento e limites da conta.
         </p>
       </header>
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
       {message && (
-        <p className="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{message}</p>
+        <p className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{message}</p>
       )}
 
       {sub && (
         <>
           {/* Situação atual */}
-          <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+          <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-semibold text-gray-800">Plano atual</h2>
+              <h2 className="font-bold tracking-tight text-gray-900">Plano atual</h2>
               <span
-                className={`rounded px-2 py-0.5 text-xs font-medium ${STATUS_COLOR[sub.status]}`}
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLOR[sub.status]}`}
               >
                 {SUBSCRIPTION_STATUS_LABEL[sub.status]}
               </span>
@@ -222,12 +222,12 @@ function SubscriptionContent() {
             </div>
 
             {sub.status === 'PAST_DUE' && (
-              <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              <p className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
                 Há um pagamento pendente. Renove abaixo para manter o acesso completo.
               </p>
             )}
             {(sub.status === 'CANCELED' || sub.status === 'SUSPENDED') && (
-              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+              <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
                 Sua assinatura não está ativa — o cadastro de novos dados está bloqueado.
                 Escolha um plano abaixo para reativar.
               </p>
@@ -238,7 +238,7 @@ function SubscriptionContent() {
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="text-sm font-medium text-red-600 hover:underline"
+                  className="text-sm font-semibold text-red-600 hover:text-red-800"
                 >
                   Cancelar assinatura
                 </button>
@@ -248,7 +248,7 @@ function SubscriptionContent() {
 
           {/* Planos */}
           <section>
-            <h2 className="mb-3 font-semibold text-gray-800">
+            <h2 className="mb-3 font-bold tracking-tight text-gray-900">
               {isTrial ? 'Escolha um plano' : 'Planos disponíveis'}
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -257,12 +257,12 @@ function SubscriptionContent() {
                 return (
                   <div
                     key={p.tier}
-                    className={`flex flex-col rounded-lg border p-4 ${
-                      isCurrent ? 'border-emerald-600 bg-emerald-50' : 'border-gray-200 bg-white'
+                    className={`flex flex-col rounded-2xl border p-5 ${
+                      isCurrent ? 'border-emerald-600 bg-emerald-50' : 'border-gray-200/70 bg-white'
                     }`}
                   >
                     <p className="font-semibold text-emerald-800">{p.label}</p>
-                    <p className="mt-1 text-xl font-bold text-gray-900">{p.priceLabel}</p>
+                    <p className="mt-1 text-xl font-bold tracking-tight text-gray-900">{p.priceLabel}</p>
                     <p className="text-xs text-gray-500">{p.farms}</p>
                     <ul className="mt-3 flex-1 space-y-1 text-sm text-gray-600">
                       {p.highlights.map((h) => (
@@ -271,7 +271,7 @@ function SubscriptionContent() {
                     </ul>
                     <div className="mt-4">
                       {isCurrent && sub.status !== 'CANCELED' && sub.status !== 'SUSPENDED' ? (
-                        <span className="block rounded-lg border border-emerald-600 px-3 py-2 text-center text-sm font-medium text-emerald-700">
+                        <span className="block rounded-full bg-emerald-600/10 px-4 py-2 text-center text-sm font-semibold text-emerald-800">
                           Plano atual
                         </span>
                       ) : p.checkout ? (
@@ -279,7 +279,7 @@ function SubscriptionContent() {
                           type="button"
                           onClick={() => handleCheckout(p.tier)}
                           disabled={busyTier !== null}
-                          className="w-full rounded-lg bg-emerald-700 px-3 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                          className="w-full rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                         >
                           {busyTier === p.tier
                             ? 'Redirecionando...'
@@ -290,7 +290,7 @@ function SubscriptionContent() {
                       ) : (
                         <Link
                           href="/suporte"
-                          className="block rounded-lg border border-gray-200 bg-white px-3 py-2 text-center text-sm font-medium text-gray-700 hover:bg-gray-50"
+                          className="block rounded-full bg-gray-900/5 px-4 py-2 text-center text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                         >
                           Falar com vendas
                         </Link>
@@ -316,7 +316,7 @@ export default function SubscriptionPage() {
     <Suspense
       fallback={
         <main className="flex flex-1 items-center justify-center">
-          <p className="text-gray-500">Carregando...</p>
+          <p className="text-sm text-gray-400">Carregando...</p>
         </main>
       }
     >
@@ -327,8 +327,8 @@ export default function SubscriptionPage() {
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-gray-200 p-2">
-      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
+    <div className="rounded-2xl bg-gray-100/60 p-4">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">{label}</p>
       <p className="mt-1 font-semibold text-gray-900">{value}</p>
     </div>
   );

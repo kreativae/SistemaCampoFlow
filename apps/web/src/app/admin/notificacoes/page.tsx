@@ -64,7 +64,7 @@ export default function AdminNotificationsPage() {
   if (fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -72,7 +72,7 @@ export default function AdminNotificationsPage() {
   return (
     <main className="animate-fade-up mx-auto w-full max-w-3xl flex-1 px-4 py-10">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Notificações</h1>
+        <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">Notificações</h1>
         <p className="text-sm text-gray-500">
           Com que frequência o sistema varre as fazendas e gera as notificações automáticas
           (vacinas, tarefas da agenda e estoque de insumos). Vale para todas as propriedades.
@@ -80,33 +80,33 @@ export default function AdminNotificationsPage() {
       </header>
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
       {message && (
-        <p className="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{message}</p>
+        <p className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{message}</p>
       )}
 
-      <section className="rounded-lg border border-gray-200 p-4">
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
         <form onSubmit={handleSave} className="space-y-4">
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
             <input
               type="checkbox"
               checked={enabled}
               onChange={(e) => setEnabled(e.target.checked)}
-              className="h-4 w-4 rounded-lg border-gray-300"
+              className="h-4 w-4 rounded border-gray-300 accent-emerald-700"
             />
             Geração automática ativada
           </label>
 
           <div>
-            <label className="block text-xs font-medium text-gray-500">Frequência</label>
+            <label className="block text-sm font-medium text-gray-700">Frequência</label>
             <select
               value={frequency}
               disabled={!enabled}
               onChange={(e) => setFrequency(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10 disabled:bg-gray-100 disabled:text-gray-400"
+              className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
             >
               {config?.options.map((opt) => (
                 <option key={opt.key} value={opt.key}>
@@ -123,7 +123,7 @@ export default function AdminNotificationsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {saving ? 'Salvando...' : 'Salvar configuração'}
           </button>

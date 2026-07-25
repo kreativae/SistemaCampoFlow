@@ -38,8 +38,8 @@ function ChecklistItem({
         <p className="font-medium text-gray-800">
           {label}{' '}
           <span
-            className={`ml-2 rounded-lg px-1.5 py-0.5 text-xs ${
-              done ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+            className={`ml-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+              done ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
             }`}
           >
             {done ? 'OK' : todoLabel}
@@ -110,7 +110,7 @@ export default function AdminGatewayPage() {
   if (fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -118,7 +118,7 @@ export default function AdminGatewayPage() {
   return (
     <main className="animate-fade-up mx-auto w-full max-w-3xl flex-1 px-4 py-10">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Gateway de Pagamento</h1>
+        <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">Gateway de Pagamento</h1>
         <p className="text-sm text-gray-500">
           Credenciais do Stripe para processamento de assinaturas. As chaves salvas aqui têm
           prioridade sobre a variável de ambiente <code className="rounded-lg bg-gray-100 px-1">STRIPE_SECRET_KEY</code>.
@@ -126,16 +126,16 @@ export default function AdminGatewayPage() {
       </header>
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
       {message && (
-        <p className="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{message}</p>
+        <p className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{message}</p>
       )}
 
       {status && (
-        <section className="mb-8 rounded-lg border border-gray-200 p-4">
+        <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
           <div className="mb-4 flex items-center gap-2">
             <span
               className={`h-2.5 w-2.5 rounded-full ${
@@ -150,7 +150,7 @@ export default function AdminGatewayPage() {
 
           <form onSubmit={handleSave} className="space-y-3">
             <div>
-              <label className="block text-xs font-medium text-gray-500">
+              <label className="block text-sm font-medium text-gray-700">
                 Secret Key (sk_…){' '}
                 {status.secretKeyMasked && `· atual: ${status.secretKeyMasked}`}
               </label>
@@ -159,11 +159,11 @@ export default function AdminGatewayPage() {
                 value={secretKeyInput}
                 onChange={(e) => setSecretKeyInput(e.target.value)}
                 placeholder="Deixe em branco para manter o atual"
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500">
+              <label className="block text-sm font-medium text-gray-700">
                 Webhook Signing Secret (whsec_…){' '}
                 {status.webhookSecretSet && '· já definido'}
               </label>
@@ -172,13 +172,13 @@ export default function AdminGatewayPage() {
                 value={webhookSecretInput}
                 onChange={(e) => setWebhookSecretInput(e.target.value)}
                 placeholder="Deixe em branco para manter o atual"
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
+              className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
             >
               {saving ? 'Salvando...' : 'Salvar configuração'}
             </button>
@@ -187,8 +187,8 @@ export default function AdminGatewayPage() {
       )}
 
       {status && (
-        <section className="mb-8 rounded-lg border border-gray-200 p-4">
-          <h2 className="mb-1 text-sm font-semibold text-gray-700">Checklist para produção</h2>
+        <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+          <h2 className="mb-1 text-sm font-bold tracking-tight text-gray-900">Checklist para produção</h2>
           <p className="mb-3 text-xs text-gray-500">
             Ambiente atual: <strong>{status.nodeEnv}</strong>.
           </p>
@@ -247,7 +247,7 @@ export default function AdminGatewayPage() {
                   onClick={() => {
                     void navigator.clipboard.writeText(status.webhookEndpointUrl);
                   }}
-                  className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600 hover:bg-gray-100"
+                  className="rounded-full bg-gray-900/5 px-3 py-1 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                 >
                   Copiar
                 </button>

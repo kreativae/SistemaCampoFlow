@@ -62,7 +62,7 @@ const REPRO_OPTIONS = [
   { value: 'PRENHE', label: 'Prenhe (diagnóstico positivo)' },
 ];
 
-const selectClasses = 'mt-1 block w-full max-w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10';
+const selectClasses = 'mt-1 block w-full max-w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400';
 
 export default function ReportsPage() {
   const { farmId } = useParams<{ farmId: string }>();
@@ -137,7 +137,7 @@ export default function ReportsPage() {
   if (loading || !user) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -152,14 +152,14 @@ export default function ReportsPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
 
-      <div className="mb-8 flex flex-wrap items-end gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+      <div className="mb-8 flex flex-wrap items-end gap-3 rounded-2xl border border-gray-200/70 bg-white p-5">
         <div>
-          <label className="text-xs font-medium text-gray-600">Relatório</label>
+          <label className="text-sm font-medium text-gray-700">Relatório</label>
           <select
             value={type}
             onChange={(e) => setType(e.target.value as ReportType)}
@@ -174,7 +174,7 @@ export default function ReportsPage() {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-600">Formato</label>
+          <label className="text-sm font-medium text-gray-700">Formato</label>
           <select
             value={format}
             onChange={(e) => setFormat(e.target.value as ReportFormat)}
@@ -191,44 +191,44 @@ export default function ReportsPage() {
         <button
           onClick={() => handleDownload(type, format)}
           disabled={downloading === `${type}-${format}`}
-          className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+          className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
         >
           {downloading === `${type}-${format}` ? 'Gerando...' : 'Baixar relatório'}
         </button>
       </div>
 
       {type === 'rebanho' && (
-        <div className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-          <p className="w-full text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">Personalizar relatório de rebanho</p>
+        <div className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+          <p className="w-full text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 mb-3">Personalizar relatório de rebanho</p>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             <div>
-              <label className="text-xs font-medium text-gray-600">Categoria</label>
+              <label className="text-sm font-medium text-gray-700">Categoria</label>
               <select value={herdCategory} onChange={(e) => setHerdCategory(e.target.value)} className={selectClasses}>
                 {CATEGORY_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Sexo</label>
+              <label className="text-sm font-medium text-gray-700">Sexo</label>
               <select value={herdSex} onChange={(e) => setHerdSex(e.target.value)} className={selectClasses}>
                 {SEX_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Pasto</label>
+              <label className="text-sm font-medium text-gray-700">Pasto</label>
               <select value={herdPastureId} onChange={(e) => setHerdPastureId(e.target.value)} className={selectClasses}>
                 <option value="">Todos</option>
                 {pastures.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Desempenho</label>
+              <label className="text-sm font-medium text-gray-700">Desempenho</label>
               <select value={herdPerformance} onChange={(e) => setHerdPerformance(e.target.value)} className={selectClasses}>
                 {PERFORMANCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Mês de nascimento</label>
+              <label className="text-sm font-medium text-gray-700">Mês de nascimento</label>
               <select value={herdBirthMonth} onChange={(e) => setHerdBirthMonth(e.target.value)} className={selectClasses}>
                 <option value="">Todos</option>
                 {['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'].map((m, i) => (
@@ -237,23 +237,23 @@ export default function ReportsPage() {
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Vacinação</label>
+              <label className="text-sm font-medium text-gray-700">Vacinação</label>
               <input
                 type="text"
                 placeholder="Ex: Raiva, Aftosa..."
                 value={herdVaccination}
                 onChange={(e) => setHerdVaccination(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 block w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Reprodução</label>
+              <label className="text-sm font-medium text-gray-700">Reprodução</label>
               <select value={herdReproStatus} onChange={(e) => setHerdReproStatus(e.target.value)} className={selectClasses}>
                 {REPRO_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Ordenar por ganho</label>
+              <label className="text-sm font-medium text-gray-700">Ordenar por ganho</label>
               <select value={herdSortByGain} onChange={(e) => setHerdSortByGain(e.target.value)} className={selectClasses}>
                 <option value="">Padrão</option>
                 <option value="desc">Maior ganho primeiro</option>
@@ -264,21 +264,21 @@ export default function ReportsPage() {
 
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div>
-              <label className="text-xs font-medium text-gray-600">Período — de</label>
+              <label className="text-sm font-medium text-gray-700">Período — de</label>
               <input
                 type="date"
                 value={herdStartDate}
                 onChange={(e) => setHerdStartDate(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 block w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Período — até</label>
+              <label className="text-sm font-medium text-gray-700">Período — até</label>
               <input
                 type="date"
                 value={herdEndDate}
                 onChange={(e) => setHerdEndDate(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 block w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
           </div>
@@ -289,7 +289,7 @@ export default function ReportsPage() {
         {TYPE_OPTIONS.map((opt) => (
           <li
             key={opt.value}
-            className="flex flex-col gap-2 rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-2 rounded-2xl border border-gray-200/70 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
           >
             <span className="font-medium text-gray-900">{opt.label}</span>
             <div className="flex flex-wrap gap-3">
@@ -298,7 +298,7 @@ export default function ReportsPage() {
                   key={fmt.value}
                   onClick={() => handleDownload(opt.value, fmt.value)}
                   disabled={downloading === `${opt.value}-${fmt.value}`}
-                  className="text-xs font-medium text-emerald-700 hover:underline disabled:opacity-50"
+                  className="text-sm font-semibold text-emerald-700 hover:text-emerald-900 disabled:opacity-50"
                 >
                   {downloading === `${opt.value}-${fmt.value}` ? '...' : fmt.label}
                 </button>

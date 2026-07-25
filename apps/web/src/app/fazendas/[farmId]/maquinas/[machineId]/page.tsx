@@ -245,7 +245,7 @@ export default function MachineDetailPage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -253,17 +253,17 @@ export default function MachineDetailPage() {
   return (
     <main className="animate-fade-up mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8">
       <header className="mb-8">
-        <Link href={`/fazendas/${farmId}/maquinas`} className="text-sm text-emerald-700 hover:underline">
+        <Link href={`/fazendas/${farmId}/maquinas`} className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
           ← Máquinas
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{machine?.name}</h1>
+        <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">{machine?.name}</h1>
         <p className="text-sm text-gray-500">
           {machine?.brand ?? 'Marca não informada'} · {machine?.year ?? '—'}
         </p>
       </header>
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
@@ -272,19 +272,19 @@ export default function MachineDetailPage() {
         <SummaryCard label="Horímetro atual" value={`${machine?.currentHourMeter ?? 0} h`} />
       </section>
 
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-semibold text-gray-800">Gastos (manutenção + combustível)</h2>
+          <h2 className="font-bold tracking-tight text-gray-900">Gastos (manutenção + combustível)</h2>
           <div className="flex gap-1">
             {(['day', 'week', 'month'] as const).map((g) => (
               <button
                 key={g}
                 type="button"
                 onClick={() => setChartGranularity(g)}
-                className={`rounded px-2 py-1 text-xs font-medium ${
+                className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors duration-150 ${
                   chartGranularity === g
                     ? 'bg-emerald-700 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-900/5 text-gray-600 hover:bg-gray-900/10'
                 }`}
               >
                 {g === 'day' ? 'Dia' : g === 'week' ? 'Semana' : 'Mês'}
@@ -295,8 +295,8 @@ export default function MachineDetailPage() {
         <SpendingChart machine={machine} granularity={chartGranularity} />
       </section>
 
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Manutenção</h2>
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Manutenção</h2>
         <form onSubmit={handleAddMaintenance} className="mb-4 flex flex-wrap gap-2">
           <input
             type="text"
@@ -304,7 +304,7 @@ export default function MachineDetailPage() {
             required
             value={maintenanceDescription}
             onChange={(e) => setMaintenanceDescription(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="number"
@@ -312,7 +312,7 @@ export default function MachineDetailPage() {
             placeholder="Custo (R$)"
             value={maintenanceCost}
             onChange={(e) => setMaintenanceCost(e.target.value)}
-            className="w-32 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="w-32 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="number"
@@ -320,7 +320,7 @@ export default function MachineDetailPage() {
             placeholder="Horímetro"
             value={maintenanceHourMeter}
             onChange={(e) => setMaintenanceHourMeter(e.target.value)}
-            className="w-32 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="w-32 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <label className="flex items-center gap-1.5 text-sm text-gray-600 whitespace-nowrap">
             <input
@@ -334,7 +334,7 @@ export default function MachineDetailPage() {
           <button
             type="submit"
             disabled={savingMaintenance}
-            className="rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {savingMaintenance ? 'Salvando...' : 'Registrar'}
           </button>
@@ -345,18 +345,18 @@ export default function MachineDetailPage() {
           <ul className="space-y-1 text-sm text-gray-700">
             {machine.maintenances.map((m) =>
               editingMaintenanceId === m.id ? (
-                <li key={m.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-emerald-600 bg-emerald-50 p-2">
+                <li key={m.id} className="flex flex-wrap items-center gap-2 rounded-2xl border border-emerald-600 bg-emerald-50 p-3">
                   <input
                     type="date"
                     value={editMaintenanceDate}
                     onChange={(e) => setEditMaintenanceDate(e.target.value)}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <input
                     type="text"
                     value={editMaintenanceDescription}
                     onChange={(e) => setEditMaintenanceDescription(e.target.value)}
-                    className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <input
                     type="number"
@@ -364,7 +364,7 @@ export default function MachineDetailPage() {
                     placeholder="Custo (R$)"
                     value={editMaintenanceCost}
                     onChange={(e) => setEditMaintenanceCost(e.target.value)}
-                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="w-28 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <input
                     type="number"
@@ -372,20 +372,20 @@ export default function MachineDetailPage() {
                     placeholder="Horímetro"
                     value={editMaintenanceHourMeter}
                     onChange={(e) => setEditMaintenanceHourMeter(e.target.value)}
-                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="w-28 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <button
                     type="button"
                     disabled={savingMaintenanceEdit}
                     onClick={() => handleSaveMaintenanceEdit(m.id)}
-                    className="rounded-lg bg-emerald-700 px-2 py-1 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                    className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                   >
                     {savingMaintenanceEdit ? 'Salvando...' : 'Salvar'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditingMaintenanceId(null)}
-                    className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                   >
                     Cancelar
                   </button>
@@ -400,14 +400,14 @@ export default function MachineDetailPage() {
                     <button
                       type="button"
                       onClick={() => startEditMaintenance(m)}
-                      className="text-xs font-medium text-emerald-700 hover:underline"
+                      className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                     >
                       Editar
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDeleteMaintenance(m.id)}
-                      className="text-xs font-medium text-red-600 hover:underline"
+                      className="text-sm font-semibold text-red-600 hover:text-red-700"
                     >
                       Excluir
                     </button>
@@ -419,8 +419,8 @@ export default function MachineDetailPage() {
         )}
       </section>
 
-      <section className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Abastecimento</h2>
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Abastecimento</h2>
         <form onSubmit={handleAddFuel} className="mb-4 flex flex-wrap gap-2">
           <input
             type="number"
@@ -429,7 +429,7 @@ export default function MachineDetailPage() {
             required
             value={fuelLiters}
             onChange={(e) => setFuelLiters(e.target.value)}
-            className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="w-28 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="number"
@@ -437,7 +437,7 @@ export default function MachineDetailPage() {
             placeholder="Custo (R$)"
             value={fuelCost}
             onChange={(e) => setFuelCost(e.target.value)}
-            className="w-32 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="w-32 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="number"
@@ -445,7 +445,7 @@ export default function MachineDetailPage() {
             placeholder="Horímetro"
             value={fuelHourMeter}
             onChange={(e) => setFuelHourMeter(e.target.value)}
-            className="w-32 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="w-32 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <label className="flex items-center gap-1.5 text-sm text-gray-600 whitespace-nowrap">
             <input
@@ -459,7 +459,7 @@ export default function MachineDetailPage() {
           <button
             type="submit"
             disabled={savingFuel}
-            className="rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {savingFuel ? 'Salvando...' : 'Registrar'}
           </button>
@@ -470,12 +470,12 @@ export default function MachineDetailPage() {
           <ul className="space-y-1 text-sm text-gray-700">
             {machine.fuelRecords.map((f) =>
               editingFuelId === f.id ? (
-                <li key={f.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-emerald-600 bg-emerald-50 p-2">
+                <li key={f.id} className="flex flex-wrap items-center gap-2 rounded-2xl border border-emerald-600 bg-emerald-50 p-3">
                   <input
                     type="date"
                     value={editFuelDate}
                     onChange={(e) => setEditFuelDate(e.target.value)}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <input
                     type="number"
@@ -483,7 +483,7 @@ export default function MachineDetailPage() {
                     placeholder="Litros"
                     value={editFuelLiters}
                     onChange={(e) => setEditFuelLiters(e.target.value)}
-                    className="w-24 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="w-24 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <input
                     type="number"
@@ -491,7 +491,7 @@ export default function MachineDetailPage() {
                     placeholder="Custo (R$)"
                     value={editFuelCost}
                     onChange={(e) => setEditFuelCost(e.target.value)}
-                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="w-28 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <input
                     type="number"
@@ -499,20 +499,20 @@ export default function MachineDetailPage() {
                     placeholder="Horímetro"
                     value={editFuelHourMeter}
                     onChange={(e) => setEditFuelHourMeter(e.target.value)}
-                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="w-28 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <button
                     type="button"
                     disabled={savingFuelEdit}
                     onClick={() => handleSaveFuelEdit(f.id)}
-                    className="rounded-lg bg-emerald-700 px-2 py-1 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                    className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                   >
                     {savingFuelEdit ? 'Salvando...' : 'Salvar'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditingFuelId(null)}
-                    className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                   >
                     Cancelar
                   </button>
@@ -527,14 +527,14 @@ export default function MachineDetailPage() {
                     <button
                       type="button"
                       onClick={() => startEditFuel(f)}
-                      className="text-xs font-medium text-emerald-700 hover:underline"
+                      className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                     >
                       Editar
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDeleteFuel(f.id)}
-                      className="text-xs font-medium text-red-600 hover:underline"
+                      className="text-sm font-semibold text-red-600 hover:text-red-700"
                     >
                       Excluir
                     </button>
@@ -551,9 +551,9 @@ export default function MachineDetailPage() {
 
 function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-3 inline-block">
-      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-gray-900">{value}</p>
+    <div className="rounded-2xl border border-gray-200/70 bg-white p-5 inline-block">
+      <p className="text-[13px] font-medium text-gray-500">{label}</p>
+      <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums text-gray-900">{value}</p>
     </div>
   );
 }

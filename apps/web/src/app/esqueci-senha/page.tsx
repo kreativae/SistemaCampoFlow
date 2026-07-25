@@ -29,14 +29,14 @@ export default function ForgotPasswordPage() {
 
   return (
     <main className="flex flex-1 items-center justify-center px-4">
-      <div className="animate-fade-up w-full max-w-sm space-y-4 rounded-3xl border border-gray-200/70 bg-white p-8 shadow-[0_16px_40px_-20px_rgba(6,30,20,0.25),0_2px_8px_-4px_rgba(6,30,20,0.06)]">
+      <div className="animate-fade-up w-full max-w-sm space-y-4 rounded-2xl border border-gray-200/70 bg-white p-6">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">CampoFlow</h1>
+          <h1 className="text-3xl font-bold tracking-[-0.02em] text-gray-900">CampoFlow</h1>
           <p className="text-sm text-gray-500">Esqueci minha senha</p>
         </div>
 
         {sent ? (
-          <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800" role="status">
+          <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800" role="status">
             Se o e-mail informado estiver cadastrado, você receberá instruções para redefinir
             a senha em breve.
           </p>
@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
             </p>
 
             {error && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+              <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
                 {error}
               </p>
             )}
@@ -62,14 +62,14 @@ export default function ForgotPasswordPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-xl bg-emerald-700 px-3 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-700/20 transition-all duration-150 hover:bg-emerald-800 hover:shadow-md hover:shadow-emerald-700/20 active:scale-[0.99] disabled:opacity-50"
+              className="w-full rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
             >
               {submitting ? 'Enviando...' : 'Enviar link de redefinição'}
             </button>
@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
         )}
 
         <p className="text-center text-sm text-gray-500">
-          <Link href="/entrar" className="font-medium text-emerald-700 hover:underline">
+          <Link href="/entrar" className="font-semibold text-emerald-700 hover:text-emerald-900">
             Voltar para o login
           </Link>
         </p>

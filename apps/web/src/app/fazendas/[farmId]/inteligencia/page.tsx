@@ -57,7 +57,7 @@ export default function BiPage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -72,19 +72,19 @@ export default function BiPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
 
       {forbidden ? (
-        <p className="rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3 text-sm text-gray-500">
+        <p className="rounded-2xl border border-gray-200/70 bg-white px-4 py-3 text-sm text-gray-500">
           Seu perfil não tem permissão para visualizar a IA desta propriedade.
         </p>
       ) : data ? (
         <>
           <section className="mb-8">
-            <h2 className="mb-3 font-semibold text-gray-800">Indicadores</h2>
+            <h2 className="mb-3 font-bold tracking-tight text-gray-900">Indicadores</h2>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <KpiCard label="Arrobas produzidas" value={`${data.kpis.arrobasProduzidas} @`} />
               <KpiCard label="Custo por arroba" value={formatCurrency(data.kpis.custoPorArroba)} />
@@ -97,8 +97,8 @@ export default function BiPage() {
             </div>
           </section>
 
-          <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-            <h2 className="mb-3 font-semibold text-gray-800">
+          <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+            <h2 className="mb-3 font-bold tracking-tight text-gray-900">
               Previsão de ganho de peso (próximos {data.forecastWeightGain.windowDays} dias)
             </h2>
             <p className="text-sm text-gray-700">
@@ -110,8 +110,8 @@ export default function BiPage() {
             </p>
           </section>
 
-          <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-            <h2 className="mb-3 font-semibold text-gray-800">Previsão de vendas (próximo mês)</h2>
+          <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+            <h2 className="mb-3 font-bold tracking-tight text-gray-900">Previsão de vendas (próximo mês)</h2>
             <p className="text-sm text-gray-700">
               Receita projetada:{' '}
               <strong>{formatCurrency(data.forecastSales.projectedNextMonthReceita)}</strong>{' '}
@@ -119,8 +119,8 @@ export default function BiPage() {
             </p>
           </section>
 
-          <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-            <h2 className="mb-3 font-semibold text-gray-800">Dados de outros módulos</h2>
+          <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+            <h2 className="mb-3 font-bold tracking-tight text-gray-900">Dados de outros módulos</h2>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <KpiCard
                 label="Valor estimado do rebanho"
@@ -153,9 +153,9 @@ export default function BiPage() {
 
 function KpiCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-3">
-      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-gray-900">{value}</p>
+    <div className="rounded-2xl border border-gray-200/70 bg-white p-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">{label}</p>
+      <p className="mt-1 text-lg font-bold tracking-tight tabular-nums text-gray-900">{value}</p>
     </div>
   );
 }

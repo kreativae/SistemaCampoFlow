@@ -190,7 +190,7 @@ export default function SuppliesPage() {
   if (loading || !user) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -205,15 +205,15 @@ export default function SuppliesPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
 
       {alerts.length > 0 && (
-        <div className="mb-8 rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <h2 className="mb-2 text-sm font-semibold text-amber-800">Alertas</h2>
-          <ul className="space-y-1 text-sm text-amber-900">
+        <div className="mb-8 rounded-xl bg-amber-50 px-4 py-3">
+          <h2 className="mb-2 text-sm font-bold tracking-tight text-amber-800">Alertas</h2>
+          <ul className="space-y-1 text-sm font-medium text-amber-800">
             {alerts.map((a) => (
               <li key={a.id}>
                 {a.name}
@@ -232,31 +232,31 @@ export default function SuppliesPage() {
       <button
         type="button"
         onClick={() => setShowCreateMobile((v) => !v)}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 sm:hidden"
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
       >
         {showCreateMobile ? 'Fechar formulário' : '+ Novo insumo'}
       </button>
       <form
         onSubmit={handleCreate}
-        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid sm:grid-cols-4`}
+        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid sm:grid-cols-4`}
       >
         <div className="col-span-2">
-          <label className="text-xs font-medium text-gray-600">Nome</label>
+          <label className="text-sm font-medium text-gray-700">Nome</label>
           <input
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-600">Categoria</label>
+          <label className="text-sm font-medium text-gray-700">Categoria</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as SupplyCategory)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             {CATEGORY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -271,17 +271,17 @@ export default function SuppliesPage() {
               required
               value={customCategory}
               onChange={(e) => setCustomCategory(e.target.value)}
-              className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
             />
           )}
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-600">Unidade</label>
+          <label className="text-sm font-medium text-gray-700">Unidade</label>
           <select
             value={unitSelect}
             onChange={(e) => setUnitSelect(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             {UNIT_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>
@@ -297,30 +297,30 @@ export default function SuppliesPage() {
               required
               value={customUnit}
               onChange={(e) => setCustomUnit(e.target.value)}
-              className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
             />
           )}
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-600">Quantidade</label>
+          <label className="text-sm font-medium text-gray-700">Quantidade</label>
           <input
             type="number"
             step="0.01"
             min="0.01"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
 
         <div className="col-span-2">
-          <label className="text-xs font-medium text-gray-600">Validade (opcional)</label>
+          <label className="text-sm font-medium text-gray-700">Validade (opcional)</label>
           <input
             type="date"
             value={expirationDate}
             onChange={(e) => setExpirationDate(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
 
@@ -328,7 +328,7 @@ export default function SuppliesPage() {
           <button
             type="submit"
             disabled={creating}
-            className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {creating ? 'Cadastrando...' : 'Cadastrar insumo'}
           </button>
@@ -336,10 +336,13 @@ export default function SuppliesPage() {
       </form>
 
       {fetching ? (
-        <p className="text-gray-500">Carregando insumos...</p>
+        <p className="text-sm text-gray-400">Carregando insumos...</p>
       ) : supplies.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-12 text-center">
-          <p className="text-lg font-medium text-gray-700">Nenhum insumo cadastrado</p>
+        <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
+            <Package size={22} strokeWidth={1.9} />
+          </span>
+          <p className="mt-4 text-lg font-bold text-gray-900">Nenhum insumo cadastrado</p>
           <p className="mt-1 text-sm text-gray-500">Registre sal mineral, ração, fertilizantes e outros insumos da propriedade.</p>
         </div>
       ) : (
@@ -348,23 +351,23 @@ export default function SuppliesPage() {
             editingId === supply.id ? (
               <li
                 key={supply.id}
-                className="grid grid-cols-2 gap-3 rounded-lg border border-emerald-600 bg-white p-4 sm:grid-cols-4"
+                className="grid grid-cols-2 gap-3 rounded-2xl border border-emerald-600 bg-white p-5 sm:grid-cols-4"
               >
                 <div className="col-span-2">
-                  <label className="text-xs font-medium text-gray-600">Nome</label>
+                  <label className="text-sm font-medium text-gray-700">Nome</label>
                   <input
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Categoria</label>
+                  <label className="text-sm font-medium text-gray-700">Categoria</label>
                   <select
                     value={editCategory}
                     onChange={(e) => setEditCategory(e.target.value as SupplyCategory)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     {CATEGORY_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -378,16 +381,16 @@ export default function SuppliesPage() {
                       placeholder="Nome da categoria"
                       value={editCustomCategory}
                       onChange={(e) => setEditCustomCategory(e.target.value)}
-                      className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Unidade</label>
+                  <label className="text-sm font-medium text-gray-700">Unidade</label>
                   <select
                     value={editUnitSelect}
                     onChange={(e) => setEditUnitSelect(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     {UNIT_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -402,12 +405,12 @@ export default function SuppliesPage() {
                       placeholder="Unidade personalizada"
                       value={editCustomUnit}
                       onChange={(e) => setEditCustomUnit(e.target.value)}
-                      className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">
+                  <label className="text-sm font-medium text-gray-700">
                     Estoque mínimo (alertas)
                   </label>
                   <input
@@ -415,16 +418,16 @@ export default function SuppliesPage() {
                     step="0.01"
                     value={editMinimumQuantity}
                     onChange={(e) => setEditMinimumQuantity(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="text-xs font-medium text-gray-600">Validade</label>
+                  <label className="text-sm font-medium text-gray-700">Validade</label>
                   <input
                     type="date"
                     value={editExpirationDate}
                     onChange={(e) => setEditExpirationDate(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div className="col-span-full flex gap-2">
@@ -432,14 +435,14 @@ export default function SuppliesPage() {
                     type="button"
                     disabled={saving}
                     onClick={() => handleSaveEdit(supply.id)}
-                    className="rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                    className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                   >
                     {saving ? 'Salvando...' : 'Salvar'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditingId(null)}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                   >
                     Cancelar
                   </button>
@@ -448,10 +451,10 @@ export default function SuppliesPage() {
             ) : (
               <li
                 key={supply.id}
-                className="flex flex-col gap-2 rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3 transition-all duration-200 hover:border-emerald-200 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-2 rounded-2xl border border-gray-200/70 bg-white px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_10px_30px_-12px_rgba(6,30,20,0.15)] sm:flex-row sm:items-center sm:justify-between"
               >
                 <Link href={`/fazendas/${farmId}/insumos/${supply.id}`} className="flex min-w-0 flex-1 items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><Package size={18} strokeWidth={1.9} /></span>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700"><Package size={18} strokeWidth={1.9} /></span>
                   <span className="min-w-0">
                     <span className="block truncate font-medium text-gray-900">{supply.name}</span>
                     <span className="block truncate text-sm text-gray-500">{categoryLabel(supply)}</span>
@@ -464,14 +467,14 @@ export default function SuppliesPage() {
                   <button
                     type="button"
                     onClick={() => startEdit(supply)}
-                    className="text-sm font-medium text-emerald-700 hover:underline"
+                    className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                   >
                     Editar
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(supply)}
-                    className="text-sm font-medium text-red-600 hover:underline"
+                    className="text-sm font-semibold text-red-600 hover:text-red-800"
                   >
                     Excluir
                   </button>

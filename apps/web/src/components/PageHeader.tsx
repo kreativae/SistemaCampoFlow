@@ -25,7 +25,7 @@ export default function PageHeader({
       {backHref && (
         <Link
           href={backHref}
-          className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 transition-colors hover:text-emerald-900"
+          className="mb-3 inline-flex items-center gap-1 text-sm font-semibold text-emerald-700 transition-colors hover:text-emerald-900"
         >
           <ArrowLeft size={15} strokeWidth={2} />
           {backLabel}
@@ -33,12 +33,12 @@ export default function PageHeader({
       )}
       <div className="flex flex-wrap items-center gap-3">
         {Icon && (
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600/10 text-emerald-700">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
             <Icon size={21} strokeWidth={1.9} />
           </span>
         )}
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{title}</h1>
+          <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">{title}</h1>
           {subtitle && <p className="mt-0.5 text-sm text-gray-500">{subtitle}</p>}
         </div>
         {actions}

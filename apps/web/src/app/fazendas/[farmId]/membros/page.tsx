@@ -206,7 +206,7 @@ export default function MembersPage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -221,44 +221,44 @@ export default function MembersPage() {
       />
 
       {forbidden ? (
-        <p className="rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3 text-sm text-gray-500">
+        <p className="rounded-2xl border border-gray-200/70 bg-white px-4 py-3 text-sm text-gray-500">
           Apenas o proprietário ou gerente da propriedade pode gerenciar membros.
         </p>
       ) : (
         <>
           {error && (
-            <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+            <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
               {error}
             </p>
           )}
           {message && (
-            <p className="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{message}</p>
+            <p className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{message}</p>
           )}
 
           {/* Convidar / adicionar membro */}
           <form
             onSubmit={handleAdd}
-            className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4"
+            className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5"
           >
-            <h2 className="mb-3 font-semibold text-gray-800">Convidar membro</h2>
+            <h2 className="mb-3 font-bold tracking-tight text-gray-900">Convidar membro</h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_200px_auto]">
               <div>
-                <label className="text-xs font-medium text-gray-600">E-mail</label>
+                <label className="text-sm font-medium text-gray-700">E-mail</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="pessoa@exemplo.com"
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Papel</label>
+                <label className="text-sm font-medium text-gray-700">Papel</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value as Role)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 >
                   {ROLE_OPTIONS.map((r) => (
                     <option key={r} value={r}>
@@ -271,7 +271,7 @@ export default function MembersPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50 sm:w-auto"
+                  className="w-full rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50 sm:w-auto"
                 >
                   {saving ? 'Enviando...' : 'Convidar'}
                 </button>
@@ -280,13 +280,13 @@ export default function MembersPage() {
             <p className="mt-2 text-xs text-gray-400">{ROLE_HINT[role]}</p>
 
             {/* Limite de acesso por módulo (opcional) */}
-            <div className="mt-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
+            <div className="mt-3 rounded-2xl bg-gray-100/60 p-3">
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <input
                   type="checkbox"
                   checked={restrict}
                   onChange={(e) => setRestrict(e.target.checked)}
-                  className="h-4 w-4 rounded-lg border-gray-300 text-emerald-700 focus:ring-emerald-600"
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-700 focus:ring-emerald-600"
                 />
                 Limitar as páginas que este membro pode acessar
               </label>
@@ -308,7 +308,7 @@ export default function MembersPage() {
                           onChange={() =>
                             setModuleAccess((prev) => toggle(prev, opt.key))
                           }
-                          className="h-4 w-4 rounded-lg border-gray-300 text-emerald-700 focus:ring-emerald-600"
+                          className="h-4 w-4 rounded border-gray-300 text-emerald-700 focus:ring-emerald-600"
                         />
                         {opt.label}
                       </label>
@@ -326,14 +326,14 @@ export default function MembersPage() {
 
           {/* Membros ativos */}
           <section className="mb-8">
-            <h2 className="mb-3 font-semibold text-gray-800">
+            <h2 className="mb-3 font-bold tracking-tight text-gray-900">
               Membros ativos ({members.length})
             </h2>
             <ul className="space-y-2">
               {members.map((m) => (
                 <li
                   key={m.userId}
-                  className="rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3"
+                  className="rounded-2xl border border-gray-200/70 bg-white px-4 py-3"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -347,10 +347,10 @@ export default function MembersPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span
-                        className={`rounded px-2 py-0.5 text-xs font-medium ${
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                           m.role === 'OWNER'
                             ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-gray-100 text-gray-700'
+                            : 'bg-gray-100 text-gray-600'
                         }`}
                       >
                         {ROLE_LABEL[m.role]}
@@ -362,14 +362,14 @@ export default function MembersPage() {
                             onClick={() =>
                               editingId === m.userId ? setEditingId(null) : startEdit(m)
                             }
-                            className="text-sm font-medium text-emerald-700 hover:underline"
+                            className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                           >
                             {editingId === m.userId ? 'Cancelar' : 'Acesso'}
                           </button>
                           <button
                             type="button"
                             onClick={() => handleRemoveMember(m)}
-                            className="text-sm font-medium text-red-600 hover:underline"
+                            className="text-sm font-semibold text-red-600 hover:text-red-800"
                           >
                             Remover
                           </button>
@@ -394,7 +394,7 @@ export default function MembersPage() {
 
                   {/* Edição de acesso por módulo */}
                   {editingId === m.userId && (
-                    <div className="mt-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
+                    <div className="mt-3 rounded-2xl bg-gray-100/60 p-3">
                       <p className="text-xs text-gray-500">
                         Marque os módulos liberados. Sem nenhum marcado, o membro terá acesso
                         total (conforme o papel).
@@ -411,7 +411,7 @@ export default function MembersPage() {
                               onChange={() =>
                                 setEditModules((prev) => toggle(prev, opt.key))
                               }
-                              className="h-4 w-4 rounded-lg border-gray-300 text-emerald-700 focus:ring-emerald-600"
+                              className="h-4 w-4 rounded border-gray-300 text-emerald-700 focus:ring-emerald-600"
                             />
                             {opt.label}
                           </label>
@@ -422,14 +422,14 @@ export default function MembersPage() {
                           type="button"
                           disabled={editSaving}
                           onClick={() => handleSaveAccess(m)}
-                          className="rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                          className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                         >
                           {editSaving ? 'Salvando...' : 'Salvar acesso'}
                         </button>
                         <button
                           type="button"
                           onClick={() => setEditModules([])}
-                          className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                          className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                         >
                           Liberar tudo
                         </button>
@@ -443,7 +443,7 @@ export default function MembersPage() {
 
           {/* Convites pendentes */}
           <section>
-            <h2 className="mb-3 font-semibold text-gray-800">
+            <h2 className="mb-3 font-bold tracking-tight text-gray-900">
               Convites pendentes ({invites.length})
             </h2>
             {invites.length === 0 ? (
@@ -453,7 +453,7 @@ export default function MembersPage() {
                 {invites.map((inv) => (
                   <li
                     key={inv.id}
-                    className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-4 py-3"
+                    className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3"
                   >
                     <div>
                       <p className="font-medium text-gray-900">{inv.email}</p>
@@ -465,7 +465,7 @@ export default function MembersPage() {
                     <button
                       type="button"
                       onClick={() => handleRevokeInvite(inv)}
-                      className="text-sm font-medium text-red-600 hover:underline"
+                      className="text-sm font-semibold text-red-600 hover:text-red-800"
                     >
                       Revogar
                     </button>

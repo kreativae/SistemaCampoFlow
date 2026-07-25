@@ -294,7 +294,7 @@ export default function FinancePage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -309,13 +309,13 @@ export default function FinancePage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
 
       {forbidden ? (
-        <p className="rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3 text-sm text-gray-500">
+        <p className="rounded-2xl border border-gray-200/70 bg-white px-4 py-3 text-sm text-gray-500">
           Seu perfil não tem permissão para visualizar os dados financeiros desta propriedade.
         </p>
       ) : (
@@ -323,20 +323,20 @@ export default function FinancePage() {
           <button
             type="button"
             onClick={() => setShowCreateMobile((v) => !v)}
-            className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 sm:hidden"
+            className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
           >
             {showCreateMobile ? 'Fechar formulário' : '+ Novo lançamento'}
           </button>
           <form
             onSubmit={handleCreate}
-            className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid sm:grid-cols-4`}
+            className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid sm:grid-cols-4`}
           >
             <div>
-              <label className="text-xs font-medium text-gray-600">Tipo</label>
+              <label className="text-sm font-medium text-gray-700">Tipo</label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as TransactionType)}
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               >
                 {TYPE_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -347,11 +347,11 @@ export default function FinancePage() {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-gray-600">Categoria</label>
+              <label className="text-sm font-medium text-gray-700">Categoria</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as TransactionCategory)}
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               >
                 {CATEGORY_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -362,47 +362,47 @@ export default function FinancePage() {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-gray-600">Valor (R$)</label>
+              <label className="text-sm font-medium text-gray-700">Valor (R$)</label>
               <input
                 type="number"
                 step="0.01"
                 required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
 
             <div>
-              <label className="text-xs font-medium text-gray-600">Vencimento</label>
+              <label className="text-sm font-medium text-gray-700">Vencimento</label>
               <input
                 type="date"
                 required
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
 
             <div className="col-span-2 sm:col-span-3">
-              <label className="text-xs font-medium text-gray-600">Descrição (opcional)</label>
+              <label className="text-sm font-medium text-gray-700">Descrição (opcional)</label>
               <input
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
 
             {cropCycles.length > 0 && (
               <div className="col-span-2 sm:col-span-3">
-                <label className="text-xs font-medium text-gray-600">
+                <label className="text-sm font-medium text-gray-700">
                   Vincular a uma safra (opcional)
                 </label>
                 <select
                   value={cropCycleId}
                   onChange={(e) => setCropCycleId(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 >
                   <option value="">Sem vínculo</option>
                   {cropCycles.map((c) => (
@@ -424,7 +424,7 @@ export default function FinancePage() {
                 onChange={(e) => setAlreadyPaid(e.target.checked)}
                 className="h-4 w-4"
               />
-              <label htmlFor="alreadyPaid" className="text-sm text-gray-700">
+              <label htmlFor="alreadyPaid" className="text-sm font-medium text-gray-700">
                 Já pago/recebido
               </label>
             </div>
@@ -433,20 +433,20 @@ export default function FinancePage() {
               <button
                 type="submit"
                 disabled={creating}
-                className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
               >
                 {creating ? 'Salvando...' : 'Lançar'}
               </button>
             </div>
           </form>
 
-          <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+          <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-semibold text-gray-800">Fluxo de caixa</h2>
+              <h2 className="font-bold tracking-tight text-gray-900">Fluxo de caixa</h2>
               <select
                 value={granularity}
                 onChange={(e) => setGranularity(e.target.value as 'daily' | 'weekly' | 'monthly')}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
               >
                 {GRANULARITY_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -461,7 +461,7 @@ export default function FinancePage() {
               <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="text-xs uppercase text-gray-500">
+                  <tr className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                     <th className="py-1">Período</th>
                     <th className="py-1">Receita</th>
                     <th className="py-1">Despesa</th>
@@ -470,7 +470,7 @@ export default function FinancePage() {
                 </thead>
                 <tbody>
                   {cashFlow.map((bucket) => (
-                    <tr key={bucket.period} className="border-t border-gray-100">
+                    <tr key={bucket.period} className="border-t border-gray-100 transition-colors hover:bg-gray-50/70">
                       <td className="py-1.5">{bucket.period}</td>
                       <td className="py-1.5 text-emerald-700">{formatCurrency(bucket.receita)}</td>
                       <td className="py-1.5 text-red-600">{formatCurrency(bucket.despesa)}</td>
@@ -484,51 +484,51 @@ export default function FinancePage() {
           </section>
 
           <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+            <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+              <div className="flex items-center gap-2 text-[13px] font-medium text-gray-500">
                 <ArrowUpCircle size={14} className="text-emerald-500" />
                 Receita
               </div>
-              <p className="mt-1 text-lg font-bold tabular-nums text-emerald-600">{formatCurrency(summary.receita)}</p>
+              <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-emerald-600">{formatCurrency(summary.receita)}</p>
             </div>
-            <div className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+            <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+              <div className="flex items-center gap-2 text-[13px] font-medium text-gray-500">
                 <ArrowDownCircle size={14} className="text-red-500" />
                 Despesa
               </div>
-              <p className="mt-1 text-lg font-bold tabular-nums text-red-500">{formatCurrency(summary.despesa)}</p>
+              <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-red-500">{formatCurrency(summary.despesa)}</p>
             </div>
-            <div className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+            <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+              <div className="flex items-center gap-2 text-[13px] font-medium text-gray-500">
                 <Wallet size={14} className="text-gray-400" />
                 Saldo
               </div>
-              <p className={`mt-1 text-lg font-bold tabular-nums ${summary.saldo >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+              <p className={`mt-1 text-2xl font-bold tracking-tight tabular-nums ${summary.saldo >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
                 {formatCurrency(summary.saldo)}
               </p>
             </div>
-            <div className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+            <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+              <div className="flex items-center gap-2 text-[13px] font-medium text-gray-500">
                 <Clock size={14} className="text-amber-500" />
                 Pendentes
               </div>
-              <p className="mt-1 text-lg font-bold tabular-nums text-amber-600">{summary.pendentes}</p>
+              <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-amber-600">{summary.pendentes}</p>
             </div>
           </div>
 
           <section>
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-semibold text-gray-800">Lançamentos</h2>
+              <h2 className="font-bold tracking-tight text-gray-900">Lançamentos</h2>
               <div className="flex flex-wrap gap-1">
                 {([['day', 'Dia'], ['week', 'Semana'], ['month', 'Mês'], ['year', 'Ano'], ['all', 'Todos']] as const).map(([val, label]) => (
                   <button
                     key={val}
                     type="button"
                     onClick={() => setTxFilter(val)}
-                    className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors duration-150 ${
+                    className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors duration-150 ${
                       txFilter === val
                         ? 'bg-emerald-700 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'bg-gray-900/5 text-gray-600 hover:bg-gray-900/10'
                     }`}
                   >
                     {label}
@@ -537,8 +537,11 @@ export default function FinancePage() {
               </div>
             </div>
             {filteredTransactions.length === 0 ? (
-              <div className="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-12 text-center">
-                <p className="text-lg font-medium text-gray-700">
+              <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
+                  <Wallet size={22} strokeWidth={1.8} />
+                </span>
+                <p className="mt-4 text-lg font-bold text-gray-900">
                   {transactions.length === 0 ? 'Nenhum lançamento' : 'Nenhum lançamento no período'}
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
@@ -552,11 +555,11 @@ export default function FinancePage() {
                 {filteredTransactions.map((t) => (
                   <li
                     key={t.id}
-                    className="flex items-center gap-4 rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3"
+                    className="flex items-center gap-4 rounded-2xl border border-gray-200/70 bg-white px-4 py-3"
                   >
                     <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                        t.type === 'RECEITA' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                        t.type === 'RECEITA' ? 'bg-emerald-600/10 text-emerald-700' : 'bg-red-50 text-red-600'
                       }`}
                     >
                       {t.type === 'RECEITA' ? (
@@ -572,10 +575,10 @@ export default function FinancePage() {
                           {t.description || t.category}
                         </p>
                         <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                             t.paidAt
-                              ? 'bg-emerald-50 text-emerald-600'
-                              : 'bg-amber-50 text-amber-600'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-amber-100 text-amber-800'
                           }`}
                         >
                           {t.paidAt ? <Check size={10} /> : <Clock size={10} />}
@@ -598,7 +601,7 @@ export default function FinancePage() {
                     <div className="flex shrink-0 items-center gap-1">
                       <button
                         onClick={() => startEdit(t)}
-                        className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                        className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
                         title="Editar"
                       >
                         <Pencil size={15} />
@@ -606,7 +609,7 @@ export default function FinancePage() {
                       {!t.paidAt ? (
                         <button
                           onClick={() => handleMarkPaid(t.id)}
-                          className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-emerald-50 hover:text-emerald-600"
+                          className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-emerald-50 hover:text-emerald-600"
                           title="Marcar como pago"
                         >
                           <Check size={15} />
@@ -614,7 +617,7 @@ export default function FinancePage() {
                       ) : (
                         <button
                           onClick={() => handleMarkUnpaid(t.id)}
-                          className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
+                          className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
                           title="Marcar como pendente"
                         >
                           <Undo2 size={15} />
@@ -622,7 +625,7 @@ export default function FinancePage() {
                       )}
                       <button
                         onClick={() => handleDelete(t.id)}
-                        className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                        className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
                         title="Excluir"
                       >
                         <X size={15} />
@@ -638,18 +641,18 @@ export default function FinancePage() {
             <Modal onClose={() => setEditingTx(null)}>
               <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600/10 text-emerald-700">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
                     <Pencil size={19} strokeWidth={1.9} />
                   </span>
                   <div>
-                    <h2 className="text-base font-semibold text-gray-900">Editar lançamento</h2>
+                    <h2 className="text-lg font-bold tracking-tight text-gray-900">Editar lançamento</h2>
                     <p className="text-xs text-gray-500">{formatCurrency(editingTx.amount)}</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setEditingTx(null)}
-                  className="rounded-lg p-1.5 text-gray-400 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-600"
+                  className="rounded-full p-1.5 text-gray-400 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-600"
                   aria-label="Fechar"
                 >
                   <X size={18} />
@@ -658,11 +661,11 @@ export default function FinancePage() {
 
               <div className="grid grid-cols-2 gap-3 px-6 py-5">
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Tipo</label>
+                  <label className="text-sm font-medium text-gray-700">Tipo</label>
                   <select
                     value={editType}
                     onChange={(e) => setEditType(e.target.value as TransactionType)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     {TYPE_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -672,11 +675,11 @@ export default function FinancePage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Categoria</label>
+                  <label className="text-sm font-medium text-gray-700">Categoria</label>
                   <select
                     value={editCategory}
                     onChange={(e) => setEditCategory(e.target.value as TransactionCategory)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     {CATEGORY_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -686,33 +689,33 @@ export default function FinancePage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Valor (R$)</label>
+                  <label className="text-sm font-medium text-gray-700">Valor (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     required
                     value={editAmount}
                     onChange={(e) => setEditAmount(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Vencimento</label>
+                  <label className="text-sm font-medium text-gray-700">Vencimento</label>
                   <input
                     type="date"
                     required
                     value={editDueDate}
                     onChange={(e) => setEditDueDate(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="text-xs font-medium text-gray-600">Descrição (opcional)</label>
+                  <label className="text-sm font-medium text-gray-700">Descrição (opcional)</label>
                   <input
                     type="text"
                     value={editDescription}
                     onChange={(e) => setEditDescription(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
               </div>
@@ -721,7 +724,7 @@ export default function FinancePage() {
                 <button
                   type="button"
                   onClick={() => setEditingTx(null)}
-                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                 >
                   Cancelar
                 </button>
@@ -729,7 +732,7 @@ export default function FinancePage() {
                   type="button"
                   disabled={savingEdit}
                   onClick={handleSaveEdit}
-                  className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                  className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                 >
                   {savingEdit ? 'Salvando...' : 'Salvar'}
                 </button>

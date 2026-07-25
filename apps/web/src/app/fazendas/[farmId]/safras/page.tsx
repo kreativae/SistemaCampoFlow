@@ -33,7 +33,7 @@ const STATUS_LABEL: Record<CropCycleStatus, string> = {
 };
 
 const STATUS_COLOR: Record<CropCycleStatus, string> = {
-  PLANEJADA: 'bg-gray-100 text-gray-700',
+  PLANEJADA: 'bg-gray-100 text-gray-600',
   PLANTADA: 'bg-amber-100 text-amber-800',
   COLHIDA: 'bg-emerald-100 text-emerald-800',
 };
@@ -270,7 +270,7 @@ export default function CropsPage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -285,7 +285,7 @@ export default function CropsPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
@@ -293,51 +293,51 @@ export default function CropsPage() {
       <button
         type="button"
         onClick={() => setShowCreateMobile((v) => !v)}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 sm:hidden"
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
       >
         {showCreateMobile ? 'Fechar formulário' : '+ Nova safra'}
       </button>
       <form
         onSubmit={handleCreate}
-        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:grid sm:grid-cols-4`}
+        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid sm:grid-cols-4`}
       >
         <div className="col-span-2">
-          <label className="text-xs font-medium text-gray-600">Cultura</label>
+          <label className="text-sm font-medium text-gray-700">Cultura</label>
           <input
             type="text"
             required
             value={form.cropName}
             onChange={(e) => setForm((f) => ({ ...f, cropName: e.target.value }))}
             placeholder="Ex.: Soja"
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Variedade (opcional)</label>
+          <label className="text-sm font-medium text-gray-700">Variedade (opcional)</label>
           <input
             type="text"
             value={form.variety}
             onChange={(e) => setForm((f) => ({ ...f, variety: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Área (ha)</label>
+          <label className="text-sm font-medium text-gray-700">Área (ha)</label>
           <input
             type="number"
             step="0.01"
             value={form.areaHectares}
             onChange={(e) => setForm((f) => ({ ...f, areaHectares: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
 
         <div className="col-span-2">
-          <label className="text-xs font-medium text-gray-600">Talhão (opcional)</label>
+          <label className="text-sm font-medium text-gray-700">Talhão (opcional)</label>
           <select
             value={form.mapFeatureId}
             onChange={(e) => setForm((f) => ({ ...f, mapFeatureId: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             <option value="">Sem vínculo</option>
             {features.map((f) => (
@@ -348,32 +348,32 @@ export default function CropsPage() {
           </select>
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Data do plantio</label>
+          <label className="text-sm font-medium text-gray-700">Data do plantio</label>
           <input
             type="date"
             required
             value={form.plantedAt}
             onChange={(e) => setForm((f) => ({ ...f, plantedAt: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Previsão de colheita</label>
+          <label className="text-sm font-medium text-gray-700">Previsão de colheita</label>
           <input
             type="date"
             value={form.expectedHarvestAt}
             onChange={(e) => setForm((f) => ({ ...f, expectedHarvestAt: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
 
         <div className="col-span-full">
-          <label className="text-xs font-medium text-gray-600">Observações</label>
+          <label className="text-sm font-medium text-gray-700">Observações</label>
           <input
             type="text"
             value={form.notes}
             onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
         </div>
 
@@ -381,7 +381,7 @@ export default function CropsPage() {
           <button
             type="submit"
             disabled={creating}
-            className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {creating ? 'Salvando...' : 'Registrar safra'}
           </button>
@@ -393,8 +393,11 @@ export default function CropsPage() {
       <CropRotation farmId={farmId} token={accessToken} />
 
       {cycles.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-12 text-center">
-          <p className="text-lg font-medium text-gray-700">Nenhuma safra registrada</p>
+        <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
+            <Sprout size={22} strokeWidth={1.9} />
+          </span>
+          <p className="mt-3 text-lg font-bold text-gray-900">Nenhuma safra registrada</p>
           <p className="mt-1 text-sm text-gray-500">Registre safras para acompanhar plantio, colheita e vincular custos ao ciclo produtivo.</p>
         </div>
       ) : (
@@ -402,14 +405,14 @@ export default function CropsPage() {
           {cycles.map((c) => {
             const feature = features.find((f) => f.id === c.mapFeatureId);
             return (
-              <li key={c.id} className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+              <li key={c.id} className="rounded-2xl border border-gray-200/70 bg-white p-5">
                 <div className="flex items-center justify-between">
                   <p className="font-medium text-gray-900">
                     {c.cropName}
                     {c.variety ? ` — ${c.variety}` : ''}
                   </p>
                   <span
-                    className={`rounded px-2 py-0.5 text-xs font-medium ${STATUS_COLOR[c.status]}`}
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLOR[c.status]}`}
                   >
                     {STATUS_LABEL[c.status]}
                   </span>
@@ -431,14 +434,14 @@ export default function CropsPage() {
                   <button
                     type="button"
                     onClick={() => startEdit(c)}
-                    className="text-sm font-medium text-emerald-700 hover:underline"
+                    className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                   >
                     Visualização rápida
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(c)}
-                    className="text-sm font-medium text-red-600 hover:underline"
+                    className="text-sm font-semibold text-red-600 hover:text-red-800"
                   >
                     Excluir
                   </button>
@@ -454,11 +457,11 @@ export default function CropsPage() {
             {/* Header fixo */}
             <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-6 py-4">
               <div className="flex min-w-0 items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600/10 text-emerald-700">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
                   <Sprout size={19} strokeWidth={1.9} />
                 </span>
                 <div className="min-w-0">
-                  <h2 className="truncate text-lg font-semibold tracking-tight text-gray-900">
+                  <h2 className="truncate text-lg font-bold tracking-tight text-gray-900">
                     {editForm.cropName || 'Safra'}
                     {editForm.variety ? ` — ${editForm.variety}` : ''}
                   </h2>
@@ -468,7 +471,7 @@ export default function CropsPage() {
               <button
                 type="button"
                 onClick={() => setEditingId(null)}
-                className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
                 aria-label="Fechar"
               >
                 <X size={18} strokeWidth={1.8} />
@@ -477,47 +480,47 @@ export default function CropsPage() {
 
             {/* Corpo rolável */}
             <div className="flex-1 overflow-y-auto px-6 py-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
               Dados da safra
             </p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div className="col-span-2 sm:col-span-1">
-                <label className="text-xs font-medium text-gray-600">Cultura</label>
+                <label className="text-sm font-medium text-gray-700">Cultura</label>
                 <input
                   type="text"
                   value={editForm.cropName}
                   onChange={(e) => setEditForm((f) => ({ ...f, cropName: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Variedade</label>
+                <label className="text-sm font-medium text-gray-700">Variedade</label>
                 <input
                   type="text"
                   value={editForm.variety}
                   onChange={(e) => setEditForm((f) => ({ ...f, variety: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Área (ha)</label>
+                <label className="text-sm font-medium text-gray-700">Área (ha)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={editForm.areaHectares}
                   onChange={(e) => setEditForm((f) => ({ ...f, areaHectares: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <label className="text-xs font-medium text-gray-600">Talhão</label>
+                <label className="text-sm font-medium text-gray-700">Talhão</label>
                 <select
                   value={editForm.mapFeatureId}
                   onChange={(e) => {
                     if (!e.target.value) setSoilPreview(null);
                     setEditForm((f) => ({ ...f, mapFeatureId: e.target.value }));
                   }}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 >
                   <option value="">Sem vínculo</option>
                   {features.map((f) => (
@@ -529,8 +532,8 @@ export default function CropsPage() {
               </div>
 
               {editForm.mapFeatureId && (
-                <div className="col-span-full rounded-lg border border-emerald-100 bg-emerald-50/60 p-3">
-                  <p className="mb-1 text-xs font-semibold text-gray-600">
+                <div className="col-span-full rounded-xl border border-emerald-100 bg-emerald-50/60 p-3">
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                     Última análise de solo do talhão
                   </p>
                   {loadingSoilPreview ? (
@@ -551,7 +554,7 @@ export default function CropsPage() {
                       </p>
                       <Link
                         href={`/fazendas/${farmId}/mapa/solo/${editForm.mapFeatureId}`}
-                        className="mt-1 inline-block font-medium text-emerald-700 hover:underline"
+                        className="mt-1 inline-block font-semibold text-emerald-700 hover:text-emerald-900"
                       >
                         Ver análises de solo →
                       </Link>
@@ -565,63 +568,63 @@ export default function CropsPage() {
               )}
             </div>
 
-            <p className="mb-2 mt-6 text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+            <p className="mb-2 mt-6 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
               Datas
             </p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div>
-                <label className="text-xs font-medium text-gray-600">Plantio</label>
+                <label className="text-sm font-medium text-gray-700">Plantio</label>
                 <input
                   type="date"
                   value={editForm.plantedAt}
                   onChange={(e) => setEditForm((f) => ({ ...f, plantedAt: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Previsão de colheita</label>
+                <label className="text-sm font-medium text-gray-700">Previsão de colheita</label>
                 <input
                   type="date"
                   value={editForm.expectedHarvestAt}
                   onChange={(e) =>
                     setEditForm((f) => ({ ...f, expectedHarvestAt: e.target.value }))
                   }
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Colheita realizada</label>
+                <label className="text-sm font-medium text-gray-700">Colheita realizada</label>
                 <input
                   type="date"
                   value={editForm.harvestedAt}
                   onChange={(e) => setEditForm((f) => ({ ...f, harvestedAt: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
             </div>
 
-            <p className="mb-2 mt-6 text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+            <p className="mb-2 mt-6 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
               Produção e venda
             </p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div>
-                <label className="text-xs font-medium text-gray-600">Produção (kg)</label>
+                <label className="text-sm font-medium text-gray-700">Produção (kg)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={editForm.yieldKg}
                   onChange={(e) => setEditForm((f) => ({ ...f, yieldKg: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Unidade de venda</label>
+                <label className="text-sm font-medium text-gray-700">Unidade de venda</label>
                 <select
                   value={editForm.saleUnit}
                   onChange={(e) =>
                     setEditForm((f) => ({ ...f, saleUnit: e.target.value as CropSaleUnit }))
                   }
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 >
                   <option value="SACA60">Saca (60kg)</option>
                   <option value="KG">Quilo (kg)</option>
@@ -629,7 +632,7 @@ export default function CropsPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Preço de venda (R$/un.)</label>
+                <label className="text-sm font-medium text-gray-700">Preço de venda (R$/un.)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -637,29 +640,29 @@ export default function CropsPage() {
                   onChange={(e) =>
                     setEditForm((f) => ({ ...f, salePricePerUnit: e.target.value }))
                   }
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div className="col-span-full">
-                <label className="text-xs font-medium text-gray-600">Observações</label>
+                <label className="text-sm font-medium text-gray-700">Observações</label>
                 <input
                   type="text"
                   value={editForm.notes}
                   onChange={(e) => setEditForm((f) => ({ ...f, notes: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
             </div>
 
-            <div className="mt-6 rounded-xl border border-gray-200/80 bg-gray-50/60 p-4">
-              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+            <div className="mt-6 rounded-2xl bg-gray-100/60 p-5">
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                 Planejamento de plantio
               </p>
               <CropPlanning farmId={farmId} token={accessToken} cycleId={editingId} />
             </div>
 
-            <div className="mt-4 rounded-xl border border-gray-200/80 bg-gray-50/60 p-4">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+            <div className="mt-4 rounded-2xl bg-gray-100/60 p-5">
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                 Fechamento da safra
               </p>
               <p className="mb-3 text-xs text-gray-500">
@@ -674,7 +677,7 @@ export default function CropsPage() {
               <button
                 type="button"
                 onClick={() => setEditingId(null)}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50"
+                className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
               >
                 Cancelar
               </button>
@@ -682,7 +685,7 @@ export default function CropsPage() {
                 type="button"
                 disabled={saving}
                 onClick={() => handleSaveEdit(editingId)}
-                className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
               >
                 {saving ? 'Salvando...' : 'Salvar'}
               </button>

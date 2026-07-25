@@ -195,17 +195,17 @@ export default function BoundaryDrawer({
           value={searchQuery}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Buscar cidade ou região..."
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+          className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
         />
-        {searching && <p className="mt-1 text-xs text-gray-400">Buscando...</p>}
+        {searching && <p className="mt-1 text-sm text-gray-400">Buscando...</p>}
         {searchResults.length > 0 && (
-          <ul className="absolute z-[1000] mt-1 w-full max-h-48 overflow-y-auto rounded-xl border border-gray-200/80 bg-white shadow-sm p-1 shadow-md">
+          <ul className="absolute z-[1000] mt-1 w-full max-h-48 overflow-y-auto rounded-2xl border border-gray-200/70 bg-white p-1 shadow-md">
             {searchResults.map((r, i) => (
               <li key={i}>
                 <button
                   type="button"
                   onClick={() => selectResult(r)}
-                  className="w-full rounded-lg px-2 py-1.5 text-left text-sm text-gray-700 hover:bg-emerald-50"
+                  className="w-full rounded-xl px-2.5 py-1.5 text-left text-sm text-gray-700 transition-colors duration-150 hover:bg-emerald-600/10"
                 >
                   {r.label}
                 </button>
@@ -215,7 +215,7 @@ export default function BoundaryDrawer({
         )}
       </div>
 
-      <div className="rounded-lg border border-gray-200 overflow-hidden">
+      <div className="rounded-2xl border border-gray-200/70 overflow-hidden">
         <MapContainer
           center={mapCenter}
           zoom={zoom}
@@ -249,7 +249,7 @@ export default function BoundaryDrawer({
             type="button"
             onClick={handleUndo}
             disabled={points.length === 0}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40"
+            className="rounded-full bg-gray-900/5 px-4 py-2 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10 disabled:opacity-40"
           >
             Desfazer ponto
           </button>
@@ -257,21 +257,21 @@ export default function BoundaryDrawer({
             type="button"
             onClick={handleClear}
             disabled={points.length === 0}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-40"
+            className="rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 transition-colors duration-150 hover:bg-red-100 disabled:opacity-40"
           >
             Limpar
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-full bg-gray-900/5 px-4 py-2 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
           >
             Cancelar
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-800"
+            className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98]"
           >
             Salvar croqui
           </button>

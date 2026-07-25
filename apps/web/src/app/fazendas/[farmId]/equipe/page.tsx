@@ -356,7 +356,7 @@ export default function TeamPage() {
   if (loading || !user) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -371,7 +371,7 @@ export default function TeamPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
@@ -392,27 +392,27 @@ export default function TeamPage() {
       </div>
 
       {/* Calculadora valor-hora / valor */}
-      <section className="mb-6 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Calculadora de valor / hora</h2>
+      <section className="mb-6 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Calculadora de valor / hora</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="text-xs font-medium text-gray-600">Valor/hora (R$)</label>
+            <label className="text-sm font-medium text-gray-700">Valor/hora (R$)</label>
             <input
               type="number"
               step="0.01"
               value={calcRate}
               onChange={(e) => setCalcRate(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600">Horas</label>
+            <label className="text-sm font-medium text-gray-700">Horas</label>
             <input
               type="number"
               step="0.1"
               value={calcHours}
               onChange={(e) => setCalcHours(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
             />
           </div>
         </div>
@@ -431,20 +431,20 @@ export default function TeamPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por nome..."
-              className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
             />
             <button
               type="button"
               onClick={selectNew}
-              className="shrink-0 rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800"
+              className="shrink-0 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98]"
             >
               + Novo
             </button>
           </div>
 
-          <div className="mb-3 space-y-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-3">
+          <div className="mb-3 space-y-3 rounded-2xl border border-gray-200/70 bg-white p-5">
             <div>
-              <p className="mb-1 text-xs font-medium text-gray-600">Tipo</p>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Tipo</p>
               <div className="flex flex-wrap gap-x-4 gap-y-1">
                 {TYPE_OPTIONS.map((opt) => (
                   <label
@@ -462,7 +462,7 @@ export default function TeamPage() {
               </div>
             </div>
             <div>
-              <p className="mb-1 text-xs font-medium text-gray-600">Situação</p>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Situação</p>
               <div className="flex flex-wrap gap-x-4 gap-y-1">
                 {(
                   [
@@ -497,10 +497,13 @@ export default function TeamPage() {
           </div>
 
           {fetching ? (
-            <p className="text-sm text-gray-500">Carregando...</p>
+            <p className="text-sm text-gray-400">Carregando...</p>
           ) : filteredEmployees.length === 0 ? (
-            <div className="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-12 text-center">
-              <p className="text-lg font-medium text-gray-700">Nenhum funcionário cadastrado</p>
+            <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
+                <Users className="h-6 w-6" />
+              </div>
+              <p className="mt-4 text-lg font-bold text-gray-900">Nenhum funcionário cadastrado</p>
               <p className="mt-1 text-sm text-gray-500">Cadastre funcionários para controlar banco de horas, custos e atribuições.</p>
             </div>
           ) : (
@@ -510,16 +513,16 @@ export default function TeamPage() {
                   <button
                     type="button"
                     onClick={() => selectEmployee(e)}
-                    className={`w-full rounded-lg border px-3 py-2 text-left text-sm hover:border-emerald-600 ${
+                    className={`w-full rounded-2xl border px-3.5 py-2.5 text-left text-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_10px_30px_-12px_rgba(6,30,20,0.15)] ${
                       selectedId === e.id
                         ? 'border-emerald-600 bg-emerald-50'
-                        : 'border-gray-200 bg-white'
+                        : 'border-gray-200/70 bg-white'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <p className="font-medium text-gray-900">{e.name}</p>
                       {!e.active && (
-                        <span className="rounded-lg bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500">
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
                           Inativo
                         </span>
                       )}
@@ -536,7 +539,7 @@ export default function TeamPage() {
         </div>
 
         {/* Right: detail / edit / create + banco de horas */}
-        <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+        <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
           {selectedId === null ? (
             <p className="text-sm text-gray-500">
               Selecione um funcionário à esquerda ou clique em &quot;+ Novo&quot; para
@@ -546,14 +549,14 @@ export default function TeamPage() {
             <div className="space-y-6">
               <form onSubmit={handleSaveEmployee} className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-semibold text-gray-800">
+                  <h2 className="font-bold tracking-tight text-gray-900">
                     {selectedId === 'new' ? 'Novo funcionário' : 'Dados do funcionário'}
                   </h2>
                   {selectedId !== 'new' && (
                     <button
                       type="button"
                       onClick={handleDeleteEmployee}
-                      className="text-sm font-medium text-red-600 hover:underline"
+                      className="text-sm font-semibold text-red-600 hover:text-red-800"
                     >
                       Excluir
                     </button>
@@ -562,23 +565,23 @@ export default function TeamPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="col-span-2">
-                    <label className="text-xs font-medium text-gray-600">Nome</label>
+                    <label className="text-sm font-medium text-gray-700">Nome</label>
                     <input
                       type="text"
                       required
                       value={form.name}
                       onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Tipo</label>
+                    <label className="text-sm font-medium text-gray-700">Tipo</label>
                     <select
                       value={form.type}
                       onChange={(e) =>
                         setForm((f) => ({ ...f, type: e.target.value as EmployeeType }))
                       }
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       {TYPE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -588,17 +591,17 @@ export default function TeamPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Função</label>
+                    <label className="text-sm font-medium text-gray-700">Função</label>
                     <input
                       type="text"
                       value={form.role}
                       onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
                       placeholder="Ex.: Tratorista"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Valor/hora (R$)</label>
+                    <label className="text-sm font-medium text-gray-700">Valor/hora (R$)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -606,25 +609,25 @@ export default function TeamPage() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, hourlyRate: e.target.value }))
                       }
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Documento (CPF)</label>
+                    <label className="text-sm font-medium text-gray-700">Documento (CPF)</label>
                     <input
                       type="text"
                       value={form.document}
                       onChange={(e) => setForm((f) => ({ ...f, document: e.target.value }))}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Telefone</label>
+                    <label className="text-sm font-medium text-gray-700">Telefone</label>
                     <input
                       type="text"
                       value={form.phone}
                       onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <label className="col-span-2 flex items-center gap-2 text-sm text-gray-700">
@@ -636,12 +639,12 @@ export default function TeamPage() {
                     Ativo
                   </label>
                   <div className="col-span-2">
-                    <label className="text-xs font-medium text-gray-600">Observações</label>
+                    <label className="text-sm font-medium text-gray-700">Observações</label>
                     <input
                       type="text"
                       value={form.notes}
                       onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                 </div>
@@ -653,14 +656,14 @@ export default function TeamPage() {
                       setSelectedId(null);
                       setDetail(null);
                     }}
-                    className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                    className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                   >
                     {saving ? 'Salvando...' : 'Salvar'}
                   </button>
@@ -670,7 +673,7 @@ export default function TeamPage() {
               {/* Banco de horas — só para funcionário já cadastrado */}
               {selectedId !== 'new' && detail && (
                 <div className="border-t border-gray-200 pt-4">
-                  <h2 className="mb-3 font-semibold text-gray-800">Banco de horas</h2>
+                  <h2 className="mb-3 font-bold tracking-tight text-gray-900">Banco de horas</h2>
                   <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     <SummaryCard
                       label="Horas trabalhadas"
@@ -698,7 +701,7 @@ export default function TeamPage() {
                       placeholder="Descrição"
                       value={entryDescription}
                       onChange={(e) => setEntryDescription(e.target.value)}
-                      className="col-span-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="col-span-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                     <input
                       type="number"
@@ -707,13 +710,13 @@ export default function TeamPage() {
                       placeholder="Horas (+/-)"
                       value={entryHours}
                       onChange={(e) => setEntryHours(e.target.value)}
-                      className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                     <input
                       type="date"
                       value={entryDate}
                       onChange={(e) => setEntryDate(e.target.value)}
-                      className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                     <label className="col-span-2 flex items-center gap-1.5 text-sm text-gray-700 sm:col-span-3">
                       <input
@@ -726,7 +729,7 @@ export default function TeamPage() {
                     <button
                       type="submit"
                       disabled={savingEntry}
-                      className="col-span-2 rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50 sm:col-span-1"
+                      className="col-span-2 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50 sm:col-span-1"
                     >
                       {savingEntry ? 'Salvando...' : 'Registrar horas'}
                     </button>
@@ -747,26 +750,26 @@ export default function TeamPage() {
                         editingEntryId === entry.id ? (
                           <li
                             key={entry.id}
-                            className="flex flex-wrap items-center gap-2 rounded-lg border border-emerald-600 p-2"
+                            className="flex flex-wrap items-center gap-2 rounded-xl border border-emerald-600 p-2"
                           >
                             <input
                               type="text"
                               value={editEntryDescription}
                               onChange={(e) => setEditEntryDescription(e.target.value)}
-                              className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                              className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
                             />
                             <input
                               type="number"
                               step="0.1"
                               value={editEntryHours}
                               onChange={(e) => setEditEntryHours(e.target.value)}
-                              className="w-20 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                              className="w-20 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
                             />
                             <input
                               type="date"
                               value={editEntryDate}
                               onChange={(e) => setEditEntryDate(e.target.value)}
-                              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                              className="rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
                             />
                             <label className="flex items-center gap-1 text-xs text-gray-700">
                               <input
@@ -779,14 +782,14 @@ export default function TeamPage() {
                             <button
                               type="button"
                               onClick={() => handleSaveEntry(entry.id)}
-                              className="rounded-lg bg-emerald-700 px-2 py-1 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-800"
+                              className="rounded-full bg-emerald-700 px-3 py-1 text-xs font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98]"
                             >
                               Salvar
                             </button>
                             <button
                               type="button"
                               onClick={() => setEditingEntryId(null)}
-                              className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                              className="rounded-full bg-gray-900/5 px-3 py-1 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                             >
                               Cancelar
                             </button>
@@ -808,7 +811,7 @@ export default function TeamPage() {
                               <span className="text-xs text-gray-500">
                                 {formatCurrency(entry.hours * detail.hourlyRate)}
                                 {entry.paid && (
-                                  <span className="ml-2 rounded-lg bg-emerald-100 px-1.5 py-0.5 text-xs font-medium text-emerald-700">
+                                  <span className="ml-2 inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
                                     Paga
                                   </span>
                                 )}
@@ -818,21 +821,21 @@ export default function TeamPage() {
                               <button
                                 type="button"
                                 onClick={() => handleTogglePaid(entry)}
-                                className="text-xs font-medium text-gray-600 hover:underline"
+                                className="text-xs font-semibold text-gray-600 hover:text-gray-900"
                               >
                                 {entry.paid ? 'Marcar não paga' : 'Marcar paga'}
                               </button>
                               <button
                                 type="button"
                                 onClick={() => startEditEntry(entry)}
-                                className="text-xs font-medium text-emerald-700 hover:underline"
+                                className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
                               >
                                 Editar
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleDeleteEntry(entry)}
-                                className="text-xs font-medium text-red-600 hover:underline"
+                                className="text-xs font-semibold text-red-600 hover:text-red-800"
                               >
                                 Excluir
                               </button>
@@ -846,7 +849,7 @@ export default function TeamPage() {
                     <button
                       type="button"
                       onClick={() => setShowAllEntries((v) => !v)}
-                      className="mt-3 text-sm font-medium text-emerald-700 hover:underline"
+                      className="mt-3 text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                     >
                       {showAllEntries
                         ? 'Mostrar menos'
@@ -873,9 +876,9 @@ function SummaryCard({
   sub?: string;
 }) {
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-3">
-      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-gray-900">{value}</p>
+    <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+      <p className="text-[13px] font-medium text-gray-500">{label}</p>
+      <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums text-gray-900">{value}</p>
       {sub && <p className="text-xs text-gray-400">{sub}</p>}
     </div>
   );

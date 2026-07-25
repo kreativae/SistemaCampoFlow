@@ -50,7 +50,7 @@ export default function ReproductionStatsPage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -65,7 +65,7 @@ export default function ReproductionStatsPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
@@ -87,9 +87,9 @@ export default function ReproductionStatsPage() {
 
 function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-gray-900">{value}</p>
+    <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+      <p className="text-[13px] font-medium text-gray-500">{label}</p>
+      <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums text-gray-900">{value}</p>
     </div>
   );
 }

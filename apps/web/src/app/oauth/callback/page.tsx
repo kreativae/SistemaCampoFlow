@@ -29,16 +29,16 @@ function OAuthCallbackContent() {
     <div className="text-center">
       {error ? (
         <>
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
           <button
             onClick={() => router.replace('/entrar')}
-            className="mt-4 text-sm font-medium text-emerald-700 hover:underline"
+            className="mt-4 text-sm font-semibold text-emerald-700 hover:text-emerald-900"
           >
             Voltar para o login
           </button>
         </>
       ) : (
-        <p className="text-sm text-gray-500">Concluindo login...</p>
+        <p className="text-sm text-gray-400">Concluindo login...</p>
       )}
     </div>
   );
@@ -47,7 +47,7 @@ function OAuthCallbackContent() {
 export default function OAuthCallbackPage() {
   return (
     <main className="flex flex-1 items-center justify-center px-4">
-      <Suspense fallback={<p className="text-sm text-gray-500">Concluindo login...</p>}>
+      <Suspense fallback={<p className="text-sm text-gray-400">Concluindo login...</p>}>
         <OAuthCallbackContent />
       </Suspense>
     </main>

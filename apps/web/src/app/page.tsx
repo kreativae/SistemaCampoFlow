@@ -15,7 +15,7 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-1 items-center justify-center">
-      <p className="text-gray-500">Carregando...</p>
+      <p className="text-sm text-gray-400">Carregando...</p>
     </main>
   );
 }

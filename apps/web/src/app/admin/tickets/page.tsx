@@ -22,9 +22,9 @@ const STATUS_LABEL: Record<TicketStatus, string> = {
 };
 
 const STATUS_BADGE: Record<TicketStatus, string> = {
-  ABERTO: 'bg-amber-50 text-amber-700',
-  EM_ANDAMENTO: 'bg-blue-50 text-blue-700',
-  RESOLVIDO: 'bg-emerald-50 text-emerald-700',
+  ABERTO: 'bg-amber-100 text-amber-800',
+  EM_ANDAMENTO: 'bg-emerald-600/10 text-emerald-800',
+  RESOLVIDO: 'bg-emerald-100 text-emerald-800',
   FECHADO: 'bg-gray-100 text-gray-600',
 };
 
@@ -36,8 +36,8 @@ const PRIORITY_LABEL: Record<TicketPriority, string> = {
 
 const PRIORITY_BADGE: Record<TicketPriority, string> = {
   BAIXA: 'bg-gray-100 text-gray-600',
-  MEDIA: 'bg-amber-50 text-amber-700',
-  ALTA: 'bg-red-50 text-red-700',
+  MEDIA: 'bg-amber-100 text-amber-800',
+  ALTA: 'bg-red-100 text-red-700',
 };
 
 function relativeTime(iso: string) {
@@ -88,7 +88,7 @@ export default function AdminTicketsPage() {
   return (
     <main className="animate-fade-up mx-auto w-full max-w-5xl flex-1 px-4 py-10">
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Tickets de suporte</h1>
+        <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">Tickets de suporte</h1>
         <p className="text-sm text-gray-500">Tickets de todas as contas da plataforma.</p>
       </header>
 
@@ -102,16 +102,16 @@ export default function AdminTicketsPage() {
               key={opt.value}
               type="button"
               onClick={() => setStatusFilter(opt.value)}
-              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-150 ${
+              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors duration-150 ${
                 active
                   ? 'bg-gray-900 text-white'
-                  : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50'
+                  : 'bg-gray-900/5 text-gray-600 hover:bg-gray-900/10'
               }`}
             >
               {opt.label}
               <span
                 className={`rounded-full px-1.5 text-xs font-semibold ${
-                  active ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'
+                  active ? 'bg-white/20 text-white' : 'bg-gray-900/10 text-gray-500'
                 }`}
               >
                 {count}
@@ -122,16 +122,16 @@ export default function AdminTicketsPage() {
       </div>
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
 
       {fetching ? (
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-12 text-center">
-          <p className="text-lg font-medium text-gray-700">Nenhum ticket encontrado</p>
+        <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+          <p className="text-lg font-bold text-gray-900">Nenhum ticket encontrado</p>
           <p className="mt-1 text-sm text-gray-500">
             {statusFilter === 'TODOS'
               ? 'Quando os clientes abrirem tickets, eles aparecem aqui.'
@@ -144,7 +144,7 @@ export default function AdminTicketsPage() {
             <Link
               key={ticket.id}
               href={`/admin/tickets/${ticket.id}`}
-              className="block rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm transition-shadow duration-150 hover:shadow-md"
+              className="block rounded-2xl border border-gray-200/70 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_10px_30px_-12px_rgba(6,30,20,0.15)]"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
@@ -156,12 +156,12 @@ export default function AdminTicketsPage() {
                 </div>
                 <div className="flex shrink-0 items-center gap-1.5">
                   <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_BADGE[ticket.priority]}`}
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${PRIORITY_BADGE[ticket.priority]}`}
                   >
                     {PRIORITY_LABEL[ticket.priority]}
                   </span>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[ticket.status]}`}
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_BADGE[ticket.status]}`}
                   >
                     {STATUS_LABEL[ticket.status]}
                   </span>

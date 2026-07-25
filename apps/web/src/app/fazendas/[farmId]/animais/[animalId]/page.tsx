@@ -366,7 +366,7 @@ export default function AnimalDetailPage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -374,19 +374,19 @@ export default function AnimalDetailPage() {
   return (
     <main className="animate-fade-up mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8">
       <header className="mb-8">
-        <Link href={`/fazendas/${farmId}/animais`} className="text-sm text-emerald-700 hover:underline">
+        <Link href={`/fazendas/${farmId}/animais`} className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
           ← Rebanho
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{animal?.earTag}</h1>
+        <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">{animal?.earTag}</h1>
         <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-500">
           <span>{animal?.category} · {animal?.sex === 'FEMALE' ? 'Fêmea' : 'Macho'} · {animal?.breed ?? 'Raça não informada'}</span>
           {animal?.performance && (
-            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${ANIMAL_PERFORMANCE_COLOR[animal.performance]}`}>
+            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${ANIMAL_PERFORMANCE_COLOR[animal.performance]}`}>
               {ANIMAL_PERFORMANCE_LABEL[animal.performance]}
             </span>
           )}
           {animal && (() => { const age = calcAnimalAge(animal); return age ? (
-            <span className="inline-flex items-center rounded-full bg-blue-100 text-blue-800 px-2 py-0.5 text-xs font-medium">
+            <span className="inline-flex items-center rounded-full bg-emerald-100 text-emerald-800 px-2.5 py-0.5 text-xs font-semibold">
               {age.label} · {age.category}
             </span>
           ) : null; })()}
@@ -394,7 +394,7 @@ export default function AnimalDetailPage() {
       </header>
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
@@ -411,14 +411,14 @@ export default function AnimalDetailPage() {
         />
       </section>
 
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Datas</h2>
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Datas</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Data de nascimento</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Data de nascimento</label>
             <input
               type="date"
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               value={animal?.birthDate ? animal.birthDate.slice(0, 10) : ''}
               onChange={async (e) => {
                 const v = e.target.value;
@@ -436,10 +436,10 @@ export default function AnimalDetailPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Data de entrada</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Data de entrada</label>
             <input
               type="date"
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               value={animal?.entryDate ? animal.entryDate.slice(0, 10) : ''}
               onChange={async (e) => {
                 const v = e.target.value;
@@ -459,8 +459,8 @@ export default function AnimalDetailPage() {
         </div>
       </section>
 
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Pasto</h2>
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Pasto</h2>
         <p className="mb-3 text-sm text-gray-500">
           Pasto atual:{' '}
           <span className="font-medium text-gray-800">
@@ -471,7 +471,7 @@ export default function AnimalDetailPage() {
           <select
             value={movePastureId}
             onChange={(e) => setMovePastureId(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             <option value="">— Sem pasto —</option>
             {pastures.map((p) => (
@@ -483,15 +483,15 @@ export default function AnimalDetailPage() {
           <button
             type="submit"
             disabled={savingPasture || movePastureId === (animal?.pastureId ?? '')}
-            className="rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {savingPasture ? 'Salvando...' : 'Trocar pasto'}
           </button>
         </form>
       </section>
 
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Pesagens</h2>
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Pesagens</h2>
         <form onSubmit={handleAddWeighing} className="mb-4 flex gap-2">
           <input
             type="number"
@@ -501,12 +501,12 @@ export default function AnimalDetailPage() {
             required
             value={newWeight}
             onChange={(e) => setNewWeight(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <button
             type="submit"
             disabled={savingWeight}
-            className="rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {savingWeight ? 'Salvando...' : 'Registrar'}
           </button>
@@ -527,7 +527,7 @@ export default function AnimalDetailPage() {
                         type="date"
                         value={editWeighingDate}
                         onChange={(e) => setEditWeighingDate(e.target.value)}
-                        className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                        className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       />
                       <input
                         type="number"
@@ -535,20 +535,20 @@ export default function AnimalDetailPage() {
                         min="0"
                         value={editWeighingKg}
                         onChange={(e) => setEditWeighingKg(e.target.value)}
-                        className="w-24 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                        className="w-24 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       />
                       <button
                         type="button"
                         disabled={savingWeighingEdit}
                         onClick={() => handleSaveWeighingEdit(w.id)}
-                        className="rounded-lg bg-emerald-700 px-2 py-1 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                        className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                       >
                         {savingWeighingEdit ? 'Salvando...' : 'Salvar'}
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditingWeighingId(null)}
-                        className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                        className="rounded-full bg-gray-900/5 px-4 py-2 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                       >
                         Cancelar
                       </button>
@@ -563,14 +563,14 @@ export default function AnimalDetailPage() {
                         <button
                           type="button"
                           onClick={() => startEditWeighing(w)}
-                          className="text-xs font-medium text-emerald-700 hover:underline"
+                          className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                         >
                           Editar
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDeleteWeighing(w.id)}
-                          className="text-xs font-medium text-red-600 hover:underline"
+                          className="text-sm font-semibold text-red-600 hover:text-red-800"
                         >
                           Excluir
                         </button>
@@ -583,8 +583,8 @@ export default function AnimalDetailPage() {
         )}
       </section>
 
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Vacinação</h2>
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Vacinação</h2>
         <form onSubmit={handleScheduleVaccination} className="mb-4 flex flex-wrap gap-2">
           <input
             type="text"
@@ -592,19 +592,19 @@ export default function AnimalDetailPage() {
             required
             value={vaccineName}
             onChange={(e) => setVaccineName(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <input
             type="date"
             required
             value={scheduledDate}
             onChange={(e) => setScheduledDate(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
           <button
             type="submit"
             disabled={savingVaccination}
-            className="rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {savingVaccination ? 'Salvando...' : 'Agendar'}
           </button>
@@ -617,17 +617,17 @@ export default function AnimalDetailPage() {
               editingVaccinationId === v.id ? (
                 <li key={v.id} className="flex flex-wrap items-center gap-2 py-1">
                   <span className="font-medium">{v.vaccineName}</span>
-                  <label className="flex items-center gap-1 text-xs text-gray-500">
+                  <label className="flex items-center gap-1 text-sm font-medium text-gray-700">
                     Agendada para
                     <input
                       type="date"
                       value={editVaccinationScheduledDate}
                       onChange={(e) => setEditVaccinationScheduledDate(e.target.value)}
-                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </label>
                   {v.administeredAt && (
-                    <label className="flex items-center gap-1 text-xs text-gray-500">
+                    <label className="flex items-center gap-1 text-sm font-medium text-gray-700">
                       Aplicada em
                       <input
                         type="date"
@@ -635,7 +635,7 @@ export default function AnimalDetailPage() {
                         onChange={(e) =>
                           setEditVaccinationAdministeredAt(e.target.value)
                         }
-                        className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                        className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       />
                     </label>
                   )}
@@ -643,14 +643,14 @@ export default function AnimalDetailPage() {
                     type="button"
                     disabled={savingVaccinationEdit}
                     onClick={() => handleSaveVaccinationEdit(v.id)}
-                    className="rounded-lg bg-emerald-700 px-2 py-1 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                    className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                   >
                     {savingVaccinationEdit ? 'Salvando...' : 'Salvar'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditingVaccinationId(null)}
-                    className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-full bg-gray-900/5 px-4 py-2 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                   >
                     Cancelar
                   </button>
@@ -666,7 +666,7 @@ export default function AnimalDetailPage() {
                       <button
                         type="button"
                         onClick={() => handleApplyVaccination(v.id)}
-                        className="text-xs font-medium text-emerald-700 hover:underline"
+                        className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                       >
                         Marcar como aplicada
                       </button>
@@ -674,7 +674,7 @@ export default function AnimalDetailPage() {
                     <button
                       type="button"
                       onClick={() => startEditVaccination(v)}
-                      className="text-xs font-medium text-emerald-700 hover:underline"
+                      className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                     >
                       Editar
                     </button>
@@ -686,13 +686,13 @@ export default function AnimalDetailPage() {
         )}
       </section>
 
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Reprodução</h2>
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Reprodução</h2>
         <form onSubmit={handleAddReproductiveEvent} className="mb-4 flex flex-wrap gap-2">
           <select
             value={reproEventType}
             onChange={(e) => setReproEventType(e.target.value as ReproductiveEventType)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             {REPRODUCTIVE_EVENT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -705,7 +705,7 @@ export default function AnimalDetailPage() {
               value={reproResult}
               onChange={(e) => setReproResult(e.target.value as PregnancyDiagnosisResult | '')}
               required
-              className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
             >
               <option value="">Resultado...</option>
               <option value="PRENHE">Prenhe</option>
@@ -715,7 +715,7 @@ export default function AnimalDetailPage() {
           <button
             type="submit"
             disabled={savingReproEvent}
-            className="rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {savingReproEvent ? 'Salvando...' : 'Registrar evento'}
           </button>
@@ -731,12 +731,12 @@ export default function AnimalDetailPage() {
                     type="date"
                     value={editReproDate}
                     onChange={(ev) => setEditReproDate(ev.target.value)}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <select
                     value={editReproType}
                     onChange={(ev) => setEditReproType(ev.target.value as ReproductiveEventType)}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     {REPRODUCTIVE_EVENT_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -748,7 +748,7 @@ export default function AnimalDetailPage() {
                     <select
                       value={editReproResult}
                       onChange={(ev) => setEditReproResult(ev.target.value as PregnancyDiagnosisResult | '')}
-                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       <option value="">Resultado...</option>
                       <option value="PRENHE">Prenhe</option>
@@ -759,14 +759,14 @@ export default function AnimalDetailPage() {
                     type="button"
                     disabled={savingReproEdit}
                     onClick={() => handleSaveReproEdit(e.id)}
-                    className="rounded-lg bg-emerald-700 px-2 py-1 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                    className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                   >
                     {savingReproEdit ? 'Salvando...' : 'Salvar'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditingReproId(null)}
-                    className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-full bg-gray-900/5 px-4 py-2 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                   >
                     Cancelar
                   </button>
@@ -782,14 +782,14 @@ export default function AnimalDetailPage() {
                     <button
                       type="button"
                       onClick={() => startEditReproEvent(e)}
-                      className="text-xs font-medium text-emerald-700 hover:underline"
+                      className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                     >
                       Editar
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDeleteReproEvent(e.id)}
-                      className="text-xs font-medium text-red-600 hover:underline"
+                      className="text-sm font-semibold text-red-600 hover:text-red-800"
                     >
                       Excluir
                     </button>
@@ -802,8 +802,8 @@ export default function AnimalDetailPage() {
       </section>
 
       {/* Desempenho */}
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Desempenho</h2>
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Desempenho</h2>
         <div className="flex flex-wrap items-center gap-3">
           <select
             value={animal?.performance ?? ''}
@@ -818,7 +818,7 @@ export default function AnimalDetailPage() {
                 await loadData();
               } catch {}
             }}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             <option value="">— Sem classificação —</option>
             <option value="CABECEIRA">Cabeceira (melhor)</option>
@@ -830,13 +830,13 @@ export default function AnimalDetailPage() {
       </section>
 
       {/* Genealogia */}
-      <section className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Genealogia</h2>
+      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Genealogia</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">Pai</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 mb-1">Pai</p>
             {animal?.father ? (
-              <Link href={`/fazendas/${farmId}/animais/${animal.father.id}`} className="text-sm text-emerald-700 hover:underline">
+              <Link href={`/fazendas/${farmId}/animais/${animal.father.id}`} className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
                 {animal.father.earTag}{animal.father.name ? ` — ${animal.father.name}` : ''}
               </Link>
             ) : (
@@ -861,16 +861,16 @@ export default function AnimalDetailPage() {
                   });
                   await loadData();
                 }}
-                className="mt-1 text-xs text-red-600 hover:underline"
+                className="mt-1 text-sm font-semibold text-red-600 hover:text-red-800"
               >
                 Remover pai
               </button>
             )}
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">Mãe</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 mb-1">Mãe</p>
             {animal?.mother ? (
-              <Link href={`/fazendas/${farmId}/animais/${animal.mother.id}`} className="text-sm text-emerald-700 hover:underline">
+              <Link href={`/fazendas/${farmId}/animais/${animal.mother.id}`} className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
                 {animal.mother.earTag}{animal.mother.name ? ` — ${animal.mother.name}` : ''}
               </Link>
             ) : (
@@ -895,7 +895,7 @@ export default function AnimalDetailPage() {
                   });
                   await loadData();
                 }}
-                className="mt-1 text-xs text-red-600 hover:underline"
+                className="mt-1 text-sm font-semibold text-red-600 hover:text-red-800"
               >
                 Remover mãe
               </button>
@@ -904,11 +904,11 @@ export default function AnimalDetailPage() {
         </div>
         {animal?.children && animal.children.length > 0 && (
           <div className="mt-4">
-            <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">Filhos ({animal.children.length})</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 mb-1">Filhos ({animal.children.length})</p>
             <ul className="space-y-1">
               {animal.children.map((c) => (
                 <li key={c.id}>
-                  <Link href={`/fazendas/${farmId}/animais/${c.id}`} className="text-sm text-emerald-700 hover:underline">
+                  <Link href={`/fazendas/${farmId}/animais/${c.id}`} className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
                     {c.earTag}{c.name ? ` — ${c.name}` : ''}
                   </Link>
                 </li>
@@ -918,8 +918,8 @@ export default function AnimalDetailPage() {
         )}
       </section>
 
-      <section className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-        <h2 className="mb-3 font-semibold text-gray-800">Histórico</h2>
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Histórico</h2>
         {history.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhum evento registrado.</p>
         ) : (
@@ -940,9 +940,9 @@ export default function AnimalDetailPage() {
 
 function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-3">
-      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-gray-900">{value}</p>
+    <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+      <p className="text-[13px] font-medium text-gray-500">{label}</p>
+      <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums text-gray-900">{value}</p>
     </div>
   );
 }
@@ -1080,10 +1080,10 @@ function ParentSearch({
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 200)}
-        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+        className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
       />
       {open && results.length > 0 && (
-        <ul className="absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+        <ul className="absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg">
           {results.map((r) => (
             <li key={r.id}>
               <button

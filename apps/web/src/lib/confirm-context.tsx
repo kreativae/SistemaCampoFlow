@@ -56,10 +56,10 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
     <ConfirmContext.Provider value={{ confirm }}>
       {children}
       {pending && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+        <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-gray-950/35 px-4 backdrop-blur-[3px]">
+          <div className="animate-fade-up w-full max-w-md rounded-3xl bg-white p-7 shadow-[0_24px_60px_-16px_rgba(6,30,20,0.28)] ring-1 ring-gray-950/5">
             <h2
-              className={`text-lg font-semibold ${pending.danger ? 'text-red-700' : 'text-gray-900'}`}
+              className={`text-lg font-bold tracking-tight ${pending.danger ? 'text-red-700' : 'text-gray-900'}`}
             >
               {pending.title}
             </h2>
@@ -76,7 +76,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                   autoFocus
                   value={typedText}
                   onChange={(e) => setTypedText(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-400 focus:border-emerald-600 focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
                 />
               </div>
             )}
@@ -85,7 +85,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={() => handleClose(false)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
               >
                 {pending.cancelLabel ?? 'Cancelar'}
               </button>
@@ -93,7 +93,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                 type="button"
                 disabled={!textMatches}
                 onClick={() => handleClose(true)}
-                className={`rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50 ${
+                className={`rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 disabled:opacity-50 ${
                   pending.danger
                     ? 'bg-red-600 hover:bg-red-700'
                     : 'bg-emerald-700 hover:bg-emerald-800'

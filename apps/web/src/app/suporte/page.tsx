@@ -15,9 +15,9 @@ const STATUS_LABEL: Record<Ticket['status'], string> = {
 };
 
 const STATUS_BADGE: Record<Ticket['status'], string> = {
-  ABERTO: 'bg-amber-50 text-amber-700',
-  EM_ANDAMENTO: 'bg-blue-50 text-blue-700',
-  RESOLVIDO: 'bg-emerald-50 text-emerald-700',
+  ABERTO: 'bg-amber-100 text-amber-800',
+  EM_ANDAMENTO: 'bg-emerald-100 text-emerald-800',
+  RESOLVIDO: 'bg-emerald-100 text-emerald-800',
   FECHADO: 'bg-gray-100 text-gray-600',
 };
 
@@ -81,7 +81,7 @@ export default function SupportPage() {
   if (loading || !user) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -90,16 +90,16 @@ export default function SupportPage() {
     <main className="animate-fade-up mx-auto w-full max-w-3xl flex-1 px-4 py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Suporte</h1>
+          <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">Suporte</h1>
           <p className="text-sm text-gray-500">Olá, {user.name}</p>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/fazendas" className="text-sm font-medium text-emerald-700 hover:underline">
+          <Link href="/fazendas" className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
             Painel
           </Link>
           <button
             onClick={logout}
-            className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            className="text-sm font-semibold text-gray-600 hover:text-gray-900"
           >
             Sair
           </button>
@@ -107,20 +107,20 @@ export default function SupportPage() {
       </header>
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
 
-      <form onSubmit={handleCreate} className="mb-8 space-y-3 rounded-lg border border-gray-200 p-4">
-        <h2 className="text-sm font-semibold text-gray-700">Abrir novo ticket</h2>
+      <form onSubmit={handleCreate} className="mb-8 space-y-3 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="text-sm font-bold tracking-tight text-gray-700">Abrir novo ticket</h2>
         <input
           type="text"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Assunto"
           required
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+          className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
         />
         <textarea
           value={message}
@@ -128,13 +128,13 @@ export default function SupportPage() {
           placeholder="Descreva o problema ou dúvida"
           required
           rows={3}
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+          className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
         />
         <div className="flex items-center justify-between">
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value as Ticket['priority'])}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             <option value="BAIXA">Prioridade baixa</option>
             <option value="MEDIA">Prioridade média</option>
@@ -143,19 +143,19 @@ export default function SupportPage() {
           <button
             type="submit"
             disabled={creating}
-            className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {creating ? 'Enviando...' : 'Abrir ticket'}
           </button>
         </div>
       </form>
 
-      <h2 className="mb-3 text-sm font-semibold text-gray-700">Meus tickets</h2>
+      <h2 className="mb-3 text-sm font-bold tracking-tight text-gray-700">Meus tickets</h2>
       {fetching ? (
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       ) : tickets.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-12 text-center">
-          <p className="text-lg font-medium text-gray-700">Nenhum ticket de suporte</p>
+        <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+          <p className="text-lg font-bold text-gray-900">Nenhum ticket de suporte</p>
           <p className="mt-1 text-sm text-gray-500">Abra um chamado acima para tirar dúvidas ou reportar problemas.</p>
         </div>
       ) : (
@@ -164,7 +164,7 @@ export default function SupportPage() {
             <li key={ticket.id}>
               <Link
                 href={`/suporte/${ticket.id}`}
-                className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3 hover:border-emerald-600"
+                className="flex items-center justify-between rounded-2xl border border-gray-200/70 bg-white px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_10px_30px_-12px_rgba(6,30,20,0.15)]"
               >
                 <div>
                   <p className="font-medium text-gray-900">{ticket.subject}</p>
@@ -173,7 +173,7 @@ export default function SupportPage() {
                   </p>
                 </div>
                 <span
-                  className={`rounded px-2 py-1 text-xs font-medium ${STATUS_BADGE[ticket.status]}`}
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_BADGE[ticket.status]}`}
                 >
                   {STATUS_LABEL[ticket.status]}
                 </span>

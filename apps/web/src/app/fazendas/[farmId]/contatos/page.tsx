@@ -248,7 +248,7 @@ export default function ContactsPage() {
   if (loading || !user) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -263,7 +263,7 @@ export default function ContactsPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
@@ -277,12 +277,12 @@ export default function ContactsPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por nome..."
-              className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+              className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
             />
             <button
               type="button"
               onClick={selectNew}
-              className="shrink-0 rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800"
+              className="shrink-0 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
             >
               + Novo
             </button>
@@ -293,7 +293,7 @@ export default function ContactsPage() {
             <button
               type="button"
               onClick={() => setLetterFilter(null)}
-              className={`rounded px-1.5 py-0.5 text-xs font-medium ${
+              className={`rounded-full px-1.5 py-0.5 text-xs font-medium ${
                 letterFilter === null
                   ? 'bg-emerald-700 text-white'
                   : 'text-emerald-700 hover:bg-emerald-50'
@@ -310,7 +310,7 @@ export default function ContactsPage() {
                   type="button"
                   disabled={!enabled}
                   onClick={() => setLetterFilter(active ? null : letter)}
-                  className={`w-6 rounded-lg px-0 py-0.5 text-xs font-medium ${
+                  className={`w-6 rounded-full px-0 py-0.5 text-xs font-medium ${
                     active
                       ? 'bg-emerald-700 text-white'
                       : enabled
@@ -326,7 +326,7 @@ export default function ContactsPage() {
               <button
                 type="button"
                 onClick={() => setLetterFilter(letterFilter === '#' ? null : '#')}
-                className={`w-6 rounded-lg px-0 py-0.5 text-xs font-medium ${
+                className={`w-6 rounded-full px-0 py-0.5 text-xs font-medium ${
                   letterFilter === '#'
                     ? 'bg-emerald-700 text-white'
                     : 'text-emerald-700 hover:bg-emerald-50'
@@ -337,7 +337,7 @@ export default function ContactsPage() {
             )}
           </div>
 
-          <div className="mb-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-3">
+          <div className="mb-3 rounded-2xl border border-gray-200/70 bg-white p-5">
             <p className="mb-1 text-xs font-medium text-gray-600">Tipo</p>
             <div className="mb-2 flex flex-wrap gap-3">
               {(['PESSOA_FISICA', 'PESSOA_JURIDICA'] as ContactType[]).map((t) => (
@@ -372,10 +372,10 @@ export default function ContactsPage() {
           </div>
 
           {fetching ? (
-            <p className="text-sm text-gray-500">Carregando...</p>
+            <p className="text-sm text-gray-400">Carregando...</p>
           ) : filteredContacts.length === 0 ? (
-            <div className="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-12 text-center">
-              <p className="text-lg font-medium text-gray-700">Nenhum contato cadastrado</p>
+            <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+              <p className="text-lg font-bold text-gray-900">Nenhum contato cadastrado</p>
               <p className="mt-1 text-sm text-gray-500">Cadastre veterinários, fornecedores e outros contatos importantes da fazenda.</p>
             </div>
           ) : (
@@ -385,10 +385,10 @@ export default function ContactsPage() {
                   <button
                     type="button"
                     onClick={() => selectContact(c)}
-                    className={`w-full rounded-lg border px-3 py-2 text-left text-sm hover:border-emerald-600 ${
+                    className={`w-full rounded-xl border px-3 py-2 text-left text-sm transition-all duration-200 hover:border-emerald-200 ${
                       selectedId === c.id
                         ? 'border-emerald-600 bg-emerald-50'
-                        : 'border-gray-200 bg-white'
+                        : 'border-gray-200/70 bg-white'
                     }`}
                   >
                     <p className="font-medium text-gray-900">{c.name}</p>
@@ -403,7 +403,7 @@ export default function ContactsPage() {
         </div>
 
         {/* Right: quick view / edit / create */}
-        <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+        <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
           {selectedId === null ? (
             <p className="text-sm text-gray-500">
               Selecione um contato à esquerda ou clique em &quot;+ Novo&quot; para
@@ -412,14 +412,14 @@ export default function ContactsPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="font-semibold text-gray-800">
+                <h2 className="text-lg font-bold tracking-tight text-gray-900">
                   {selectedId === 'new' ? 'Novo contato' : 'Visualização rápida'}
                 </h2>
                 {selectedId !== 'new' && (
                   <button
                     type="button"
                     onClick={handleDelete}
-                    className="text-sm font-medium text-red-600 hover:underline"
+                    className="text-sm font-semibold text-red-600 hover:text-red-800"
                   >
                     Excluir
                   </button>
@@ -428,20 +428,20 @@ export default function ContactsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Tipo</label>
+                  <label className="text-sm font-medium text-gray-700">Tipo</label>
                   <select
                     value={form.type}
                     onChange={(e) =>
                       setForm((f) => ({ ...f, type: e.target.value as ContactType }))
                     }
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     <option value="PESSOA_FISICA">Pessoa física</option>
                     <option value="PESSOA_JURIDICA">Pessoa jurídica</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Categoria</label>
+                  <label className="text-sm font-medium text-gray-700">Categoria</label>
                   <select
                     value={form.category}
                     onChange={(e) =>
@@ -450,7 +450,7 @@ export default function ContactsPage() {
                         category: e.target.value as ContactCategory,
                       }))
                     }
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     {CATEGORY_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -461,7 +461,7 @@ export default function ContactsPage() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="text-xs font-medium text-gray-600">
+                  <label className="text-sm font-medium text-gray-700">
                     {form.type === 'PESSOA_JURIDICA' ? 'Razão social' : 'Nome completo'}
                   </label>
                   <input
@@ -469,13 +469,13 @@ export default function ContactsPage() {
                     required
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
 
                 {form.type === 'PESSOA_JURIDICA' && (
                   <div className="col-span-2">
-                    <label className="text-xs font-medium text-gray-600">
+                    <label className="text-sm font-medium text-gray-700">
                       Nome fantasia (opcional)
                     </label>
                     <input
@@ -484,13 +484,13 @@ export default function ContactsPage() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, tradeName: e.target.value }))
                       }
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                 )}
 
                 <div className="col-span-2">
-                  <label className="text-xs font-medium text-gray-600">
+                  <label className="text-sm font-medium text-gray-700">
                     {form.type === 'PESSOA_JURIDICA' ? 'CNPJ' : 'CPF'}
                   </label>
                   <input
@@ -498,40 +498,40 @@ export default function ContactsPage() {
                     value={form.document}
                     onChange={(e) => setForm((f) => ({ ...f, document: e.target.value }))}
                     placeholder={form.type === 'PESSOA_JURIDICA' ? '00.000.000/0000-00' : '000.000.000-00'}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-gray-600">E-mail</label>
+                  <label className="text-sm font-medium text-gray-700">E-mail</label>
                   <input
                     type="email"
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Telefone</label>
+                  <label className="text-sm font-medium text-gray-700">Telefone</label>
                   <input
                     type="text"
                     value={form.phone}
                     onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="text-xs font-medium text-gray-600">WhatsApp</label>
+                  <label className="text-sm font-medium text-gray-700">WhatsApp</label>
                   <input
                     type="text"
                     value={form.whatsapp}
                     onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
 
                 <div className="col-span-2">
-                  <label className="text-xs font-medium text-gray-600">Endereço</label>
+                  <label className="text-sm font-medium text-gray-700">Endereço</label>
                   <input
                     type="text"
                     value={form.addressStreet}
@@ -539,22 +539,22 @@ export default function ContactsPage() {
                       setForm((f) => ({ ...f, addressStreet: e.target.value }))
                     }
                     placeholder="Rua, número, bairro"
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Cidade</label>
+                  <label className="text-sm font-medium text-gray-700">Cidade</label>
                   <input
                     type="text"
                     value={form.addressCity}
                     onChange={(e) =>
                       setForm((f) => ({ ...f, addressCity: e.target.value }))
                     }
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Estado</label>
+                  <label className="text-sm font-medium text-gray-700">Estado</label>
                   <input
                     type="text"
                     maxLength={2}
@@ -563,28 +563,28 @@ export default function ContactsPage() {
                       setForm((f) => ({ ...f, addressState: e.target.value.toUpperCase() }))
                     }
                     placeholder="UF"
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">CEP</label>
+                  <label className="text-sm font-medium text-gray-700">CEP</label>
                   <input
                     type="text"
                     value={form.addressZip}
                     onChange={(e) =>
                       setForm((f) => ({ ...f, addressZip: e.target.value }))
                     }
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
 
                 <div className="col-span-2">
-                  <label className="text-xs font-medium text-gray-600">Observações</label>
+                  <label className="text-sm font-medium text-gray-700">Observações</label>
                   <textarea
                     rows={2}
                     value={form.notes}
                     onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                 </div>
               </div>
@@ -596,14 +596,14 @@ export default function ContactsPage() {
                     setSelectedId(null);
                     setForm(EMPTY_FORM);
                   }}
-                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+                  className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
                 >
                   {saving ? 'Salvando...' : 'Salvar'}
                 </button>

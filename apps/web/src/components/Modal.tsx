@@ -39,7 +39,7 @@ export default function Modal({
       }}
     >
       <div
-        className={`animate-fade-up flex max-h-[90vh] w-full ${maxWidth} flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-16px_rgba(6,30,20,0.28)] ring-1 ring-gray-950/5`}
+        className={`animate-fade-up flex max-h-[90vh] w-full ${maxWidth} flex-col overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-16px_rgba(6,30,20,0.28)] ring-1 ring-gray-950/5`}
       >
         {children}
       </div>

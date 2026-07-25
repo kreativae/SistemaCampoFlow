@@ -17,7 +17,7 @@ export default function GoogleLoginButton() {
   return (
     <a
       href={`${API_URL}/auth/google`}
-      className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+      className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors duration-150 hover:bg-gray-50"
     >
       Entrar com Google
     </a>

@@ -625,7 +625,7 @@ export default function NegociosPage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -642,28 +642,28 @@ export default function NegociosPage() {
         actions={
           <button
             onClick={() => { setShowForm(!showForm); if (showForm) resetForm(); }}
-            className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-emerald-800"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {showForm ? 'Cancelar' : 'Novo negócio'}
           </button>
         }
       />
 
-      {error && <p className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+      {error && <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
 
       {/* --- Formulário de criação --- */}
       {showForm && (
-        <section ref={formRef} className="mb-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
-          <h2 className="mb-4 font-semibold text-gray-800">{editingDealId ? 'Editar negócio' : 'Novo negócio'}</h2>
+        <section ref={formRef} className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+          <h2 className="mb-4 text-lg font-bold tracking-tight text-gray-900">{editingDealId ? 'Editar negócio' : 'Novo negócio'}</h2>
           <form onSubmit={handleCreate} className="space-y-4">
             {/* Tipo + data */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div>
-                <label className="text-xs font-medium text-gray-600">Tipo</label>
+                <label className="text-sm font-medium text-gray-700">Tipo</label>
                 <select
                   value={dealType}
                   onChange={(e) => setDealType(e.target.value as DealType)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 >
                   <option value="VENDA">Venda</option>
                   <option value="COMPRA">Compra</option>
@@ -672,17 +672,17 @@ export default function NegociosPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Data</label>
+                <label className="text-sm font-medium text-gray-700">Data</label>
                 <input
                   type="date"
                   value={dealDate}
                   onChange={(e) => setDealDate(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   required
                 />
               </div>
               <div className="col-span-2">
-                <label className="text-xs font-medium text-gray-600">
+                <label className="text-sm font-medium text-gray-700">
                   {dealType === 'ABATE' ? 'Frigorífico' : 'Contraparte (comprador/vendedor)'}
                 </label>
                 <input
@@ -690,7 +690,7 @@ export default function NegociosPage() {
                   value={counterparty}
                   onChange={(e) => setCounterparty(e.target.value)}
                   placeholder={dealType === 'ABATE' ? 'Nome do frigorífico' : 'Nome ou empresa'}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
             </div>
@@ -700,7 +700,7 @@ export default function NegociosPage() {
               <div className="space-y-3">
                 <div className={`grid gap-3 ${isInstallment ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-2'}`}>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Quantidade de animais</label>
+                    <label className="text-sm font-medium text-gray-700">Quantidade de animais</label>
                     <input
                       type="number"
                       min="1"
@@ -708,14 +708,14 @@ export default function NegociosPage() {
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
                       placeholder="0"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       required={draftItems.length === 0}
                     />
                   </div>
                   {isInstallment ? (
                     <>
                       <div>
-                        <label className="text-xs font-medium text-gray-600">Nº de parcelas</label>
+                        <label className="text-sm font-medium text-gray-700">Nº de parcelas</label>
                         <input
                           type="number"
                           min="1"
@@ -723,12 +723,12 @@ export default function NegociosPage() {
                           value={installmentCount}
                           onChange={(e) => setInstallmentCount(e.target.value)}
                           placeholder="1"
-                          className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                          className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                           required
                         />
                       </div>
                       <div>
-                        <label className="text-xs font-medium text-gray-600">Valor da parcela (R$)</label>
+                        <label className="text-sm font-medium text-gray-700">Valor da parcela (R$)</label>
                         <input
                           type="number"
                           step="0.01"
@@ -736,13 +736,13 @@ export default function NegociosPage() {
                           value={installmentValue}
                           onChange={(e) => setInstallmentValue(e.target.value)}
                           placeholder="0,00"
-                          className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                          className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                           required
                         />
                       </div>
                       <div className="col-span-full">
-                        <label className="text-xs font-medium text-gray-600">Valor total (calculado)</label>
-                        <p className="mt-1 rounded-lg border border-gray-100 bg-gray-50 px-2 py-1.5 text-sm font-medium text-gray-700">
+                        <label className="text-sm font-medium text-gray-700">Valor total (calculado)</label>
+                        <p className="mt-1 rounded-xl border border-gray-100 bg-gray-50 px-2 py-1.5 text-sm font-medium text-gray-700">
                           {Number(installmentCount) > 0 && Number(installmentValue) > 0
                             ? formatCurrency(Number(installmentCount) * Number(installmentValue))
                             : 'R$ —'}
@@ -751,7 +751,7 @@ export default function NegociosPage() {
                     </>
                   ) : (
                     <div>
-                      <label className="text-xs font-medium text-gray-600">Valor total (R$)</label>
+                      <label className="text-sm font-medium text-gray-700">Valor total (R$)</label>
                       <input
                         type="number"
                         step="0.01"
@@ -759,7 +759,7 @@ export default function NegociosPage() {
                         value={totalValue}
                         onChange={(e) => setTotalValue(e.target.value)}
                         placeholder="0,00"
-                        className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                        className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                         required
                       />
                     </div>
@@ -781,18 +781,18 @@ export default function NegociosPage() {
               {dealType === 'VENDA' && (
                 <>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Preço por</label>
+                    <label className="text-sm font-medium text-gray-700">Preço por</label>
                     <select
                       value={priceUnit}
                       onChange={(e) => setPriceUnit(e.target.value as 'ANIMAL' | 'ARROBA')}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       <option value="ARROBA">Arroba (@)</option>
                       <option value="ANIMAL">Animal</option>
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">
+                    <label className="text-sm font-medium text-gray-700">
                       Valor (R$/{priceUnit === 'ARROBA' ? '@' : 'cab.'})
                     </label>
                     <input
@@ -802,7 +802,7 @@ export default function NegociosPage() {
                       value={pricePerUnit}
                       onChange={(e) => setPricePerUnit(e.target.value)}
                       placeholder="0,00"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       required
                     />
                   </div>
@@ -812,7 +812,7 @@ export default function NegociosPage() {
               {dealType === 'ABATE' && (
                 <>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Valor do kg vivo (R$)</label>
+                    <label className="text-sm font-medium text-gray-700">Valor do kg vivo (R$)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -820,12 +820,12 @@ export default function NegociosPage() {
                       value={liveWeightPricePerKg}
                       onChange={(e) => setLiveWeightPricePerKg(e.target.value)}
                       placeholder="0,00"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Rendimento de carcaça (%)</label>
+                    <label className="text-sm font-medium text-gray-700">Rendimento de carcaça (%)</label>
                     <input
                       type="number"
                       step="0.1"
@@ -834,24 +834,24 @@ export default function NegociosPage() {
                       value={carcassYieldPercent}
                       onChange={(e) => setCarcassYieldPercent(e.target.value)}
                       placeholder="52"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Valor da @ (calculado)</label>
-                    <p className="mt-1 rounded-lg border border-gray-100 bg-gray-50 px-2 py-1.5 text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-gray-700">Valor da @ (calculado)</label>
+                    <p className="mt-1 rounded-xl border border-gray-100 bg-gray-50 px-2 py-1.5 text-sm font-medium text-gray-700">
                       {Number(liveWeightPricePerKg) > 0 && Number(carcassYieldPercent) > 0
                         ? formatCurrency((Number(liveWeightPricePerKg) / (Number(carcassYieldPercent) / 100)) * ARROBA_KG)
                         : 'R$ —'}
                     </p>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Frequência</label>
+                    <label className="text-sm font-medium text-gray-700">Frequência</label>
                     <select
                       value={slaughterFrequency}
                       onChange={(e) => setSlaughterFrequency(e.target.value as 'TRIMESTRAL' | 'SEMESTRAL')}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       <option value="TRIMESTRAL">Trimestral</option>
                       <option value="SEMESTRAL">Semestral</option>
@@ -864,7 +864,7 @@ export default function NegociosPage() {
               {(dealType === 'ABATE' || dealType === 'VENDA_GRAO') && (
                 <>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Funrural (%)</label>
+                    <label className="text-sm font-medium text-gray-700">Funrural (%)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -873,11 +873,11 @@ export default function NegociosPage() {
                       value={funruralPercent}
                       onChange={(e) => setFunruralPercent(e.target.value)}
                       placeholder="1.5"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">SENAR (%)</label>
+                    <label className="text-sm font-medium text-gray-700">SENAR (%)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -886,14 +886,14 @@ export default function NegociosPage() {
                       value={senarPercent}
                       onChange={(e) => setSenarPercent(e.target.value)}
                       placeholder="0.2"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                 </>
               )}
 
               <div>
-                <label className="text-xs font-medium text-gray-600">Frete total (R$)</label>
+                <label className="text-sm font-medium text-gray-700">Frete total (R$)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -901,11 +901,11 @@ export default function NegociosPage() {
                   value={freightCost}
                   onChange={(e) => setFreightCost(e.target.value)}
                   placeholder="0,00"
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Comissão (%)</label>
+                <label className="text-sm font-medium text-gray-700">Comissão (%)</label>
                 <input
                   type="number"
                   step="0.1"
@@ -914,7 +914,7 @@ export default function NegociosPage() {
                   value={commissionPercent}
                   onChange={(e) => setCommissionPercent(e.target.value)}
                   placeholder="0"
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
             </div>
@@ -924,7 +924,7 @@ export default function NegociosPage() {
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Cultura</label>
+                    <label className="text-sm font-medium text-gray-700">Cultura</label>
                     <select
                       value={grainCrop}
                       onChange={(e) => {
@@ -936,7 +936,7 @@ export default function NegociosPage() {
                           setGrainMoistureBasePercent('14');
                         }
                       }}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       {['Soja', 'Milho', 'Café', 'Trigo', 'Arroz', 'Sorgo', 'Algodão', 'Feijão'].map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -944,7 +944,7 @@ export default function NegociosPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Quantidade</label>
+                    <label className="text-sm font-medium text-gray-700">Quantidade</label>
                     <input
                       type="number"
                       step="0.01"
@@ -952,16 +952,16 @@ export default function NegociosPage() {
                       value={grainQuantity}
                       onChange={(e) => setGrainQuantity(e.target.value)}
                       placeholder="0"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Unidade</label>
+                    <label className="text-sm font-medium text-gray-700">Unidade</label>
                     <select
                       value={grainUnit}
                       onChange={(e) => setGrainUnit(e.target.value as 'SACA60' | 'KG' | 'TONELADA')}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       <option value="SACA60">Saca 60kg</option>
                       <option value="KG">kg</option>
@@ -969,7 +969,7 @@ export default function NegociosPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Preço por unidade (R$)</label>
+                    <label className="text-sm font-medium text-gray-700">Preço por unidade (R$)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -977,14 +977,14 @@ export default function NegociosPage() {
                       value={pricePerUnit}
                       onChange={(e) => setPricePerUnit(e.target.value)}
                       placeholder="0,00"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                       required
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Umidade aferida (%)</label>
+                    <label className="text-sm font-medium text-gray-700">Umidade aferida (%)</label>
                     <input
                       type="number"
                       step="0.1"
@@ -993,11 +993,11 @@ export default function NegociosPage() {
                       value={grainMoisturePercent}
                       onChange={(e) => setGrainMoisturePercent(e.target.value)}
                       placeholder="14"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Umidade base (%)</label>
+                    <label className="text-sm font-medium text-gray-700">Umidade base (%)</label>
                     <input
                       type="number"
                       step="0.1"
@@ -1006,11 +1006,11 @@ export default function NegociosPage() {
                       value={grainMoistureBasePercent}
                       onChange={(e) => setGrainMoistureBasePercent(e.target.value)}
                       placeholder="14"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Impureza (%)</label>
+                    <label className="text-sm font-medium text-gray-700">Impureza (%)</label>
                     <input
                       type="number"
                       step="0.1"
@@ -1019,11 +1019,11 @@ export default function NegociosPage() {
                       value={grainImpurityPercent}
                       onChange={(e) => setGrainImpurityPercent(e.target.value)}
                       placeholder="0"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Peso bruto (kg)</label>
+                    <label className="text-sm font-medium text-gray-700">Peso bruto (kg)</label>
                     <input
                       type="number"
                       step="0.1"
@@ -1031,17 +1031,17 @@ export default function NegociosPage() {
                       value={grainGrossWeightKg}
                       onChange={(e) => setGrainGrossWeightKg(e.target.value)}
                       placeholder="0"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Modalidade</label>
+                    <label className="text-sm font-medium text-gray-700">Modalidade</label>
                     <select
                       value={grainSaleModality}
                       onChange={(e) => setGrainSaleModality(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       <option value="BALCAO">Balcão</option>
                       <option value="CONTRATO_FUTURO">Contrato futuro</option>
@@ -1050,31 +1050,31 @@ export default function NegociosPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Armazém/Silo</label>
+                    <label className="text-sm font-medium text-gray-700">Armazém/Silo</label>
                     <input
                       type="text"
                       value={grainWarehouse}
                       onChange={(e) => setGrainWarehouse(e.target.value)}
                       placeholder="Nome do armazém"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Placa/Ticket</label>
+                    <label className="text-sm font-medium text-gray-700">Placa/Ticket</label>
                     <input
                       type="text"
                       value={grainTicketRef}
                       onChange={(e) => setGrainTicketRef(e.target.value)}
                       placeholder="Placa ou ticket"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Safra vinculada</label>
+                    <label className="text-sm font-medium text-gray-700">Safra vinculada</label>
                     <select
                       value={selectedCropCycleId}
                       onChange={(e) => setSelectedCropCycleId(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       <option value="">Nenhuma</option>
                       {cropCycles.map((cc) => (
@@ -1085,7 +1085,7 @@ export default function NegociosPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Valor total (R$)</label>
+                    <label className="text-sm font-medium text-gray-700">Valor total (R$)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -1093,12 +1093,12 @@ export default function NegociosPage() {
                       value={totalValue}
                       onChange={(e) => setTotalValue(e.target.value)}
                       placeholder="Calculado automaticamente"
-                      className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Peso líquido (calculado)</label>
-                    <p className="mt-1 rounded-lg border border-gray-100 bg-gray-50 px-2 py-1.5 text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-gray-700">Peso líquido (calculado)</label>
+                    <p className="mt-1 rounded-xl border border-gray-100 bg-gray-50 px-2 py-1.5 text-sm font-medium text-gray-700">
                       {grainSummary.netWeight > 0 ? `${grainSummary.netWeight} kg` : '—'}
                     </p>
                   </div>
@@ -1115,7 +1115,7 @@ export default function NegociosPage() {
                 {isInstallment && (
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-medium text-gray-600">Nº de parcelas</label>
+                      <label className="text-sm font-medium text-gray-700">Nº de parcelas</label>
                       <input
                         type="number"
                         min="1"
@@ -1123,12 +1123,12 @@ export default function NegociosPage() {
                         value={installmentCount}
                         onChange={(e) => setInstallmentCount(e.target.value)}
                         placeholder="1"
-                        className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                        className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                         required
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-gray-600">Valor da parcela (R$)</label>
+                      <label className="text-sm font-medium text-gray-700">Valor da parcela (R$)</label>
                       <input
                         type="number"
                         step="0.01"
@@ -1136,7 +1136,7 @@ export default function NegociosPage() {
                         value={installmentValue}
                         onChange={(e) => setInstallmentValue(e.target.value)}
                         placeholder="0,00"
-                        className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                        className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                         required
                       />
                     </div>
@@ -1147,19 +1147,19 @@ export default function NegociosPage() {
 
             {/* Observações */}
             <div>
-              <label className="text-xs font-medium text-gray-600">Observações</label>
+              <label className="text-sm font-medium text-gray-700">Observações</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
 
             {/* --- Animais --- */}
             {dealType !== 'VENDA_GRAO' && <div>
               <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-700">
+                <h3 className="text-sm font-bold tracking-tight text-gray-700">
                   Animais ({draftItems.length})
                 </h3>
                 <div className="flex gap-2">
@@ -1167,7 +1167,7 @@ export default function NegociosPage() {
                     <button
                       type="button"
                       onClick={() => setShowAnimalPicker(!showAnimalPicker)}
-                      className="rounded-lg border border-emerald-600 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-50"
+                      className="rounded-full bg-emerald-600/10 px-4 py-2 text-xs font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20"
                     >
                       {showAnimalPicker ? 'Fechar seletor' : 'Importar do rebanho'}
                     </button>
@@ -1175,7 +1175,7 @@ export default function NegociosPage() {
                   <button
                     type="button"
                     onClick={addManualItem}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-full bg-gray-900/5 px-4 py-2 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                   >
                     Adicionar manualmente
                   </button>
@@ -1184,13 +1184,13 @@ export default function NegociosPage() {
 
               {/* Animal picker */}
               {showAnimalPicker && (
-                <div className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                <div className="mb-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
                   <input
                     type="text"
                     value={animalSearch}
                     onChange={(e) => setAnimalSearch(e.target.value)}
                     placeholder="Buscar por brinco ou nome..."
-                    className="mb-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mb-2 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   />
                   <div className="max-h-48 overflow-x-auto overflow-y-auto">
                     {filteredAnimals.length === 0 ? (
@@ -1198,7 +1198,7 @@ export default function NegociosPage() {
                     ) : (
                       <table className="w-full text-xs">
                         <thead>
-                          <tr className="border-b text-left text-gray-500">
+                          <tr className="border-b text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                             <th className="py-1">Brinco</th>
                             <th>Nome</th>
                             <th>Categoria</th>
@@ -1208,7 +1208,7 @@ export default function NegociosPage() {
                         </thead>
                         <tbody>
                           {filteredAnimals.map((a) => (
-                            <tr key={a.id} className="border-b border-gray-100 hover:bg-emerald-100">
+                            <tr key={a.id} className="border-b border-gray-100 transition-colors hover:bg-gray-50/70">
                               <td className="py-1 font-mono">{a.earTag}</td>
                               <td>{a.name ?? '—'}</td>
                               <td>{a.category}</td>
@@ -1239,7 +1239,7 @@ export default function NegociosPage() {
 
               {/* Warning: animals without weight */}
               {animalsWithoutWeight.length > 0 && (
-                <p className="mb-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-700">
+                <p className="mb-2 rounded-xl bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
                   ⚠ {animalsWithoutWeight.length} animal(is) sem peso registrado no rebanho.
                   {dealType === 'ABATE'
                     ? ' O cálculo de rendimento de carcaça ficará impreciso.'
@@ -1252,7 +1252,7 @@ export default function NegociosPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b text-left text-xs text-gray-500">
+                      <tr className="border-b text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                         <th className="py-2">Brinco</th>
                         <th>Peso vivo (kg)</th>
                         {dealType === 'ABATE' ? (
@@ -1284,7 +1284,7 @@ export default function NegociosPage() {
                                   value={item.earTag}
                                   onChange={(e) => updateItem(idx, 'earTag', e.target.value)}
                                   placeholder="Brinco"
-                                  className="w-28 rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
+                                  className="w-28 rounded-xl border border-gray-200 bg-white px-2 py-1 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
                                   required
                                 />
                               )}
@@ -1296,7 +1296,7 @@ export default function NegociosPage() {
                                 value={item.weightKg ?? ''}
                                 onChange={(e) => updateItem(idx, 'weightKg', e.target.value)}
                                 placeholder="—"
-                                className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
+                                className="w-24 rounded-xl border border-gray-200 bg-white px-2 py-1 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
                               />
                             </td>
                             {dealType === 'ABATE' ? (
@@ -1336,8 +1336,8 @@ export default function NegociosPage() {
 
             {/* Live summary — compra em lote */}
             {dealType === 'COMPRA' && (Number(quantity) > 0 || draftItems.length > 0) && (
-              <div className="rounded-lg bg-gray-50 p-3">
-                <h3 className="mb-2 text-sm font-semibold text-gray-700">Resumo da compra</h3>
+              <div className="rounded-2xl bg-gray-100/60 p-5">
+                <h3 className="mb-2 text-sm font-bold tracking-tight text-gray-700">Resumo da compra</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
                   <div>
                     <span className="text-xs text-gray-500">Quantidade</span>
@@ -1373,8 +1373,8 @@ export default function NegociosPage() {
 
             {/* Live summary — venda */}
             {dealType === 'VENDA' && draftItems.length > 0 && (
-              <div className="rounded-lg bg-gray-50 p-3">
-                <h3 className="mb-2 text-sm font-semibold text-gray-700">Resumo do negócio</h3>
+              <div className="rounded-2xl bg-gray-100/60 p-5">
+                <h3 className="mb-2 text-sm font-bold tracking-tight text-gray-700">Resumo do negócio</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
                   <div>
                     <span className="text-xs text-gray-500">Animais</span>
@@ -1426,8 +1426,8 @@ export default function NegociosPage() {
 
             {/* Live summary — abate */}
             {dealType === 'ABATE' && draftItems.length > 0 && (
-              <div className="rounded-lg bg-orange-50 p-3">
-                <h3 className="mb-2 text-sm font-semibold text-gray-700">Resumo do abate</h3>
+              <div className="rounded-2xl bg-orange-50 p-5">
+                <h3 className="mb-2 text-sm font-bold tracking-tight text-gray-700">Resumo do abate</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
                   <div>
                     <span className="text-xs text-gray-500">Animais</span>
@@ -1491,8 +1491,8 @@ export default function NegociosPage() {
 
             {/* Live summary — venda de grãos */}
             {dealType === 'VENDA_GRAO' && Number(grainQuantity) > 0 && (
-              <div className="rounded-lg bg-green-50 p-3">
-                <h3 className="mb-2 text-sm font-semibold text-gray-700">Resumo da venda de grãos</h3>
+              <div className="rounded-2xl bg-green-50 p-5">
+                <h3 className="mb-2 text-sm font-bold tracking-tight text-gray-700">Resumo da venda de grãos</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
                   <div>
                     <span className="text-xs text-gray-500">Cultura</span>
@@ -1565,7 +1565,7 @@ export default function NegociosPage() {
             <button
               type="submit"
               disabled={creating}
-              className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+              className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
             >
               {creating ? 'Salvando...' : editingDealId ? 'Atualizar negócio' : 'Salvar negócio'}
             </button>
@@ -1578,7 +1578,7 @@ export default function NegociosPage() {
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as DealType | '')}
-          className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
+          className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
         >
           <option value="">Todos os tipos</option>
           <option value="VENDA">Vendas</option>
@@ -1589,7 +1589,7 @@ export default function NegociosPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as DealStatus | '')}
-          className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
+          className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
         >
           <option value="">Todos os status</option>
           <option value="RASCUNHO">Rascunho</option>
@@ -1600,9 +1600,9 @@ export default function NegociosPage() {
 
       {/* --- Lista de negócios --- */}
       {deals.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
-          <p className="text-gray-500">Nenhum negócio registrado.</p>
-          <p className="mt-1 text-sm text-gray-400">
+        <div className="rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+          <p className="text-lg font-bold text-gray-900">Nenhum negócio registrado.</p>
+          <p className="mt-1 text-sm text-gray-500">
             Clique em &quot;Novo negócio&quot; para calcular uma compra, venda ou abate.
           </p>
         </div>
@@ -1615,21 +1615,21 @@ export default function NegociosPage() {
             const sa = isAbate ? slaughterDealSummary(deal) : null;
 
             return (
-              <li key={deal.id} className="rounded-xl border border-gray-200/80 bg-white shadow-sm p-4">
+              <li key={deal.id} className="rounded-2xl border border-gray-200/70 bg-white p-5">
                 <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className={`rounded px-2 py-0.5 text-xs font-medium ${TYPE_COLOR[deal.type]}`}>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TYPE_COLOR[deal.type]}`}>
                         {TYPE_LABEL[deal.type]}
                       </span>
-                      <span className={`rounded px-2 py-0.5 text-xs font-medium ${STATUS_COLOR[deal.status]}`}>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLOR[deal.status]}`}>
                         {STATUS_LABEL[deal.status]}
                       </span>
                       <span className="text-sm text-gray-500">
                         {new Date(deal.dealDate).toLocaleDateString('pt-BR')}
                       </span>
                       {isAbate && deal.slaughterFrequency && (
-                        <span className="rounded-lg bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
                           {deal.slaughterFrequency === 'TRIMESTRAL' ? 'Trimestral' : 'Semestral'}
                         </span>
                       )}
@@ -1641,13 +1641,13 @@ export default function NegociosPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => handleDownloadReport(deal.id)}
-                      className="rounded-lg bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200"
+                      className="rounded-full bg-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 transition-colors duration-150 hover:bg-blue-200"
                     >
                       Exportar PDF
                     </button>
                     <button
                       onClick={() => startEditDeal(deal)}
-                      className="rounded-lg bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200"
+                      className="rounded-full bg-gray-900/5 px-3 py-1.5 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                     >
                       <Pencil size={12} className="inline mr-1" />
                       Editar
@@ -1656,13 +1656,13 @@ export default function NegociosPage() {
                       <>
                         <button
                           onClick={() => handleStatusChange(deal.id, 'FINALIZADO')}
-                          className="rounded-lg bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-200"
+                          className="rounded-full bg-emerald-600/10 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20"
                         >
                           Finalizar
                         </button>
                         <button
                           onClick={() => handleStatusChange(deal.id, 'CANCELADO')}
-                          className="rounded-lg bg-gray-100 px-2 py-1 text-xs text-gray-600 hover:bg-gray-200"
+                          className="rounded-full bg-gray-900/5 px-3 py-1.5 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                         >
                           Cancelar
                         </button>
@@ -1670,7 +1670,7 @@ export default function NegociosPage() {
                     )}
                     <button
                       onClick={() => handleDelete(deal.id)}
-                      className="text-xs text-red-600 hover:underline"
+                      className="rounded-full bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors duration-150 hover:bg-red-100"
                     >
                       Excluir
                     </button>
@@ -1682,7 +1682,7 @@ export default function NegociosPage() {
                   <div className="mb-2 overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead>
-                        <tr className="border-b text-left text-gray-500">
+                        <tr className="border-b text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                           <th className="py-1">Brinco</th>
                           <th>Peso vivo (kg)</th>
                           {isAbate ? (
@@ -1722,7 +1722,7 @@ export default function NegociosPage() {
                 {/* Summary numbers — ABATE */}
                 {isAbate && sa && (
                   <>
-                    <div className="grid grid-cols-2 gap-2 rounded-lg bg-orange-50 p-2 text-xs sm:grid-cols-5">
+                    <div className="grid grid-cols-2 gap-2 rounded-xl bg-orange-50 p-3 text-xs sm:grid-cols-5">
                       <div>
                         <span className="text-gray-500">{sa.totalAnimals} animais</span>
                       </div>
@@ -1769,7 +1769,7 @@ export default function NegociosPage() {
                   const netPerSaca = sacas > 0 ? netTotal / sacas : 0;
                   return (
                     <>
-                      <div className="grid grid-cols-2 gap-2 rounded-lg bg-green-50 p-2 text-xs sm:grid-cols-5">
+                      <div className="grid grid-cols-2 gap-2 rounded-xl bg-green-50 p-3 text-xs sm:grid-cols-5">
                         <div>
                           <span className="text-gray-500">{deal.grainCrop}: </span>
                           <span className="font-medium">{qty} {unitLabel[deal.grainUnit ?? ''] ?? deal.grainUnit}</span>
@@ -1814,7 +1814,7 @@ export default function NegociosPage() {
                 {/* Summary numbers — COMPRA/VENDA */}
                 {!isAbate && !isGrainDeal && s && (
                   <>
-                    <div className="grid grid-cols-2 gap-2 rounded-lg bg-gray-50 p-2 text-xs sm:grid-cols-5">
+                    <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100/60 p-3 text-xs sm:grid-cols-5">
                       <div>
                         <span className="text-gray-500">{s.totalAnimals} animais</span>
                       </div>

@@ -149,7 +149,7 @@ export default function DocumentsPage() {
   if (loading || !user || fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -164,7 +164,7 @@ export default function DocumentsPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
@@ -172,20 +172,20 @@ export default function DocumentsPage() {
       <button
         type="button"
         onClick={() => setShowCreateMobile((v) => !v)}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 sm:hidden"
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
       >
         {showCreateMobile ? 'Fechar formulário' : '+ Enviar documento'}
       </button>
       <form
         onSubmit={handleUpload}
-        className={`${showCreateMobile ? 'flex' : 'hidden'} mb-8 flex-wrap items-end gap-3 rounded-xl border border-gray-200/80 bg-white shadow-sm p-4 sm:flex`}
+        className={`${showCreateMobile ? 'flex' : 'hidden'} mb-8 flex-wrap items-end gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:flex`}
       >
         <div>
-          <label className="text-xs font-medium text-gray-600">Categoria</label>
+          <label className="text-sm font-medium text-gray-700">Categoria</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as DocumentCategory)}
-            className="mt-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+            className="mt-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           >
             {CATEGORY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -196,7 +196,7 @@ export default function DocumentsPage() {
         </div>
 
         <div className="flex-1">
-          <label className="text-xs font-medium text-gray-600">Arquivo</label>
+          <label className="text-sm font-medium text-gray-700">Arquivo</label>
           <input
             ref={fileInputRef}
             type="file"
@@ -207,7 +207,7 @@ export default function DocumentsPage() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="mt-1 flex w-full items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-3 py-2 text-sm text-gray-500 transition-all duration-150 hover:border-emerald-400 hover:bg-emerald-50/40"
+            className="mt-1 flex w-full items-center gap-2 rounded-xl border border-dashed border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-500 transition-all duration-150 hover:border-emerald-400 hover:bg-emerald-50/40"
           >
             <Upload size={15} className="shrink-0 text-gray-400" />
             {selectedFileName || 'Escolher arquivo...'}
@@ -217,7 +217,7 @@ export default function DocumentsPage() {
         <button
           type="submit"
           disabled={uploading}
-          className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+          className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
         >
           {uploading ? 'Enviando...' : 'Enviar documento'}
         </button>
@@ -226,11 +226,11 @@ export default function DocumentsPage() {
       {documents.length > 0 && (
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-3">
-            <h2 className="font-semibold text-gray-800">Documentos</h2>
+            <h2 className="font-bold tracking-tight text-gray-900">Documentos</h2>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value as DocumentCategory | '')}
-              className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm"
+              className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
             >
               <option value="">Todas as categorias</option>
               {CATEGORY_OPTIONS.map((opt) => (
@@ -244,7 +244,7 @@ export default function DocumentsPage() {
                 key={val}
                 type="button"
                 onClick={() => setDocFilter(val)}
-                className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors duration-150 ${
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors duration-150 ${
                   docFilter === val
                     ? 'bg-emerald-700 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -258,8 +258,11 @@ export default function DocumentsPage() {
       )}
 
       {filteredDocuments.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 py-12 text-center">
-          <p className="text-lg font-medium text-gray-700">
+        <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
+            <FileText size={22} />
+          </div>
+          <p className="mt-3 text-lg font-bold text-gray-900">
             {documents.length === 0 ? 'Nenhum documento enviado' : 'Nenhum documento no período'}
           </p>
           <p className="mt-1 text-sm text-gray-500">
@@ -273,7 +276,7 @@ export default function DocumentsPage() {
           {filteredDocuments.map((doc) => (
             <li
               key={doc.id}
-              className="flex flex-col gap-2 rounded-xl border border-gray-200/80 bg-white shadow-sm px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-2 rounded-2xl border border-gray-200/70 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0">
                 <p className="truncate font-medium text-gray-900">{doc.fileName}</p>
@@ -285,13 +288,13 @@ export default function DocumentsPage() {
               <div className="flex shrink-0 gap-3">
                 <button
                   onClick={() => handleDownload(doc)}
-                  className="text-xs font-medium text-emerald-700 hover:underline"
+                  className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                 >
                   Baixar
                 </button>
                 <button
                   onClick={() => handleDelete(doc.id)}
-                  className="text-xs font-medium text-red-600 hover:underline"
+                  className="text-sm font-semibold text-red-600 hover:text-red-800"
                 >
                   Excluir
                 </button>

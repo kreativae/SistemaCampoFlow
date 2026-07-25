@@ -173,7 +173,7 @@ export default function FarmLayout({ children }: { children: React.ReactNode }) 
                 <Link
                   key={item.suffix}
                   href={base + item.suffix}
-                  className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 ${
+                  className={`group flex items-center gap-3 rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-150 ${
                     active
                       ? 'bg-sidebar-active text-white'
                       : 'text-white/65 hover:bg-sidebar-hover hover:text-white'

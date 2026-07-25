@@ -24,13 +24,13 @@ function ServiceCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-gray-200 p-4">
+    <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
       <div className="mb-2 flex items-center gap-2">
         <StatusDot ok={ok} />
-        <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
+        <h3 className="text-sm font-bold tracking-tight text-gray-900">{title}</h3>
         <span
-          className={`ml-auto rounded-lg px-2 py-0.5 text-xs font-medium ${
-            ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
+          className={`ml-auto inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+            ok ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-700'
           }`}
         >
           {ok ? 'OK' : 'Atenção'}
@@ -81,7 +81,7 @@ export default function AdminSaudePage() {
   if (loading) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -89,7 +89,7 @@ export default function AdminSaudePage() {
   if (error || !health) {
     return (
       <main className="animate-fade-up mx-auto w-full max-w-3xl flex-1 px-4 py-10">
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
+        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
       </main>
     );
   }
@@ -105,7 +105,7 @@ export default function AdminSaudePage() {
     <main className="animate-fade-up mx-auto w-full max-w-3xl flex-1 px-4 py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">
             Saúde da plataforma
           </h1>
           <p className="text-sm text-gray-500">
@@ -114,7 +114,7 @@ export default function AdminSaudePage() {
         </div>
         <div className="flex items-center gap-3">
           <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
               allOk ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
             }`}
           >
@@ -122,7 +122,7 @@ export default function AdminSaudePage() {
           </span>
           <button
             onClick={() => void load()}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs text-gray-600 hover:bg-gray-50"
+            className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
           >
             Atualizar
           </button>
@@ -130,7 +130,7 @@ export default function AdminSaudePage() {
       </header>
 
       <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
           Serviços
         </h2>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -189,12 +189,12 @@ export default function AdminSaudePage() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
           Dados automatizados
         </h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-lg border border-gray-200 p-4">
-            <h3 className="mb-1 text-sm font-semibold text-gray-800">
+          <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+            <h3 className="mb-1 text-sm font-bold tracking-tight text-gray-900">
               Cotações
             </h3>
             <p className="text-xs text-gray-600">
@@ -208,8 +208,8 @@ export default function AdminSaudePage() {
             )}
           </div>
 
-          <div className="rounded-lg border border-gray-200 p-4">
-            <h3 className="mb-1 text-sm font-semibold text-gray-800">
+          <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+            <h3 className="mb-1 text-sm font-bold tracking-tight text-gray-900">
               Notificações
             </h3>
             <p className="text-xs text-gray-600">

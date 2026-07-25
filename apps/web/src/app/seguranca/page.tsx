@@ -116,34 +116,34 @@ export default function SecurityPage() {
   }
 
   if (loading || !user) {
-    return <div className="p-8">Carregando...</div>;
+    return <div className="p-8 text-sm text-gray-400">Carregando...</div>;
   }
 
   return (
     <div className="mx-auto max-w-2xl p-4 sm:p-8">
-      <Link href="/fazendas" className="text-sm text-emerald-700 hover:underline">
+      <Link href="/fazendas" className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
         &larr; Voltar
       </Link>
-      <h1 className="mt-2 text-2xl font-bold">Segurança da conta</h1>
+      <h1 className="mt-2 text-[28px] font-bold tracking-[-0.02em] text-gray-900">Segurança da conta</h1>
       <p className="mt-1 text-sm text-gray-500">
         Conectado como {user.name} ({user.email})
       </p>
 
-      <section className="mt-8 rounded-xl border border-gray-200/80 bg-white shadow-sm p-6">
-        <h2 className="text-lg font-semibold">Autenticação em duas etapas (MFA)</h2>
+      <section className="mt-8 rounded-2xl border border-gray-200/70 bg-white p-6">
+        <h2 className="text-lg font-bold tracking-tight text-gray-900">Autenticação em duas etapas (MFA)</h2>
         <p className="mt-1 text-sm text-gray-600">
           Use um aplicativo autenticador (Google Authenticator, Authy, etc.) para exigir um
           código adicional no login.
         </p>
 
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-        {message && <p className="mt-3 text-sm text-emerald-700">{message}</p>}
+        {error && <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
+        {message && <p className="mt-3 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{message}</p>}
 
         {step === 'idle' && (
           <button
             onClick={handleStartSetup}
             disabled={submitting}
-            className="mt-4 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+            className="mt-4 rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
             {submitting ? 'Gerando...' : 'Habilitar MFA'}
           </button>
@@ -169,13 +169,13 @@ export default function SecurityPage() {
                 required
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-emerald-800 disabled:opacity-50"
+              className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
             >
               {submitting ? 'Confirmando...' : 'Confirmar e habilitar'}
             </button>
@@ -186,26 +186,26 @@ export default function SecurityPage() {
           <button
             onClick={handleDisable}
             disabled={submitting}
-            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+            className="mt-4 rounded-full bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-50"
           >
             {submitting ? 'Desabilitando...' : 'Desabilitar MFA'}
           </button>
         )}
       </section>
 
-      <section className="mt-6 rounded-xl border border-gray-200/80 bg-white shadow-sm p-6">
-        <h2 className="text-lg font-semibold">Privacidade e dados (LGPD)</h2>
+      <section className="mt-6 rounded-2xl border border-gray-200/70 bg-white p-6">
+        <h2 className="text-lg font-bold tracking-tight text-gray-900">Privacidade e dados (LGPD)</h2>
         <p className="mt-1 text-sm text-gray-600">
           Você pode exportar uma cópia de todos os seus dados pessoais ou solicitar a exclusão
           da sua conta.
         </p>
 
-        {lgpdError && <p className="mt-3 text-sm text-red-600">{lgpdError}</p>}
+        {lgpdError && <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{lgpdError}</p>}
 
         <button
           onClick={handleExportData}
           disabled={exporting}
-          className="mt-4 rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300 disabled:opacity-50"
+          className="mt-4 rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10 disabled:opacity-50"
         >
           {exporting ? 'Exportando...' : 'Exportar meus dados'}
         </button>
@@ -214,13 +214,13 @@ export default function SecurityPage() {
           {!confirmingDelete ? (
             <button
               onClick={() => setConfirmingDelete(true)}
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              className="rounded-full bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
             >
               Excluir minha conta
             </button>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm font-medium text-red-700">
+              <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
                 Tem certeza? Sua conta será anonimizada e você perderá o acesso. Se você for o
                 único proprietário de alguma fazenda, será necessário transferir a propriedade
                 antes.
@@ -229,13 +229,13 @@ export default function SecurityPage() {
                 <button
                   onClick={handleDeleteAccount}
                   disabled={deletingAccount}
-                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                  className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
                 >
                   {deletingAccount ? 'Excluindo...' : 'Sim, excluir minha conta'}
                 </button>
                 <button
                   onClick={() => setConfirmingDelete(false)}
-                  className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
+                  className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
                 >
                   Cancelar
                 </button>

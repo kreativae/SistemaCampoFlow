@@ -30,9 +30,9 @@ const STATUS_OPTIONS: SubscriptionStatus[] = [
 ];
 
 function statusBadgeClass(status: SubscriptionStatus | null) {
-  if (status === 'ACTIVE' || status === 'TRIALING') return 'bg-emerald-50 text-emerald-700';
-  if (status === 'PAST_DUE') return 'bg-amber-50 text-amber-700';
-  return 'bg-red-50 text-red-700';
+  if (status === 'ACTIVE' || status === 'TRIALING') return 'bg-emerald-100 text-emerald-800';
+  if (status === 'PAST_DUE') return 'bg-amber-100 text-amber-800';
+  return 'bg-red-100 text-red-700';
 }
 
 function MetricCard({
@@ -53,9 +53,9 @@ function MetricCard({
           ? 'text-red-700'
           : 'text-gray-900';
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm px-3 py-3">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className={`mt-1 text-xl font-semibold ${valueColor}`}>{value}</p>
+    <div className="rounded-2xl border border-gray-200/70 bg-white p-4">
+      <p className="text-[13px] font-medium text-gray-500">{label}</p>
+      <p className={`mt-1 text-2xl font-bold tracking-tight tabular-nums ${valueColor}`}>{value}</p>
     </div>
   );
 }
@@ -268,7 +268,7 @@ export default function AdminAccountsPage() {
   if (fetching) {
     return (
       <main className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
   }
@@ -279,7 +279,7 @@ export default function AdminAccountsPage() {
     <main className="animate-fade-up mx-auto w-full max-w-5xl flex-1 px-4 py-10">
       <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Contas e assinaturas</h1>
+          <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">Contas e assinaturas</h1>
           <p className="text-sm text-gray-500">
             Visão restrita à equipe da plataforma. Alterar plano/status aqui não passa pelo
             Stripe — use só para suporte (conta de cortesia, corrigir assinatura travada,
@@ -291,7 +291,7 @@ export default function AdminAccountsPage() {
             type="button"
             onClick={handleBulkDelete}
             disabled={deletingBulk}
-            className="shrink-0 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+            className="shrink-0 rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
           >
             {deletingBulk ? 'Excluindo...' : `Excluir selecionadas (${selected.size})`}
           </button>
@@ -340,7 +340,7 @@ export default function AdminAccountsPage() {
               type="button"
               onClick={handleRefreshQuotations}
               disabled={refreshingQuotations}
-              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-40"
+              className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10 disabled:opacity-40"
             >
               {refreshingQuotations ? 'Atualizando...' : 'Atualizar cotações agora'}
             </button>
@@ -352,7 +352,7 @@ export default function AdminAccountsPage() {
       )}
 
       {error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+        <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
       )}
@@ -372,11 +372,11 @@ export default function AdminAccountsPage() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Buscar por nome, e-mail de cobrança ou de usuário"
-            className="w-full max-w-md rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
+            className="w-full max-w-md rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
           />
           <button
             type="submit"
-            className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98]"
           >
             Buscar
           </button>
@@ -387,7 +387,7 @@ export default function AdminAccountsPage() {
             setPage(1);
             setStatusFilter(e.target.value as SubscriptionStatus | '');
           }}
-          className="rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
+          className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
         >
           <option value="">Todos os status</option>
           {STATUS_OPTIONS.map((s) => (
@@ -402,7 +402,7 @@ export default function AdminAccountsPage() {
             setPage(1);
             setPlanFilter(e.target.value as PlanTier | '');
           }}
-          className="rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm focus:border-gray-900 focus:outline-none"
+          className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
         >
           <option value="">Todos os planos</option>
           {PLAN_OPTIONS.map((p) => (
@@ -414,17 +414,19 @@ export default function AdminAccountsPage() {
       </div>
 
       {accounts.length === 0 ? (
-        <p className="text-gray-500">
-          {search || statusFilter || planFilter
-            ? 'Nenhuma conta encontrada com esses filtros.'
-            : 'Nenhuma conta cadastrada ainda.'}
-        </p>
+        <div className="rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+          <p className="text-lg font-bold text-gray-900">
+            {search || statusFilter || planFilter
+              ? 'Nenhuma conta encontrada com esses filtros.'
+              : 'Nenhuma conta cadastrada ainda.'}
+          </p>
+        </div>
       ) : (
         <>
         {/* Lista em cards — mobile */}
         <div className="space-y-3 sm:hidden">
           {accounts.map((account) => (
-            <div key={account.id} className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm">
+            <div key={account.id} className="rounded-2xl border border-gray-200/70 bg-white p-5">
               <div className="flex items-start justify-between gap-2">
                 <label className="flex min-w-0 items-start gap-2">
                   <input
@@ -447,7 +449,7 @@ export default function AdminAccountsPage() {
                   <button
                     type="button"
                     onClick={() => toggleExpanded(account.id)}
-                    className="text-xs font-medium text-emerald-700 hover:underline"
+                    className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                   >
                     {expandedId === account.id ? 'Ocultar' : 'Visualizar'}
                   </button>
@@ -455,20 +457,20 @@ export default function AdminAccountsPage() {
                     type="button"
                     disabled={deletingId === account.id}
                     onClick={() => handleDeleteOne(account)}
-                    className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
+                    className="text-sm font-semibold text-red-600 hover:text-red-700 disabled:opacity-50"
                   >
                     {deletingId === account.id ? 'Excluindo...' : 'Excluir'}
                   </button>
                 </div>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <label className="block text-xs font-medium text-gray-500">
+                <label className="block text-sm font-medium text-gray-700">
                   Plano
                   <select
                     value={account.planTier ?? ''}
                     disabled={savingId === account.id}
                     onChange={(e) => handleUpdate(account.id, 'planTier', e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm font-normal text-gray-900 shadow-xs focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-normal text-gray-900 transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                   >
                     {PLAN_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -477,13 +479,13 @@ export default function AdminAccountsPage() {
                     ))}
                   </select>
                 </label>
-                <label className="block text-xs font-medium text-gray-500">
+                <label className="block text-sm font-medium text-gray-700">
                   Status
                   <select
                     value={account.status ?? ''}
                     disabled={savingId === account.id}
                     onChange={(e) => handleUpdate(account.id, 'status', e.target.value)}
-                    className={`mt-1 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm font-normal shadow-xs focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10 ${statusBadgeClass(account.status)}`}
+                    className={`mt-1 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm font-normal transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:opacity-50 ${statusBadgeClass(account.status)}`}
                   >
                     {STATUS_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -498,13 +500,13 @@ export default function AdminAccountsPage() {
                 {new Date(account.createdAt).toLocaleDateString('pt-BR')}
               </p>
               {expandedId === account.id && (
-                <div className="mt-3 rounded-lg bg-gray-50 p-3">
+                <div className="mt-3 rounded-2xl bg-gray-100/60 p-5">
                   {loadingExpanded ? (
-                    <p className="text-xs text-gray-500">Carregando...</p>
+                    <p className="text-sm text-gray-400">Carregando...</p>
                   ) : expandedDetail ? (
                     <div className="grid grid-cols-2 gap-3 text-xs text-gray-700">
                       <div>
-                        <p className="font-medium text-gray-500">Fim do teste</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Fim do teste</p>
                         <p>
                           {expandedDetail.subscription?.trialEndsAt
                             ? new Date(expandedDetail.subscription.trialEndsAt).toLocaleDateString('pt-BR')
@@ -512,7 +514,7 @@ export default function AdminAccountsPage() {
                         </p>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-500">Fim do período atual</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Fim do período atual</p>
                         <p>
                           {expandedDetail.subscription?.currentPeriodEnd
                             ? new Date(expandedDetail.subscription.currentPeriodEnd).toLocaleDateString('pt-BR')
@@ -520,11 +522,11 @@ export default function AdminAccountsPage() {
                         </p>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-500">Membros</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Membros</p>
                         <p>{expandedDetail.users.length}</p>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-500">Último pagamento</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Último pagamento</p>
                         <p>
                           {expandedDetail.paymentHistory[0]
                             ? `${paymentStatusLabel(expandedDetail.paymentHistory[0].status)} · ${new Date(
@@ -544,38 +546,38 @@ export default function AdminAccountsPage() {
         </div>
 
         {/* Tabela — desktop/tablet */}
-        <div className="hidden overflow-x-auto sm:block">
+        <div className="hidden overflow-x-auto rounded-2xl border border-gray-200/70 bg-white sm:block">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-xs uppercase tracking-wide text-gray-500">
-              <th className="w-8 py-2">
+            <tr className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
+              <th className="w-8 px-3 py-3">
                 <input
                   type="checkbox"
                   checked={allSelected}
                   onChange={(e) => toggleSelectAll(e.target.checked)}
                 />
               </th>
-              <th className="py-2">Conta</th>
-              <th className="hidden py-2 md:table-cell">Responsável</th>
-              <th className="hidden py-2 sm:table-cell">Fazendas</th>
-              <th className="py-2">Plano</th>
-              <th className="py-2">Status</th>
-              <th className="hidden py-2 lg:table-cell">Criada em</th>
-              <th className="py-2" />
+              <th className="px-3 py-3">Conta</th>
+              <th className="hidden px-3 py-3 md:table-cell">Responsável</th>
+              <th className="hidden px-3 py-3 sm:table-cell">Fazendas</th>
+              <th className="px-3 py-3">Plano</th>
+              <th className="px-3 py-3">Status</th>
+              <th className="hidden px-3 py-3 lg:table-cell">Criada em</th>
+              <th className="px-3 py-3" />
             </tr>
           </thead>
           <tbody>
             {accounts.map((account) => (
               <Fragment key={account.id}>
-                <tr className="border-b border-gray-100">
-                  <td className="py-2">
+                <tr className="border-t border-gray-100 transition-colors hover:bg-gray-50/70">
+                  <td className="px-3 py-3">
                     <input
                       type="checkbox"
                       checked={selected.has(account.id)}
                       onChange={(e) => toggleSelected(account.id, e.target.checked)}
                     />
                   </td>
-                  <td className="py-2">
+                  <td className="px-3 py-3">
                     <Link
                       href={`/admin/contas/${account.id}`}
                       className="font-medium text-gray-900 hover:underline"
@@ -584,14 +586,14 @@ export default function AdminAccountsPage() {
                     </Link>
                     <p className="text-xs text-gray-400">{account.billingEmail}</p>
                   </td>
-                  <td className="hidden py-2 text-gray-600 md:table-cell">{account.owner?.email ?? '—'}</td>
-                  <td className="hidden py-2 sm:table-cell">{account.farmsUsed}</td>
-                  <td className="py-2">
+                  <td className="hidden px-3 py-3 text-gray-600 md:table-cell">{account.owner?.email ?? '—'}</td>
+                  <td className="hidden px-3 py-3 sm:table-cell">{account.farmsUsed}</td>
+                  <td className="px-3 py-3">
                     <select
                       value={account.planTier ?? ''}
                       disabled={savingId === account.id}
                       onChange={(e) => handleUpdate(account.id, 'planTier', e.target.value)}
-                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10"
+                      className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       {PLAN_OPTIONS.map((opt) => (
                         <option key={opt} value={opt}>
@@ -600,12 +602,12 @@ export default function AdminAccountsPage() {
                       ))}
                     </select>
                   </td>
-                  <td className="py-2">
+                  <td className="px-3 py-3">
                     <select
                       value={account.status ?? ''}
                       disabled={savingId === account.id}
                       onChange={(e) => handleUpdate(account.id, 'status', e.target.value)}
-                      className={`rounded border border-gray-200 bg-white px-3 py-1.5 text-sm shadow-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-600/10 ${statusBadgeClass(account.status)}`}
+                      className={`rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:opacity-50 ${statusBadgeClass(account.status)}`}
                     >
                       {STATUS_OPTIONS.map((opt) => (
                         <option key={opt} value={opt}>
@@ -614,15 +616,15 @@ export default function AdminAccountsPage() {
                       ))}
                     </select>
                   </td>
-                  <td className="hidden py-2 text-gray-500 lg:table-cell">
+                  <td className="hidden px-3 py-3 text-gray-500 lg:table-cell">
                     {new Date(account.createdAt).toLocaleDateString('pt-BR')}
                   </td>
-                  <td className="py-2">
+                  <td className="px-3 py-3">
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
                         onClick={() => toggleExpanded(account.id)}
-                        className="text-xs font-medium text-emerald-700 hover:underline"
+                        className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                       >
                         {expandedId === account.id ? 'Ocultar' : 'Visualizar'}
                       </button>
@@ -630,7 +632,7 @@ export default function AdminAccountsPage() {
                         type="button"
                         disabled={deletingId === account.id}
                         onClick={() => handleDeleteOne(account)}
-                        className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
+                        className="text-sm font-semibold text-red-600 hover:text-red-700 disabled:opacity-50"
                       >
                         {deletingId === account.id ? 'Excluindo...' : 'Excluir'}
                       </button>
@@ -638,14 +640,14 @@ export default function AdminAccountsPage() {
                   </td>
                 </tr>
                 {expandedId === account.id && (
-                  <tr className="border-b border-gray-100 bg-gray-50">
-                    <td colSpan={8} className="px-2 py-3">
+                  <tr className="border-t border-gray-100 bg-gray-100/60">
+                    <td colSpan={8} className="px-4 py-4">
                       {loadingExpanded ? (
-                        <p className="text-xs text-gray-500">Carregando...</p>
+                        <p className="text-sm text-gray-400">Carregando...</p>
                       ) : expandedDetail ? (
                         <div className="grid grid-cols-2 gap-4 text-xs text-gray-700 sm:grid-cols-4">
                           <div>
-                            <p className="font-medium text-gray-500">Fim do teste</p>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Fim do teste</p>
                             <p>
                               {expandedDetail.subscription?.trialEndsAt
                                 ? new Date(
@@ -655,7 +657,7 @@ export default function AdminAccountsPage() {
                             </p>
                           </div>
                           <div>
-                            <p className="font-medium text-gray-500">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
                               Fim do período atual
                             </p>
                             <p>
@@ -667,11 +669,11 @@ export default function AdminAccountsPage() {
                             </p>
                           </div>
                           <div>
-                            <p className="font-medium text-gray-500">Membros</p>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Membros</p>
                             <p>{expandedDetail.users.length}</p>
                           </div>
                           <div>
-                            <p className="font-medium text-gray-500">Último pagamento</p>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Último pagamento</p>
                             <p>
                               {expandedDetail.paymentHistory[0]
                                 ? `${paymentStatusLabel(expandedDetail.paymentHistory[0].status)} · ${new Date(
@@ -705,7 +707,7 @@ export default function AdminAccountsPage() {
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="rounded-lg border border-gray-200 bg-white px-3 py-1 hover:bg-gray-100 disabled:opacity-40"
+              className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10 disabled:opacity-40"
             >
               Anterior
             </button>
@@ -713,7 +715,7 @@ export default function AdminAccountsPage() {
               type="button"
               onClick={() => setPage((p) => p + 1)}
               disabled={page * pageSize >= total}
-              className="rounded-lg border border-gray-200 bg-white px-3 py-1 hover:bg-gray-100 disabled:opacity-40"
+              className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10 disabled:opacity-40"
             >
               Próxima
             </button>
