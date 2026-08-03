@@ -20,22 +20,6 @@ export const SUBSCRIPTION_STATUS_LABEL: Record<SubscriptionStatus, string> = {
   SUSPENDED: 'Suspensa',
 };
 
-// Payment status labels in Portuguese for display.
-const PAYMENT_STATUS_LABEL: Record<string, string> = {
-  approved: 'Aprovado',
-  authorized: 'Autorizado',
-  pending: 'Pendente',
-  in_process: 'Em processamento',
-  rejected: 'Rejeitado',
-  cancelled: 'Cancelado',
-  refunded: 'Reembolsado',
-  charged_back: 'Contestado',
-};
-
-export function paymentStatusLabel(status: string): string {
-  return PAYMENT_STATUS_LABEL[status] ?? status;
-}
-
 export interface AccountSummary {
   id: string;
   name: string;
@@ -61,15 +45,6 @@ export interface AccountSubscription {
   farmsLimit: number | null;
 }
 
-export interface PaymentHistoryEntry {
-  id: number;
-  status: string;
-  transactionAmount: number;
-  currencyId: string;
-  dateApproved: string | null;
-  dateCreated: string;
-}
-
 export interface AccountDetail {
   id: string;
   name: string;
@@ -89,7 +64,6 @@ export interface AccountDetail {
     currentPeriodEnd: string | null;
   } | null;
   plan: { label: string; maxFarms: number | null; priceBRL: number | null } | null;
-  paymentHistory: PaymentHistoryEntry[];
 }
 
 export interface AuthResponse {
@@ -588,18 +562,6 @@ export interface DashboardFullOverview {
   quotations: { commodity: string; price: number; unit: string }[];
 }
 
-export interface WeatherRecord {
-  id: string;
-  temperatureC: number | null;
-  humidityPercent: number | null;
-  windSpeedKmh: number | null;
-  pressureHpa: number | null;
-  rainfallMm: number | null;
-  notes: string | null;
-  source: string | null;
-  recordedAt: string;
-}
-
 export type SupplyCategory =
   | 'SAL_MINERAL'
   | 'RACAO'
@@ -684,38 +646,6 @@ export interface MachineCostSummary {
   fuelCost: number;
   totalCost: number;
   totalLiters: number;
-}
-
-export type TaskStatus = 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA';
-
-export interface Task {
-  id: string;
-  title: string;
-  description: string | null;
-  assignedToId: string | null;
-  assignedTo: { id: string; name: string; email: string } | null;
-  status: TaskStatus;
-  dueDate: string | null;
-  completedAt: string | null;
-}
-
-export interface WorkLog {
-  id: string;
-  description: string;
-  hoursWorked: number;
-  taskId: string | null;
-  workDate: string;
-  notes: string | null;
-  user: { id: string; name: string; email: string };
-}
-
-export interface Shift {
-  id: string;
-  userId: string;
-  startDate: string;
-  endDate: string;
-  notes: string | null;
-  user: { id: string; name: string; email: string };
 }
 
 export type EmployeeType = 'EFETIVO' | 'CHAPA' | 'TEMPORARIO' | 'OUTRO';

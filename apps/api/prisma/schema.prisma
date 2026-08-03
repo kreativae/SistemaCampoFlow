@@ -12,11 +12,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model HealthCheck {
-  id        Int      @id @default(autoincrement())
-  checkedAt DateTime @default(now())
-}
-
 enum Role {
   OWNER
   MANAGER
@@ -104,17 +99,17 @@ model Account {
 // allow normal use; PAST_DUE/SUSPENDED/CANCELED block mutating requests outside of
 // /conta/assinatura and /auth (see SubscriptionGuard).
 model Subscription {
-  id                       String             @id @default(uuid())
-  account                  Account            @relation(fields: [accountId], references: [id])
-  accountId                String             @unique
-  planTier                 PlanTier           @default(TRIAL)
-  status                   SubscriptionStatus @default(TRIALING)
-  stripeSubscriptionId     String?
-  trialEndsAt              DateTime?
-  currentPeriodEnd         DateTime?
-  canceledAt               DateTime?
-  createdAt                DateTime           @default(now())
-  updatedAt                DateTime           @updatedAt
+  id                   String             @id @default(uuid())
+  account              Account            @relation(fields: [accountId], references: [id])
+  accountId            String             @unique
+  planTier             PlanTier           @default(TRIAL)
+  status               SubscriptionStatus @default(TRIALING)
+  stripeSubscriptionId String?
+  trialEndsAt          DateTime?
+  currentPeriodEnd     DateTime?
+  canceledAt           DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 }
 
 enum FarmType {
@@ -126,11 +121,11 @@ enum FarmType {
 }
 
 model Farm {
-  id                 String          @id @default(uuid())
-  account            Account         @relation(fields: [accountId], references: [id])
+  id                 String            @id @default(uuid())
+  account            Account           @relation(fields: [accountId], references: [id])
   accountId          String
   name               String
-  type               FarmType        @default(FAZENDA)
+  type               FarmType          @default(FAZENDA)
   totalAreaHectares  Float?
   usableAreaHectares Float?
   latitude           Float?
@@ -160,8 +155,8 @@ model Farm {
   employees          Employee[]
   timeEntries        TimeEntry[]
   deals              Deal[]
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 }
 
 // Pending invitation for someone who doesn't have an account yet. If the invited
@@ -169,32 +164,32 @@ model Farm {
 // entirely and creates the Membership immediately (existing behavior) — invites only
 // exist to bridge "I want to add my vet/employee but they haven't signed up yet".
 model FarmInvite {
-  id          String    @id @default(uuid())
-  farm        Farm      @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  farmId      String
-  email       String
-  role        Role
-  tokenHash   String
-  invitedById String?
+  id           String    @id @default(uuid())
+  farm         Farm      @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  farmId       String
+  email        String
+  role         Role
+  tokenHash    String
+  invitedById  String?
   // Módulos que o membro poderá acessar. Vazio = acesso total (conforme o papel).
-  moduleAccess String[] @default([])
-  expiresAt   DateTime
-  acceptedAt  DateTime?
-  createdAt   DateTime  @default(now())
+  moduleAccess String[]  @default([])
+  expiresAt    DateTime
+  acceptedAt   DateTime?
+  createdAt    DateTime  @default(now())
 
   @@index([farmId])
 }
 
 model Membership {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  farm      Farm     @relation(fields: [farmId], references: [id])
-  farmId    String
-  role      Role
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  farm         Farm     @relation(fields: [farmId], references: [id])
+  farmId       String
+  role         Role
   // Módulos (páginas) que este membro pode acessar. Vazio = acesso total.
   moduleAccess String[] @default([])
-  createdAt DateTime @default(now())
+  createdAt    DateTime @default(now())
 
   @@unique([userId, farmId])
 }
@@ -750,10 +745,10 @@ model MapFeature {
 // through harvest. mapFeatureId is optional so a cycle can be registered before the
 // talhão itself is mapped. Status is derived on read (not stored) from the three dates.
 model CropCycle {
-  id                String      @id @default(uuid())
-  farm              Farm        @relation(fields: [farmId], references: [id])
+  id                String            @id @default(uuid())
+  farm              Farm              @relation(fields: [farmId], references: [id])
   farmId            String
-  mapFeature        MapFeature? @relation(fields: [mapFeatureId], references: [id], onDelete: SetNull)
+  mapFeature        MapFeature?       @relation(fields: [mapFeatureId], references: [id], onDelete: SetNull)
   mapFeatureId      String?
   cropName          String
   variety           String?
@@ -770,8 +765,8 @@ model CropCycle {
   costEntries       CropCostEntry[]
   transactions      Transaction[]
   deals             Deal[]
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 }
 
 // Unidade de venda para calcular receita/produtividade no fechamento da safra.
@@ -858,11 +853,11 @@ enum ContactCategory {
 // pessoa jurídica (CNPJ) — document is a free-text field validated client-side only,
 // since CPF/CNPJ format differs and the value is informational, not used for lookups.
 model Contact {
-  id            String           @id @default(uuid())
-  farm          Farm             @relation(fields: [farmId], references: [id])
+  id            String          @id @default(uuid())
+  farm          Farm            @relation(fields: [farmId], references: [id])
   farmId        String
   type          ContactType
-  category      ContactCategory  @default(OUTRO)
+  category      ContactCategory @default(OUTRO)
   name          String
   tradeName     String?
   document      String?
@@ -874,8 +869,8 @@ model Contact {
   addressState  String?
   addressZip    String?
   notes         String?
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 enum DocumentCategory {
@@ -954,10 +949,10 @@ model Notification {
 // mapFeatureId form the history/comparison series. documentPath is an opaque storage
 // key (same StorageService used by the Documents module) for the uploaded lab PDF.
 model SoilAnalysis {
-  id                    String      @id @default(uuid())
-  farm                  Farm        @relation(fields: [farmId], references: [id])
+  id                    String              @id @default(uuid())
+  farm                  Farm                @relation(fields: [farmId], references: [id])
   farmId                String
-  mapFeature            MapFeature? @relation(fields: [mapFeatureId], references: [id], onDelete: SetNull)
+  mapFeature            MapFeature?         @relation(fields: [mapFeatureId], references: [id], onDelete: SetNull)
   mapFeatureId          String?
   areaLabel             String?
   collectedAt           DateTime
@@ -975,22 +970,22 @@ model SoilAnalysis {
   notes                 String?
   photos                SoilAnalysisPhoto[]
   createdById           String?
-  createdAt             DateTime    @default(now())
+  createdAt             DateTime            @default(now())
 }
 
 model SoilAnalysisPhoto {
-  id              String        @id @default(uuid())
-  soilAnalysis    SoilAnalysis  @relation(fields: [soilAnalysisId], references: [id], onDelete: Cascade)
-  soilAnalysisId  String
-  storagePath     String
-  fileName        String
-  mimeType        String
-  sizeBytes       Int
-  takenAt         DateTime?
-  latitude        Float?
-  longitude       Float?
-  caption         String?
-  createdAt       DateTime      @default(now())
+  id             String       @id @default(uuid())
+  soilAnalysis   SoilAnalysis @relation(fields: [soilAnalysisId], references: [id], onDelete: Cascade)
+  soilAnalysisId String
+  storagePath    String
+  fileName       String
+  mimeType       String
+  sizeBytes      Int
+  takenAt        DateTime?
+  latitude       Float?
+  longitude      Float?
+  caption        String?
+  createdAt      DateTime     @default(now())
 }
 
 enum TicketStatus {
@@ -1035,10 +1030,9 @@ model TicketMessage {
   createdAt DateTime @default(now())
 }
 
-// Singleton row (id is always "mercadopago") holding the platform's Mercado Pago
-// credentials when configured from the admin UI instead of the MERCADOPAGO_ACCESS_TOKEN
-// Tabela genérica para configurações de plataforma (uma linha por provider).
-// accessToken é criptografado em repouso via EncryptionService.
+// Tabela genérica para configurações de plataforma (uma linha por provider; hoje
+// só "stripe"). accessToken é criptografado em repouso via EncryptionService,
+// permitindo configurar o gateway pelo admin sem redeploy.
 model PlatformSetting {
   id            String   @id
   accessToken   String?
@@ -1057,25 +1051,6 @@ model NotificationSetting {
   updatedAt DateTime @updatedAt
 }
 
-enum MercadoPagoLogEvent {
-  CREATE_SUBSCRIPTION
-  CANCEL_SUBSCRIPTION
-  WEBHOOK
-  PAYMENT_HISTORY_FETCH
-  CONFIG_UPDATED
-}
-
-model MercadoPagoLog {
-  id            String              @id @default(uuid())
-  event         MercadoPagoLogEvent
-  preapprovalId String?
-  success       Boolean
-  message       String
-  createdAt     DateTime            @default(now())
-
-  @@index([createdAt])
-}
-
 enum DealType {
   COMPRA
   VENDA
@@ -1090,51 +1065,51 @@ enum DealStatus {
 }
 
 model Deal {
-  id                String     @id @default(uuid())
-  farm              Farm       @relation(fields: [farmId], references: [id])
-  farmId            String
-  type              DealType
-  status            DealStatus @default(RASCUNHO)
-  counterparty      String?
-  pricePerUnit      Float
-  priceUnit         String     @default("ANIMAL") // "ANIMAL" or "ARROBA"
-  freightCost       Float      @default(0)
-  commissionPercent Float      @default(0)
+  id                       String        @id @default(uuid())
+  farm                     Farm          @relation(fields: [farmId], references: [id])
+  farmId                   String
+  type                     DealType
+  status                   DealStatus    @default(RASCUNHO)
+  counterparty             String?
+  pricePerUnit             Float
+  priceUnit                String        @default("ANIMAL") // "ANIMAL" or "ARROBA"
+  freightCost              Float         @default(0)
+  commissionPercent        Float         @default(0)
   // Compra em lote: quantidade informada sem brincos individuais, com valor
   // total fechado e parcela negociada — o custo/animal deriva desses campos.
-  quantity          Int?
-  installmentCount  Int?
-  installmentValue  Float?
-  totalValue        Float?
+  quantity                 Int?
+  installmentCount         Int?
+  installmentValue         Float?
+  totalValue               Float?
   // Abate
-  carcassYieldPercent   Float?
-  liveWeightPricePerKg  Float?
-  funruralPercent       Float?
-  senarPercent          Float?
-  slaughterFrequency    String?
+  carcassYieldPercent      Float?
+  liveWeightPricePerKg     Float?
+  funruralPercent          Float?
+  senarPercent             Float?
+  slaughterFrequency       String?
   // Venda de grãos
-  grainCrop              String?
-  grainQuantity          Float?
-  grainUnit              String?
-  grainMoisturePercent   Float?
+  grainCrop                String?
+  grainQuantity            Float?
+  grainUnit                String?
+  grainMoisturePercent     Float?
   grainMoistureBasePercent Float?
-  grainImpurityPercent   Float?
-  grainMoistureDiscount  Float?
-  grainGrossWeightKg     Float?
-  grainNetWeightKg       Float?
-  grainSaleModality      String?
-  grainWarehouse         String?
-  grainTicketRef         String?
-  cropCycle              CropCycle? @relation(fields: [cropCycleId], references: [id], onDelete: SetNull)
-  cropCycleId            String?
-  notes             String?
-  dealDate          DateTime
-  createdBy         User       @relation(fields: [createdById], references: [id])
-  createdById       String
-  items             DealItem[]
-  transactions      Transaction[]
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
+  grainImpurityPercent     Float?
+  grainMoistureDiscount    Float?
+  grainGrossWeightKg       Float?
+  grainNetWeightKg         Float?
+  grainSaleModality        String?
+  grainWarehouse           String?
+  grainTicketRef           String?
+  cropCycle                CropCycle?    @relation(fields: [cropCycleId], references: [id], onDelete: SetNull)
+  cropCycleId              String?
+  notes                    String?
+  dealDate                 DateTime
+  createdBy                User          @relation(fields: [createdById], references: [id])
+  createdById              String
+  items                    DealItem[]
+  transactions             Transaction[]
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
 
   @@index([farmId, dealDate])
 }

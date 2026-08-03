@@ -13,7 +13,7 @@ import type {
   PlanTier,
   SubscriptionStatus,
 } from '@/lib/types';
-import { SUBSCRIPTION_STATUS_LABEL, paymentStatusLabel } from '@/lib/types';
+import { SUBSCRIPTION_STATUS_LABEL } from '@/lib/types';
 
 const BRL = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -525,16 +525,6 @@ export default function AdminAccountsPage() {
                         <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Membros</p>
                         <p>{expandedDetail.users.length}</p>
                       </div>
-                      <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Último pagamento</p>
-                        <p>
-                          {expandedDetail.paymentHistory[0]
-                            ? `${paymentStatusLabel(expandedDetail.paymentHistory[0].status)} · ${new Date(
-                                expandedDetail.paymentHistory[0].dateCreated,
-                              ).toLocaleDateString('pt-BR')}`
-                            : '—'}
-                        </p>
-                      </div>
                     </div>
                   ) : (
                     <p className="text-xs text-red-700">Erro ao carregar detalhes.</p>
@@ -671,16 +661,6 @@ export default function AdminAccountsPage() {
                           <div>
                             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Membros</p>
                             <p>{expandedDetail.users.length}</p>
-                          </div>
-                          <div>
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Último pagamento</p>
-                            <p>
-                              {expandedDetail.paymentHistory[0]
-                                ? `${paymentStatusLabel(expandedDetail.paymentHistory[0].status)} · ${new Date(
-                                    expandedDetail.paymentHistory[0].dateCreated,
-                                  ).toLocaleDateString('pt-BR')}`
-                                : '—'}
-                            </p>
                           </div>
                         </div>
                       ) : (

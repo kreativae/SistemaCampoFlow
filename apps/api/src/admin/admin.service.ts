@@ -279,9 +279,7 @@ export class AdminService {
       ? PLAN_DEFINITIONS[account.subscription.planTier]
       : null;
 
-    const paymentHistory: unknown[] = [];
-
-    return { ...account, plan, paymentHistory };
+    return { ...account, plan };
   }
 
   async updateAccount(accountId: string, dto: UpdateAccountDto) {

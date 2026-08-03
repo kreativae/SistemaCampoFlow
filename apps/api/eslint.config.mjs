@@ -29,6 +29,9 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
+      // `const { omitido, ...rest } = obj` é o jeito idiomático de remover campos de
+      // um retorno do Prisma; sem isso a regra acusa o campo omitido como não usado.
+      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
       "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
   },

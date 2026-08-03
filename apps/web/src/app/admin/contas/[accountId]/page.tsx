@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useConfirm } from '@/lib/confirm-context';
 import { apiFetch, ApiError } from '@/lib/api';
 import type { AccountDetail, PlanTier, SubscriptionStatus } from '@/lib/types';
-import { SUBSCRIPTION_STATUS_LABEL, paymentStatusLabel } from '@/lib/types';
+import { SUBSCRIPTION_STATUS_LABEL } from '@/lib/types';
 
 const PLAN_OPTIONS: PlanTier[] = ['TRIAL', 'BASICO', 'PROFISSIONAL', 'ENTERPRISE'];
 const STATUS_OPTIONS: SubscriptionStatus[] = [
@@ -519,39 +519,9 @@ export default function AdminAccountDetailPage() {
 
       <section>
         <h2 className="mb-3 text-sm font-bold tracking-tight text-gray-900">Histórico de pagamentos</h2>
-        {account.paymentHistory.length === 0 ? (
-          <p className="rounded-2xl bg-gray-100/60 px-6 py-14 text-center text-sm text-gray-500">
-            Nenhum pagamento encontrado (histórico via Stripe não implementado ainda).
-          </p>
-        ) : (
-          <div className="overflow-x-auto rounded-2xl border border-gray-200/70 bg-white">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
-                <th className="px-4 py-3">Data</th>
-                <th className="px-4 py-3">Valor</th>
-                <th className="px-4 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {account.paymentHistory.map((payment) => (
-                <tr key={payment.id} className="border-t border-gray-100 transition-colors hover:bg-gray-50/70">
-                  <td className="px-4 py-3 text-gray-600">
-                    {new Date(payment.dateCreated).toLocaleDateString('pt-BR')}
-                  </td>
-                  <td className="px-4 py-3">
-                    {payment.transactionAmount.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: payment.currencyId,
-                    })}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">{paymentStatusLabel(payment.status)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-        )}
+        <p className="rounded-2xl bg-gray-100/60 px-6 py-14 text-center text-sm text-gray-500">
+          Ainda não disponível — a consulta ao histórico do Stripe não foi implementada.
+        </p>
       </section>
 
       <section className="mt-10 border-t border-gray-200 pt-6">
