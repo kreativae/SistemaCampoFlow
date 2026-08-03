@@ -3,9 +3,12 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { Sprout, X } from 'lucide-react';
+import { Calculator, History, Repeat, Sprout, X } from 'lucide-react';
+import ToolButton from '@/components/ToolButton';
 import PageHeader from '@/components/PageHeader';
 import Modal from '@/components/Modal';
+import NewRecordButton from '@/components/NewRecordButton';
+import FormModal from '@/components/FormModal';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
@@ -107,7 +110,12 @@ export default function CropsPage() {
 
   const [cycles, setCycles] = useState<CropCycle[]>([]);
   // No mobile o formulário começa fechado para não empurrar a lista.
-  const [showCreateMobile, setShowCreateMobile] = useState(false);
+  const [creatingOpen, setCreatingOpen] = useState(false);
+  // Calculadora, histórico e rotação são consultas pontuais: ficam atrás de botões
+  // no cabeçalho, deixando a página para a lista de safras.
+  const [calcOpen, setCalcOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [rotationOpen, setRotationOpen] = useState(false);
   const [features, setFeatures] = useState<MapFeature[]>([]);
   const [references, setReferences] = useState<CropReferenceOption[]>([]);
   const [fetching, setFetching] = useState(true);
@@ -199,6 +207,7 @@ export default function CropsPage() {
         body: buildCreateBody(form),
       });
       setForm(EMPTY_FORM);
+      setCreatingOpen(false);
       await loadData();
       toastSuccess('Safra cadastrada.');
     } catch (err) {
@@ -282,6 +291,26 @@ export default function CropsPage() {
         title="Safras"
         subtitle="Planejamento e acompanhamento de safras"
         backHref={`/fazendas/${farmId}`}
+        actions={
+          <div className="flex items-center gap-2">
+            <ToolButton
+              icon={History}
+              label="Histórico de safras"
+              onClick={() => setHistoryOpen(true)}
+            />
+            <ToolButton
+              icon={Repeat}
+              label="Rotação de culturas"
+              onClick={() => setRotationOpen(true)}
+            />
+            <ToolButton
+              icon={Calculator}
+              label="Calculadora de plantio"
+              onClick={() => setCalcOpen(true)}
+            />
+            <NewRecordButton label="Nova safra" onClick={() => setCreatingOpen(true)} />
+          </div>
+        }
       />
 
       {error && (
@@ -290,16 +319,16 @@ export default function CropsPage() {
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={() => setShowCreateMobile((v) => !v)}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
-      >
-        {showCreateMobile ? 'Fechar formulário' : '+ Nova safra'}
-      </button>
+      {creatingOpen && (
+        <FormModal
+          icon={Sprout}
+          title="Nova safra"
+          subtitle="Registre um ciclo de cultura"
+          onClose={() => setCreatingOpen(false)}
+        >
       <form
         onSubmit={handleCreate}
-        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid sm:grid-cols-4`}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
         <div className="col-span-2">
           <label className="text-sm font-medium text-gray-700">Cultura</label>
@@ -377,7 +406,14 @@ export default function CropsPage() {
           />
         </div>
 
-        <div className="col-span-full">
+        <div className="col-span-full flex justify-end gap-2 pt-2">
+          <button
+            type="button"
+            onClick={() => setCreatingOpen(false)}
+            className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+          >
+            Cancelar
+          </button>
           <button
             type="submit"
             disabled={creating}
@@ -387,10 +423,44 @@ export default function CropsPage() {
           </button>
         </div>
       </form>
+        </FormModal>
+      )}
 
-      <PlantingCalculator farmId={farmId} token={accessToken} references={references} />
-      <CropHistory farmId={farmId} token={accessToken} />
-      <CropRotation farmId={farmId} token={accessToken} />
+      {calcOpen && (
+        <FormModal
+          icon={Calculator}
+          title="Calculadora de plantio"
+          subtitle="Estime sementes, adubo e custo a partir da área"
+          maxWidth="max-w-3xl"
+          onClose={() => setCalcOpen(false)}
+        >
+          <PlantingCalculator farmId={farmId} token={accessToken} references={references} />
+        </FormModal>
+      )}
+
+      {historyOpen && (
+        <FormModal
+          icon={History}
+          title="Histórico de safras"
+          subtitle="Custos, receita e margem por ciclo"
+          maxWidth="max-w-4xl"
+          onClose={() => setHistoryOpen(false)}
+        >
+          <CropHistory farmId={farmId} token={accessToken} />
+        </FormModal>
+      )}
+
+      {rotationOpen && (
+        <FormModal
+          icon={Repeat}
+          title="Rotação de culturas"
+          subtitle="Sequência de culturas por talhão"
+          maxWidth="max-w-3xl"
+          onClose={() => setRotationOpen(false)}
+        >
+          <CropRotation farmId={farmId} token={accessToken} />
+        </FormModal>
+      )}
 
       {cycles.length === 0 ? (
         <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">

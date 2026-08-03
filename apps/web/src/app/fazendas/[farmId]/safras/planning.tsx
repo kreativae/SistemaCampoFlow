@@ -97,12 +97,10 @@ export function PlantingCalculator({
     }
   }
 
+  // Sem casca própria: o componente é renderizado dentro de um FormModal, que já
+  // fornece título, subtítulo e moldura.
   return (
-    <section className="mb-6 rounded-2xl border border-gray-200/70 bg-white p-5">
-      <h2 className="mb-1 font-bold tracking-tight text-gray-900">Calculadora de plantio</h2>
-      <p className="mb-3 text-xs text-gray-500">
-        Estime sementes, adubo e o custo para um talhão a partir do tamanho da área.
-      </p>
+    <>
       <form onSubmit={handleCalc} className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <div>
           <label className="text-sm font-medium text-gray-700">Área (ha)</label>
@@ -193,7 +191,7 @@ export function PlantingCalculator({
           <Metric label="Custo por ha" value={result.costPerHa != null ? currency(result.costPerHa) : '—'} />
         </div>
       )}
-    </section>
+    </>
   );
 }
 
@@ -225,16 +223,22 @@ export function CropRotation({ farmId, token }: { farmId: string; token: string 
     }
   }
 
+  // Renderizado dentro de um FormModal: carrega ao abrir, sem exigir um clique extra.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
-      <div className="flex items-center justify-between">
-        <h2 className="font-bold tracking-tight text-gray-900">Rotação de culturas por talhão</h2>
+    <>
+      <div className="mb-3 flex justify-end">
         <button
           type="button"
           onClick={load}
           className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
         >
-          {groups ? 'Atualizar' : 'Ver rotação'}
+          Atualizar
         </button>
       </div>
       {loading && <p className="mt-2 text-sm text-gray-400">Carregando...</p>}
@@ -258,7 +262,7 @@ export function CropRotation({ farmId, token }: { farmId: string; token: string 
           ))}
         </ul>
       )}
-    </section>
+    </>
   );
 }
 
@@ -771,16 +775,22 @@ export function CropHistory({ farmId, token }: { farmId: string; token: string |
     }
   }
 
+  // Renderizado dentro de um FormModal: carrega ao abrir, sem exigir um clique extra.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
-      <div className="flex items-center justify-between">
-        <h2 className="font-bold tracking-tight text-gray-900">Histórico de safras (custos e resultados)</h2>
+    <>
+      <div className="mb-3 flex justify-end">
         <button
           type="button"
           onClick={load}
           className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
         >
-          {rows ? 'Atualizar' : 'Ver histórico'}
+          Atualizar
         </button>
       </div>
       {loading && <p className="mt-2 text-sm text-gray-400">Carregando...</p>}
@@ -834,6 +844,6 @@ export function CropHistory({ farmId, token }: { farmId: string; token: string |
           </table>
         </div>
       )}
-    </section>
+    </>
   );
 }

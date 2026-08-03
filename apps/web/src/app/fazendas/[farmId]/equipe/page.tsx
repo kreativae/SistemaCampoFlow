@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Users } from 'lucide-react';
+import { Calculator, Users } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
+import ToolButton from '@/components/ToolButton';
+import FormModal from '@/components/FormModal';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
@@ -108,6 +110,8 @@ export default function TeamPage() {
   const [showAllEntries, setShowAllEntries] = useState(false);
 
   // Calculadora valor-hora → valor total
+  // Auxílio pontual: fica atrás de um botão no cabeçalho, não ocupando a página.
+  const [calcOpen, setCalcOpen] = useState(false);
   const [calcRate, setCalcRate] = useState('');
   const [calcHours, setCalcHours] = useState('');
 
@@ -368,6 +372,13 @@ export default function TeamPage() {
         title="Equipe"
         subtitle="Funcionários e banco de horas"
         backHref={`/fazendas/${farmId}`}
+        actions={
+          <ToolButton
+            icon={Calculator}
+            label="Calculadora de valor / hora"
+            onClick={() => setCalcOpen(true)}
+          />
+        }
       />
 
       {error && (
@@ -391,9 +402,13 @@ export default function TeamPage() {
         />
       </div>
 
-      {/* Calculadora valor-hora / valor */}
-      <section className="mb-6 rounded-2xl border border-gray-200/70 bg-white p-5">
-        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Calculadora de valor / hora</h2>
+      {calcOpen && (
+        <FormModal
+          icon={Calculator}
+          title="Calculadora de valor / hora"
+          subtitle="Multiplique o valor da hora pelas horas trabalhadas"
+          onClose={() => setCalcOpen(false)}
+        >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className="text-sm font-medium text-gray-700">Valor/hora (R$)</label>
@@ -416,11 +431,12 @@ export default function TeamPage() {
             />
           </div>
         </div>
-        <p className="mt-3 text-sm text-gray-700">
+        <p className="mt-4 rounded-xl bg-gray-100/60 px-4 py-3 text-sm text-gray-700">
           Valor total (valor/hora × horas):{' '}
           <strong className="text-emerald-700">{calcResultTotal}</strong>
         </p>
-      </section>
+        </FormModal>
+      )}
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[300px_1fr]">
         {/* Left: employees list */}
