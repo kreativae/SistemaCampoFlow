@@ -13,6 +13,7 @@ import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
 import { useConfirm } from '@/lib/confirm-context';
+import { toApiDate, formatDate } from '@/lib/dates';
 import type {
   CropCycle,
   CropCycleStatus,
@@ -75,9 +76,9 @@ function buildCreateBody(form: FormState) {
     cropName: form.cropName,
     variety: form.variety || undefined,
     areaHectares: form.areaHectares ? Number(form.areaHectares) : undefined,
-    plantedAt: form.plantedAt,
-    expectedHarvestAt: form.expectedHarvestAt || undefined,
-    harvestedAt: form.harvestedAt || undefined,
+    plantedAt: toApiDate(form.plantedAt),
+    expectedHarvestAt: toApiDate(form.expectedHarvestAt),
+    harvestedAt: toApiDate(form.harvestedAt),
     yieldKg: form.yieldKg ? Number(form.yieldKg) : undefined,
     saleUnit: form.saleUnit,
     salePricePerUnit: form.salePricePerUnit ? Number(form.salePricePerUnit) : undefined,
@@ -91,9 +92,9 @@ function buildUpdateBody(form: FormState) {
     cropName: form.cropName,
     variety: form.variety || undefined,
     areaHectares: form.areaHectares ? Number(form.areaHectares) : undefined,
-    plantedAt: form.plantedAt,
-    expectedHarvestAt: form.expectedHarvestAt || undefined,
-    harvestedAt: form.harvestedAt || undefined,
+    plantedAt: toApiDate(form.plantedAt),
+    expectedHarvestAt: toApiDate(form.expectedHarvestAt),
+    harvestedAt: toApiDate(form.harvestedAt),
     yieldKg: form.yieldKg ? Number(form.yieldKg) : undefined,
     saleUnit: form.saleUnit,
     salePricePerUnit: form.salePricePerUnit ? Number(form.salePricePerUnit) : undefined,
@@ -490,12 +491,12 @@ export default function CropsPage() {
                 <p className="mt-1 text-sm text-gray-500">
                   {feature ? `${feature.name} · ` : ''}
                   {c.areaHectares != null ? `${c.areaHectares} ha · ` : ''}
-                  Plantio em {new Date(c.plantedAt).toLocaleDateString('pt-BR')}
+                  Plantio em {formatDate(c.plantedAt)}
                   {c.expectedHarvestAt
-                    ? ` · previsão de colheita ${new Date(c.expectedHarvestAt).toLocaleDateString('pt-BR')}`
+                    ? ` · previsão de colheita ${formatDate(c.expectedHarvestAt)}`
                     : ''}
                   {c.harvestedAt
-                    ? ` · colhido em ${new Date(c.harvestedAt).toLocaleDateString('pt-BR')}`
+                    ? ` · colhido em ${formatDate(c.harvestedAt)}`
                     : ''}
                   {c.yieldKg != null ? ` · ${c.yieldKg} kg produzidos` : ''}
                 </p>
@@ -506,7 +507,7 @@ export default function CropsPage() {
                     onClick={() => startEdit(c)}
                     className="text-sm font-semibold text-emerald-700 hover:text-emerald-900"
                   >
-                    Visualização rápida
+                    Editar
                   </button>
                   <button
                     type="button"
@@ -535,7 +536,9 @@ export default function CropsPage() {
                     {editForm.cropName || 'Safra'}
                     {editForm.variety ? ` — ${editForm.variety}` : ''}
                   </h2>
-                  <p className="text-xs text-gray-500">Edição rápida da safra</p>
+                  <p className="text-xs text-gray-500">
+                    Dados, planejamento e fechamento da safra
+                  </p>
                 </div>
               </div>
               <button

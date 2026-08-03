@@ -11,6 +11,7 @@ import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
 import { useConfirm } from '@/lib/confirm-context';
+import { toApiDate, formatDate, isSameCalendarDay } from '@/lib/dates';
 import type { AgendaAlert, AgendaEvent, AgendaEventType } from '@/lib/types';
 
 const TYPE_OPTIONS: { value: AgendaEventType; label: string }[] = [
@@ -61,6 +62,8 @@ export default function AgendaPage() {
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
 
+  // O mesmo modal serve para criar e editar: null = criando.
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [type, setType] = useState<AgendaEventType>('MANEJO');
   const [scheduledDate, setScheduledDate] = useState('');
@@ -98,23 +101,53 @@ export default function AgendaPage() {
     void loadData();
   }, [loading, user, loadData, router]);
 
-  async function handleCreate(event: FormEvent) {
+  function resetForm() {
+    setEditingId(null);
+    setTitle('');
+    setType('MANEJO');
+    setScheduledDate('');
+  }
+
+  function closeForm() {
+    setCreatingOpen(false);
+    resetForm();
+  }
+
+  function startEdit(event: AgendaEvent) {
+    setEditingId(event.id);
+    setTitle(event.title);
+    setType(event.type);
+    setScheduledDate(event.scheduledDate.slice(0, 10));
+    setCreatingOpen(true);
+  }
+
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setCreating(true);
     setError(null);
     try {
-      await apiFetch<AgendaEvent>(`/fazendas/${farmId}/agenda`, {
-        method: 'POST',
-        token: accessToken,
-        body: { title, type, scheduledDate },
-      });
-      setTitle('');
-      setScheduledDate('');
-      setCreatingOpen(false);
+      await apiFetch<AgendaEvent>(
+        editingId
+          ? `/fazendas/${farmId}/agenda/${editingId}`
+          : `/fazendas/${farmId}/agenda`,
+        {
+          method: editingId ? 'PATCH' : 'POST',
+          token: accessToken,
+          body: { title, type, scheduledDate: toApiDate(scheduledDate) },
+        },
+      );
+      const wasEditing = editingId !== null;
+      closeForm();
       await loadData();
-      toastSuccess('Agendamento criado.');
+      toastSuccess(wasEditing ? 'Agendamento atualizado.' : 'Agendamento criado.');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Erro ao criar evento');
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : editingId
+            ? 'Erro ao atualizar evento'
+            : 'Erro ao criar evento',
+      );
     } finally {
       setCreating(false);
     }
@@ -169,7 +202,16 @@ export default function AgendaPage() {
         title="Agenda"
         subtitle="Eventos, alertas e calendário"
         backHref={`/fazendas/${farmId}`}
-        actions={<NewRecordButton label="Novo evento" onClick={() => setCreatingOpen(true)} />}
+        actions={
+          <NewRecordButton
+            label="Novo evento"
+            onClick={() => {
+              // Limpa o que uma edição anterior tenha deixado no formulário.
+              resetForm();
+              setCreatingOpen(true);
+            }}
+          />
+        }
       />
 
       {error && (
@@ -187,7 +229,7 @@ export default function AgendaPage() {
             {alerts.map((a) => (
               <li key={a.id}>
                 {typeLabel(a.type)}: {a.title} —{' '}
-                {new Date(a.scheduledDate).toLocaleDateString('pt-BR')}
+                {formatDate(a.scheduledDate)}
                 {a.overdue ? ' (atrasado)' : ''}
               </li>
             ))}
@@ -198,12 +240,16 @@ export default function AgendaPage() {
       {creatingOpen && (
         <FormModal
           icon={Calendar}
-          title="Novo evento"
-          subtitle="Agende manejo, compra, venda ou lembrete"
-          onClose={() => setCreatingOpen(false)}
+          title={editingId ? 'Editar evento' : 'Novo evento'}
+          subtitle={
+            editingId
+              ? 'Altere título, tipo ou data'
+              : 'Agende manejo, compra, venda ou lembrete'
+          }
+          onClose={closeForm}
         >
       <form
-        onSubmit={handleCreate}
+        onSubmit={handleSubmit}
         className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
         <div className="col-span-2">
@@ -246,7 +292,7 @@ export default function AgendaPage() {
         <div className="col-span-full flex justify-end gap-2 pt-2">
           <button
             type="button"
-            onClick={() => setCreatingOpen(false)}
+            onClick={closeForm}
             className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
           >
             Cancelar
@@ -256,7 +302,7 @@ export default function AgendaPage() {
             disabled={creating}
             className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
           >
-            {creating ? 'Salvando...' : 'Criar evento'}
+            {creating ? 'Salvando...' : editingId ? 'Salvar alterações' : 'Criar evento'}
           </button>
         </div>
       </form>
@@ -326,7 +372,7 @@ export default function AgendaPage() {
           <div className="grid grid-cols-7 gap-1">
             {buildCalendarGrid(calendarYear, calendarMonth).map((date, i) => {
               const dayEvents = date
-                ? events.filter((e) => isSameDay(new Date(e.scheduledDate), date))
+                ? events.filter((e) => isSameCalendarDay(e.scheduledDate, date))
                 : [];
               const isToday = date ? isSameDay(date, today) : false;
               return (
@@ -381,7 +427,7 @@ export default function AgendaPage() {
               <div className="min-w-0">
                 <p className="truncate font-medium text-gray-900">{e.title}</p>
                 <p className="text-sm text-gray-500">
-                  {typeLabel(e.type)} · {new Date(e.scheduledDate).toLocaleDateString('pt-BR')}
+                  {typeLabel(e.type)} · {formatDate(e.scheduledDate)}
                   {e.completedAt ? ' · concluído' : ''}
                 </p>
               </div>
@@ -394,6 +440,12 @@ export default function AgendaPage() {
                     Marcar como concluído
                   </button>
                 )}
+                <button
+                  onClick={() => startEdit(e)}
+                  className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
+                >
+                  Editar
+                </button>
                 <button
                   onClick={() => handleDelete(e)}
                   className="text-xs font-semibold text-red-600 hover:text-red-800"
