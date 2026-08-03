@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Leaf } from 'lucide-react';
@@ -8,7 +8,23 @@ import { useAuth } from '@/lib/auth-context';
 import { ApiError } from '@/lib/api';
 import SocialLoginButtons from '@/components/SocialLoginButtons';
 
+// useSearchParams() força bail-out da pré-renderização estática, então o formulário
+// fica atrás de um Suspense — mesmo padrão de /oauth/callback e /redefinir-senha.
 export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex flex-1 items-center justify-center px-4">
+          <p className="text-sm text-gray-400">Carregando...</p>
+        </main>
+      }
+    >
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const { login } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
