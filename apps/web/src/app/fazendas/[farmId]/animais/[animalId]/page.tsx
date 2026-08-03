@@ -98,6 +98,8 @@ export default function AnimalDetailPage() {
   const [editReproDate, setEditReproDate] = useState('');
   const [savingReproEdit, setSavingReproEdit] = useState(false);
 
+  const childCount = animal?.children.length ?? 0;
+
   const loadData = useCallback(async () => {
     setFetching(true);
     setError(null);
@@ -165,6 +167,51 @@ export default function AnimalDetailPage() {
     } finally {
       setSavingPasture(false);
     }
+  }
+
+  /**
+   * Vincular ou desvincular um filho é sempre um PATCH no *outro* animal: quem
+   * guarda a relação é o filho, no campo pai ou mãe conforme o sexo deste.
+   */
+  async function updateChildLink(childId: string, parentId: string | null) {
+    if (!animal) return;
+    const field = animal.sex === 'MALE' ? 'fatherId' : 'motherId';
+    setError(null);
+    try {
+      await apiFetch(`/fazendas/${farmId}/animais/${childId}`, {
+        method: 'PATCH',
+        token: accessToken,
+        body: { [field]: parentId },
+      });
+      await loadData();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Erro ao atualizar a genealogia');
+    }
+  }
+
+  async function handleLinkChild(childId: string) {
+    if (childId === animalId) {
+      setError('Um animal não pode ser filho dele mesmo.');
+      return;
+    }
+    // A API barra o autovínculo, mas não o ciclo curto (marcar o próprio pai
+    // como filho), que deixaria a genealogia sem raiz.
+    if (childId === animal?.fatherId || childId === animal?.motherId) {
+      setError('Este animal já é pai ou mãe deste. Remova o vínculo antes.');
+      return;
+    }
+    await updateChildLink(childId, animalId);
+  }
+
+  async function handleUnlinkChild(child: AnimalParent) {
+    const ok = await confirm({
+      title: 'Remover filho',
+      message: `Desvincular ${child.earTag}${child.name ? ` — ${child.name}` : ''} da genealogia deste animal? O animal continua cadastrado.`,
+      confirmLabel: 'Remover',
+      danger: true,
+    });
+    if (!ok) return;
+    await updateChildLink(child.id, null);
   }
 
   async function handleAddWeighing(event: FormEvent) {
@@ -838,7 +885,7 @@ export default function AnimalDetailPage() {
                 {animal.father.earTag}{animal.father.name ? ` — ${animal.father.name}` : ''}
               </Link>
             ) : (
-              <ParentSearch
+              <AnimalSearch
                 farmId={farmId}
                 sex="MALE"
                 label="Buscar pai..."
@@ -872,7 +919,7 @@ export default function AnimalDetailPage() {
                 {animal.mother.earTag}{animal.mother.name ? ` — ${animal.mother.name}` : ''}
               </Link>
             ) : (
-              <ParentSearch
+              <AnimalSearch
                 farmId={farmId}
                 sex="FEMALE"
                 label="Buscar mãe..."
@@ -900,20 +947,39 @@ export default function AnimalDetailPage() {
             )}
           </div>
         </div>
-        {animal?.children && animal.children.length > 0 && (
-          <div className="mt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 mb-1">Filhos ({animal.children.length})</p>
-            <ul className="space-y-1">
-              {animal.children.map((c) => (
-                <li key={c.id}>
-                  <Link href={`/fazendas/${farmId}/animais/${c.id}`} className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
+        <div className="mt-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 mb-1">
+            Filhos{childCount > 0 ? ` (${childCount})` : ''}
+          </p>
+          {childCount > 0 ? (
+            <ul className="mb-2 space-y-1">
+              {animal?.children.map((c) => (
+                <li key={c.id} className="flex items-center justify-between gap-2">
+                  <Link href={`/fazendas/${farmId}/animais/${c.id}`} className="min-w-0 truncate text-sm font-semibold text-emerald-700 hover:text-emerald-900">
                     {c.earTag}{c.name ? ` — ${c.name}` : ''}
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => void handleUnlinkChild(c)}
+                    className="shrink-0 text-sm font-semibold text-red-600 hover:text-red-800"
+                  >
+                    Remover
+                  </button>
                 </li>
               ))}
             </ul>
-          </div>
-        )}
+          ) : (
+            <p className="mb-2 text-sm text-gray-500">Nenhum filho registrado.</p>
+          )}
+          {/* A relação mora no filho: vincular é gravar este animal como pai ou
+              mãe dele, conforme o sexo — daí o PATCH ser no outro animal. */}
+          <AnimalSearch
+            farmId={farmId}
+            label="Buscar filho..."
+            token={accessToken}
+            onSelect={handleLinkChild}
+          />
+        </div>
       </section>
 
         </div>
@@ -1186,7 +1252,13 @@ function WeightEvolutionChart({ weighings }: { weighings: WeighingRecord[] }) {
   );
 }
 
-function ParentSearch({
+/**
+ * Busca um animal da propriedade para vincular na genealogia.
+ *
+ * `sex` restringe o resultado ao procurar pai (MALE) ou mãe (FEMALE). Ao
+ * procurar filhos fica indefinido: cria e novilha entram igualmente.
+ */
+function AnimalSearch({
   farmId,
   sex,
   label,
@@ -1194,7 +1266,7 @@ function ParentSearch({
   onSelect,
 }: {
   farmId: string;
-  sex: 'MALE' | 'FEMALE';
+  sex?: 'MALE' | 'FEMALE';
   label: string;
   token: string | null;
   onSelect: (id: string) => Promise<void>;
@@ -1208,7 +1280,7 @@ function ParentSearch({
     const timeout = setTimeout(async () => {
       try {
         const data = await apiFetch<AnimalParent[]>(
-          `/fazendas/${farmId}/animais/busca?q=${encodeURIComponent(query)}&sexo=${sex}`,
+          `/fazendas/${farmId}/animais/busca?q=${encodeURIComponent(query)}${sex ? `&sexo=${sex}` : ''}`,
           { token },
         );
         setResults(data);
