@@ -6,11 +6,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
 import { useConfirm } from '@/lib/confirm-context';
+import NewRecordButton from '@/components/NewRecordButton';
+import FormModal from '@/components/FormModal';
+import ShowMoreButton from '@/components/ShowMoreButton';
+import { ClipboardPlus } from 'lucide-react';
 import type {
   Animal,
   AnimalEvent,
   AnimalParent,
-  AnimalPerformance,
   GainSummary,
   Pasture,
   PregnancyDiagnosisResult,
@@ -25,6 +28,9 @@ import {
   ANIMAL_PERFORMANCE_COLOR,
   calcAnimalAge,
 } from '@/lib/types';
+
+// Quantos itens de uma lista de registros aparecem antes do "ver outros".
+const VISIBLE_RECORDS = 4;
 
 const REPRODUCTIVE_EVENT_OPTIONS: { value: ReproductiveEventType; label: string }[] = [
   { value: 'IATF', label: 'IATF' },
@@ -52,6 +58,14 @@ export default function AnimalDetailPage() {
   const [history, setHistory] = useState<AnimalEvent[]>([]);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Modal único de "Novo registro": pesagem, vacinação e evento reprodutivo são as
+  // três coisas que se lança rotineiramente na ficha do animal.
+  const [recordOpen, setRecordOpen] = useState(false);
+  const [recordTab, setRecordTab] = useState<'PESAGEM' | 'VACINACAO' | 'REPRODUCAO'>('PESAGEM');
+
+  const [showAllWeighings, setShowAllWeighings] = useState(false);
+  const [showAllHistory, setShowAllHistory] = useState(false);
 
   const [newWeight, setNewWeight] = useState('');
   const [savingWeight, setSavingWeight] = useState(false);
@@ -164,6 +178,7 @@ export default function AnimalDetailPage() {
         body: { weightKg: Number(newWeight) },
       });
       setNewWeight('');
+      setRecordOpen(false);
       await loadData();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao registrar pesagem');
@@ -233,6 +248,7 @@ export default function AnimalDetailPage() {
       });
       setVaccineName('');
       setScheduledDate('');
+      setRecordOpen(false);
       await loadData();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao agendar vacina');
@@ -255,6 +271,7 @@ export default function AnimalDetailPage() {
         },
       });
       setReproResult('');
+      setRecordOpen(false);
       await loadData();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao registrar evento reprodutivo');
@@ -373,7 +390,8 @@ export default function AnimalDetailPage() {
 
   return (
     <main className="animate-fade-up mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8">
-      <header className="mb-8">
+      <header className="mb-8 flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
         <Link href={`/fazendas/${farmId}/animais`} className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">
           ← Rebanho
         </Link>
@@ -391,6 +409,8 @@ export default function AnimalDetailPage() {
             </span>
           ) : null; })()}
         </div>
+        </div>
+        <NewRecordButton label="Novo registro" onClick={() => setRecordOpen(true)} />
       </header>
 
       {error && (
@@ -399,7 +419,7 @@ export default function AnimalDetailPage() {
         </p>
       )}
 
-      <section className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <SummaryCard label="Peso atual" value={`${animal?.currentWeightKg ?? '—'} kg`} />
         <SummaryCard
           label="Ganho diário médio"
@@ -411,115 +431,32 @@ export default function AnimalDetailPage() {
         />
       </section>
 
-      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
-        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Datas</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Data de nascimento</label>
-            <input
-              type="date"
-              className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-              value={animal?.birthDate ? animal.birthDate.slice(0, 10) : ''}
-              onChange={async (e) => {
-                const v = e.target.value;
-                try {
-                  const updated = await apiFetch<Animal>(`/fazendas/${farmId}/animais/${animalId}`, {
-                    method: 'PATCH',
-                    token: accessToken,
-                    body: { birthDate: v || undefined },
-                  });
-                  setAnimal(updated);
-                } catch (err) {
-                  setError(err instanceof ApiError ? err.message : 'Erro ao atualizar data');
-                }
-              }}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Data de entrada</label>
-            <input
-              type="date"
-              className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-              value={animal?.entryDate ? animal.entryDate.slice(0, 10) : ''}
-              onChange={async (e) => {
-                const v = e.target.value;
-                try {
-                  const updated = await apiFetch<Animal>(`/fazendas/${farmId}/animais/${animalId}`, {
-                    method: 'PATCH',
-                    token: accessToken,
-                    body: { entryDate: v || undefined },
-                  });
-                  setAnimal(updated);
-                } catch (err) {
-                  setError(err instanceof ApiError ? err.message : 'Erro ao atualizar data');
-                }
-              }}
-            />
-          </div>
-        </div>
+      {/* Coluna principal (evolução + registros) à esquerda; ficha do animal à direita. */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="flex flex-col gap-6 lg:col-span-2">
+
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Evolução de peso</h2>
+        {weighings.length < 2 ? (
+          <p className="rounded-2xl bg-gray-100/60 px-6 py-14 text-center text-sm text-gray-500">
+            Registre ao menos duas pesagens para ver a curva de ganho.
+          </p>
+        ) : (
+          <WeightEvolutionChart weighings={weighings} />
+        )}
       </section>
 
-      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
-        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Pasto</h2>
-        <p className="mb-3 text-sm text-gray-500">
-          Pasto atual:{' '}
-          <span className="font-medium text-gray-800">
-            {pastures.find((p) => p.id === animal?.pastureId)?.name ?? 'Sem pasto'}
-          </span>
-        </p>
-        <form onSubmit={handleChangePasture} className="flex flex-wrap gap-2">
-          <select
-            value={movePastureId}
-            onChange={(e) => setMovePastureId(e.target.value)}
-            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          >
-            <option value="">— Sem pasto —</option>
-            {pastures.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            disabled={savingPasture || movePastureId === (animal?.pastureId ?? '')}
-            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {savingPasture ? 'Salvando...' : 'Trocar pasto'}
-          </button>
-        </form>
-      </section>
-
-      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
         <h2 className="mb-3 font-bold tracking-tight text-gray-900">Pesagens</h2>
-        <form onSubmit={handleAddWeighing} className="mb-4 flex gap-2">
-          <input
-            type="number"
-            step="0.1"
-            min="0"
-            placeholder="Peso (kg)"
-            required
-            value={newWeight}
-            onChange={(e) => setNewWeight(e.target.value)}
-            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          />
-          <button
-            type="submit"
-            disabled={savingWeight}
-            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {savingWeight ? 'Salvando...' : 'Registrar'}
-          </button>
-        </form>
         {weighings.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma pesagem registrada.</p>
         ) : (
           <>
-            <WeightEvolutionChart weighings={weighings} />
             <ul className="space-y-1 text-sm text-gray-700">
               {weighings
                 .slice()
                 .reverse()
+                .slice(0, showAllWeighings ? undefined : VISIBLE_RECORDS)
                 .map((w) =>
                   editingWeighingId === w.id ? (
                     <li key={w.id} className="flex flex-wrap items-center gap-2 py-1">
@@ -579,36 +516,19 @@ export default function AnimalDetailPage() {
                   ),
                 )}
             </ul>
+            <ShowMoreButton
+              expanded={showAllWeighings}
+              hiddenCount={weighings.length - VISIBLE_RECORDS}
+              onToggle={() => setShowAllWeighings((v) => !v)}
+              noun="pesagens"
+              feminine
+            />
           </>
         )}
       </section>
 
-      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
         <h2 className="mb-3 font-bold tracking-tight text-gray-900">Vacinação</h2>
-        <form onSubmit={handleScheduleVaccination} className="mb-4 flex flex-wrap gap-2">
-          <input
-            type="text"
-            placeholder="Nome da vacina"
-            required
-            value={vaccineName}
-            onChange={(e) => setVaccineName(e.target.value)}
-            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          />
-          <input
-            type="date"
-            required
-            value={scheduledDate}
-            onChange={(e) => setScheduledDate(e.target.value)}
-            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          />
-          <button
-            type="submit"
-            disabled={savingVaccination}
-            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {savingVaccination ? 'Salvando...' : 'Agendar'}
-          </button>
-        </form>
         {vaccinations.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma vacina agendada.</p>
         ) : (
@@ -686,40 +606,8 @@ export default function AnimalDetailPage() {
         )}
       </section>
 
-      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
         <h2 className="mb-3 font-bold tracking-tight text-gray-900">Reprodução</h2>
-        <form onSubmit={handleAddReproductiveEvent} className="mb-4 flex flex-wrap gap-2">
-          <select
-            value={reproEventType}
-            onChange={(e) => setReproEventType(e.target.value as ReproductiveEventType)}
-            className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          >
-            {REPRODUCTIVE_EVENT_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          {reproEventType === 'DIAGNOSTICO_PRENHEZ' && (
-            <select
-              value={reproResult}
-              onChange={(e) => setReproResult(e.target.value as PregnancyDiagnosisResult | '')}
-              required
-              className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-            >
-              <option value="">Resultado...</option>
-              <option value="PRENHE">Prenhe</option>
-              <option value="VAZIA">Vazia</option>
-            </select>
-          )}
-          <button
-            type="submit"
-            disabled={savingReproEvent}
-            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {savingReproEvent ? 'Salvando...' : 'Registrar evento'}
-          </button>
-        </form>
         {reproductiveEvents.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhum evento reprodutivo registrado.</p>
         ) : (
@@ -801,8 +689,119 @@ export default function AnimalDetailPage() {
         )}
       </section>
 
-      {/* Desempenho */}
-      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Histórico</h2>
+        {history.length === 0 ? (
+          <p className="text-sm text-gray-500">Nenhum evento registrado.</p>
+        ) : (
+          <>
+            <ul className="space-y-1 text-sm text-gray-700">
+              {history
+                .slice(0, showAllHistory ? undefined : VISIBLE_RECORDS)
+                .map((e) => (
+                  <li key={e.id}>
+                    {new Date(e.occurredAt).toLocaleDateString('pt-BR')} —{' '}
+                    {ANIMAL_EVENT_TYPE_LABEL[e.type] ?? e.type}
+                    {e.description ? `: ${e.description}` : ''}
+                  </li>
+                ))}
+            </ul>
+            <ShowMoreButton
+              expanded={showAllHistory}
+              hiddenCount={history.length - VISIBLE_RECORDS}
+              onToggle={() => setShowAllHistory((v) => !v)}
+              noun="eventos"
+            />
+          </>
+        )}
+      </section>
+
+        </div>
+
+        <div className="flex flex-col gap-6">
+
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Datas</h2>
+        {/* Duas colunas só até lg: a partir daí a seção vira a barra lateral estreita,
+            onde dois campos de data lado a lado cortam o ano. */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Data de nascimento</label>
+            <input
+              type="date"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
+              value={animal?.birthDate ? animal.birthDate.slice(0, 10) : ''}
+              onChange={async (e) => {
+                const v = e.target.value;
+                try {
+                  const updated = await apiFetch<Animal>(`/fazendas/${farmId}/animais/${animalId}`, {
+                    method: 'PATCH',
+                    token: accessToken,
+                    body: { birthDate: v || undefined },
+                  });
+                  setAnimal(updated);
+                } catch (err) {
+                  setError(err instanceof ApiError ? err.message : 'Erro ao atualizar data');
+                }
+              }}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Data de entrada</label>
+            <input
+              type="date"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
+              value={animal?.entryDate ? animal.entryDate.slice(0, 10) : ''}
+              onChange={async (e) => {
+                const v = e.target.value;
+                try {
+                  const updated = await apiFetch<Animal>(`/fazendas/${farmId}/animais/${animalId}`, {
+                    method: 'PATCH',
+                    token: accessToken,
+                    body: { entryDate: v || undefined },
+                  });
+                  setAnimal(updated);
+                } catch (err) {
+                  setError(err instanceof ApiError ? err.message : 'Erro ao atualizar data');
+                }
+              }}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
+        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Pasto</h2>
+        <p className="mb-3 text-sm text-gray-500">
+          Pasto atual:{' '}
+          <span className="font-medium text-gray-800">
+            {pastures.find((p) => p.id === animal?.pastureId)?.name ?? 'Sem pasto'}
+          </span>
+        </p>
+        <form onSubmit={handleChangePasture} className="flex flex-wrap gap-2">
+          <select
+            value={movePastureId}
+            onChange={(e) => setMovePastureId(e.target.value)}
+            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
+          >
+            <option value="">— Sem pasto —</option>
+            {pastures.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+          <button
+            type="submit"
+            disabled={savingPasture || movePastureId === (animal?.pastureId ?? '')}
+            className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
+          >
+            {savingPasture ? 'Salvando...' : 'Trocar pasto'}
+          </button>
+        </form>
+      </section>
+
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
         <h2 className="mb-3 font-bold tracking-tight text-gray-900">Desempenho</h2>
         <div className="flex flex-wrap items-center gap-3">
           <select
@@ -829,10 +828,9 @@ export default function AnimalDetailPage() {
         </div>
       </section>
 
-      {/* Genealogia */}
-      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
+      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
         <h2 className="mb-3 font-bold tracking-tight text-gray-900">Genealogia</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 mb-1">Pai</p>
             {animal?.father ? (
@@ -918,31 +916,180 @@ export default function AnimalDetailPage() {
         )}
       </section>
 
-      <section className="rounded-2xl border border-gray-200/70 bg-white p-5">
-        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Histórico</h2>
-        {history.length === 0 ? (
-          <p className="text-sm text-gray-500">Nenhum evento registrado.</p>
-        ) : (
-          <ul className="space-y-1 text-sm text-gray-700">
-            {history.map((e) => (
-              <li key={e.id}>
-                {new Date(e.occurredAt).toLocaleDateString('pt-BR')} —{' '}
-                {ANIMAL_EVENT_TYPE_LABEL[e.type] ?? e.type}
-                {e.description ? `: ${e.description}` : ''}
-              </li>
+        </div>
+      </div>
+
+      {recordOpen && (
+        <FormModal
+          icon={ClipboardPlus}
+          title="Novo registro"
+          subtitle={`Animal ${animal?.earTag ?? ''}`}
+          onClose={() => setRecordOpen(false)}
+        >
+          <div className="mb-5 flex gap-1 rounded-full bg-gray-900/5 p-1">
+            {([
+              ['PESAGEM', 'Pesagem'],
+              ['VACINACAO', 'Vacinação'],
+              ['REPRODUCAO', 'Reprodução'],
+            ] as const).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setRecordTab(value)}
+                className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-150 ${
+                  recordTab === value
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-800'
+                }`}
+              >
+                {label}
+              </button>
             ))}
-          </ul>
-        )}
-      </section>
+          </div>
+
+          {recordTab === 'PESAGEM' && (
+            <form onSubmit={handleAddWeighing} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700">Peso (kg)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  required
+                  autoFocus
+                  value={newWeight}
+                  onChange={(e) => setNewWeight(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setRecordOpen(false)}
+                  className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingWeight}
+                  className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
+                >
+                  {savingWeight ? 'Salvando...' : 'Registrar pesagem'}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {recordTab === 'VACINACAO' && (
+            <form onSubmit={handleScheduleVaccination} className="space-y-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Vacina</label>
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    value={vaccineName}
+                    onChange={(e) => setVaccineName(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Agendada para</label>
+                  <input
+                    type="date"
+                    required
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setRecordOpen(false)}
+                  className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingVaccination}
+                  className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
+                >
+                  {savingVaccination ? 'Salvando...' : 'Agendar vacina'}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {recordTab === 'REPRODUCAO' && (
+            <form onSubmit={handleAddReproductiveEvent} className="space-y-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Evento</label>
+                  <select
+                    value={reproEventType}
+                    onChange={(e) => setReproEventType(e.target.value as ReproductiveEventType)}
+                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
+                  >
+                    {REPRODUCTIVE_EVENT_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {reproEventType === 'DIAGNOSTICO_PRENHEZ' && (
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Resultado</label>
+                    <select
+                      value={reproResult}
+                      onChange={(e) => setReproResult(e.target.value as PregnancyDiagnosisResult | '')}
+                      required
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
+                    >
+                      <option value="">Selecione...</option>
+                      <option value="PRENHE">Prenhe</option>
+                      <option value="VAZIA">Vazia</option>
+                    </select>
+                  </div>
+                )}
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setRecordOpen(false)}
+                  className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingReproEvent}
+                  className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
+                >
+                  {savingReproEvent ? 'Salvando...' : 'Registrar evento'}
+                </button>
+              </div>
+            </form>
+          )}
+        </FormModal>
+      )}
     </main>
   );
 }
 
 function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
+    <div className="rounded-2xl border border-gray-200/70 bg-white p-4 sm:p-5">
       <p className="text-[13px] font-medium text-gray-500">{label}</p>
-      <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums text-gray-900">{value}</p>
+      {/* Card estreito no mobile: o número reduz para não quebrar em duas linhas. */}
+      <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-gray-900 sm:text-3xl">
+        {value}
+      </p>
     </div>
   );
 }
