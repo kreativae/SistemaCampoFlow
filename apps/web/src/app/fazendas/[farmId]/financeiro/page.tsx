@@ -1,9 +1,10 @@
 'use client';
 
-import { ArrowDownCircle, ArrowUpCircle, Check, Clock, Pencil, Undo2, Wallet, X } from 'lucide-react';
+import { ArrowDownCircle, ArrowUpCircle, Check, Clock, Pencil, TrendingUp, Undo2, Wallet, X } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import Modal from '@/components/Modal';
 import NewRecordButton from '@/components/NewRecordButton';
+import ToolButton from '@/components/ToolButton';
 import FormModal from '@/components/FormModal';
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
@@ -49,6 +50,7 @@ export default function FinancePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   // No mobile o formulário começa fechado para não empurrar a lista para baixo.
   const [creatingOpen, setCreatingOpen] = useState(false);
+  const [cashFlowOpen, setCashFlowOpen] = useState(false);
   const [cashFlow, setCashFlow] = useState<CashFlowBucket[]>([]);
   const [granularity, setGranularity] = useState<'daily' | 'weekly' | 'monthly'>('monthly');
   const [txFilter, setTxFilter] = useState<'day' | 'week' | 'month' | 'year' | 'all'>('all');
@@ -311,7 +313,14 @@ export default function FinancePage() {
         backHref={`/fazendas/${farmId}`}
         actions={
           forbidden ? undefined : (
-            <NewRecordButton label="Novo lançamento" onClick={() => setCreatingOpen(true)} />
+            <div className="flex items-center gap-2">
+              <ToolButton
+                icon={TrendingUp}
+                label="Fluxo de caixa"
+                onClick={() => setCashFlowOpen(true)}
+              />
+              <NewRecordButton label="Novo lançamento" onClick={() => setCreatingOpen(true)} />
+            </div>
           )
         }
       />
@@ -457,9 +466,15 @@ export default function FinancePage() {
             </FormModal>
           )}
 
-          <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-bold tracking-tight text-gray-900">Fluxo de caixa</h2>
+          {cashFlowOpen && (
+            <FormModal
+              icon={TrendingUp}
+              title="Fluxo de caixa"
+              subtitle="Receita, despesa e saldo por período"
+              maxWidth="max-w-2xl"
+              onClose={() => setCashFlowOpen(false)}
+            >
+            <div className="mb-3 flex items-center justify-end">
               <select
                 value={granularity}
                 onChange={(e) => setGranularity(e.target.value as 'daily' | 'weekly' | 'monthly')}
@@ -476,29 +491,32 @@ export default function FinancePage() {
               <p className="text-sm text-gray-500">Sem dados para o período.</p>
             ) : (
               <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              {/* min-w-full + nowrap: em telas estreitas a tabela rola dentro do
+                  container em vez de espremer as colunas uma sobre a outra. */}
+              <table className="min-w-full text-left text-sm whitespace-nowrap">
                 <thead>
                   <tr className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
-                    <th className="py-1">Período</th>
-                    <th className="py-1">Receita</th>
-                    <th className="py-1">Despesa</th>
-                    <th className="py-1">Saldo</th>
+                    <th className="py-1 pr-6">Período</th>
+                    <th className="py-1 pr-6 text-right">Receita</th>
+                    <th className="py-1 pr-6 text-right">Despesa</th>
+                    <th className="py-1 text-right">Saldo</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="tabular-nums">
                   {cashFlow.map((bucket) => (
                     <tr key={bucket.period} className="border-t border-gray-100 transition-colors hover:bg-gray-50/70">
-                      <td className="py-1.5">{bucket.period}</td>
-                      <td className="py-1.5 text-emerald-700">{formatCurrency(bucket.receita)}</td>
-                      <td className="py-1.5 text-red-600">{formatCurrency(bucket.despesa)}</td>
-                      <td className="py-1.5 font-medium">{formatCurrency(bucket.saldo)}</td>
+                      <td className="py-1.5 pr-6">{bucket.period}</td>
+                      <td className="py-1.5 pr-6 text-right text-emerald-700">{formatCurrency(bucket.receita)}</td>
+                      <td className="py-1.5 pr-6 text-right text-red-600">{formatCurrency(bucket.despesa)}</td>
+                      <td className="py-1.5 text-right font-medium">{formatCurrency(bucket.saldo)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
               </div>
             )}
-          </section>
+            </FormModal>
+          )}
 
           <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-2xl border border-gray-200/70 bg-white p-5">
