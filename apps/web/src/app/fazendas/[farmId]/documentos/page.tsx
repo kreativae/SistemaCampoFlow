@@ -6,10 +6,14 @@ import { FileText, Upload } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import NewRecordButton from '@/components/NewRecordButton';
 import FormModal from '@/components/FormModal';
+import ShowMoreButton from '@/components/ShowMoreButton';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, apiUpload, apiDownload, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
 import type { DocumentCategory, FarmDocument } from '@/lib/types';
+
+// Quantos documentos aparecem antes do "ver outros".
+const VISIBLE_DOCUMENTS = 8;
 
 const CATEGORY_OPTIONS: { value: DocumentCategory; label: string }[] = [
   { value: 'GTA', label: 'GTA' },
@@ -48,6 +52,7 @@ export default function DocumentsPage() {
   const [selectedFileName, setSelectedFileName] = useState('');
   const [docFilter, setDocFilter] = useState<'day' | 'week' | 'month' | 'year' | 'all'>('all');
   const [categoryFilter, setCategoryFilter] = useState<DocumentCategory | ''>('');
+  const [showAll, setShowAll] = useState(false);
 
   const filteredDocuments = useMemo(() => {
     let result = documents;
@@ -72,6 +77,12 @@ export default function DocumentsPage() {
     }
     return result.filter((d) => new Date(d.createdAt) >= start);
   }, [documents, docFilter, categoryFilter]);
+
+  // Mostra os mais recentes e esconde o resto: a lista cresce indefinidamente e
+  // o que interessa quase sempre está no topo.
+  const visibleDocuments = showAll
+    ? filteredDocuments
+    : filteredDocuments.slice(0, VISIBLE_DOCUMENTS);
 
   const loadData = useCallback(async () => {
     setFetching(true);
@@ -239,35 +250,68 @@ export default function DocumentsPage() {
       )}
 
       {documents.length > 0 && (
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-3">
+        <div className="mb-4 flex flex-col gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-bold tracking-tight text-gray-900">Documentos</h2>
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value as DocumentCategory | '')}
-              className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
-            >
-              <option value="">Todas as categorias</option>
-              {CATEGORY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <div className="flex flex-wrap gap-1">
+              {([['day', 'Dia'], ['week', 'Semana'], ['month', 'Mês'], ['year', 'Ano'], ['all', 'Todos']] as const).map(([val, label]) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setDocFilter(val)}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors duration-150 ${
+                    docFilter === val
+                      ? 'bg-emerald-700 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {label}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
-          <div className="flex gap-1">
-            {([['day', 'Dia'], ['week', 'Semana'], ['month', 'Mês'], ['year', 'Ano'], ['all', 'Todos']] as const).map(([val, label]) => (
-              <button
-                key={val}
-                type="button"
-                onClick={() => setDocFilter(val)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors duration-150 ${
-                  docFilter === val
-                    ? 'bg-emerald-700 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+
+          {/* Categorias como botões, não select: com poucas opções, ver todas de
+              uma vez é mais rápido do que abrir uma lista. */}
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              type="button"
+              onClick={() => setCategoryFilter('')}
+              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+                categoryFilter === ''
+                  ? 'bg-emerald-700 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Todas
+            </button>
+            {CATEGORY_OPTIONS.map((opt) => {
+              const count = documents.filter((d) => d.category === opt.value).length;
+              // Categoria sem nenhum documento não vira botão: seria um filtro
+              // garantido de resultado vazio.
+              if (count === 0) return null;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setCategoryFilter(opt.value)}
+                  className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+                    categoryFilter === opt.value
+                      ? 'bg-emerald-700 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {opt.label}
+                  <span
+                    className={
+                      categoryFilter === opt.value ? 'ml-1.5 text-white/70' : 'ml-1.5 text-gray-400'
+                    }
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -287,8 +331,9 @@ export default function DocumentsPage() {
           </p>
         </div>
       ) : (
+        <>
         <ul className="space-y-2">
-          {filteredDocuments.map((doc) => (
+          {visibleDocuments.map((doc) => (
             <li
               key={doc.id}
               className="flex flex-col gap-2 rounded-2xl border border-gray-200/70 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
@@ -317,6 +362,13 @@ export default function DocumentsPage() {
             </li>
           ))}
         </ul>
+        <ShowMoreButton
+          expanded={showAll}
+          hiddenCount={filteredDocuments.length - VISIBLE_DOCUMENTS}
+          onToggle={() => setShowAll((v) => !v)}
+          noun="documentos"
+        />
+        </>
       )}
     </main>
   );
