@@ -1083,7 +1083,7 @@ export default function AnimalsPage() {
                 </span>
                 <div>
                   <h2 className="text-lg font-bold tracking-tight text-gray-900">Brinco {editEarTag}</h2>
-                  <p className="text-xs text-gray-500">Visualização rápida</p>
+                  <p className="text-xs text-gray-500">Editar dados</p>
                 </div>
               </div>
               <button
