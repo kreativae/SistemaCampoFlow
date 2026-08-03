@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Leaf } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { ApiError } from '@/lib/api';
-import GoogleLoginButton from '@/components/GoogleLoginButton';
+import SocialLoginButtons from '@/components/SocialLoginButtons';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -17,6 +17,17 @@ export default function LoginPage() {
   const [mfaRequired, setMfaRequired] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // O callback do login social devolve o usuário para cá com ?erro=... quando
+  // algo falha do lado do provedor.
+  const searchParams = useSearchParams();
+  const oauthError = searchParams.get('erro');
+  useEffect(() => {
+    if (oauthError) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setError(oauthError);
+    }
+  }, [oauthError]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -127,13 +138,7 @@ export default function LoginPage() {
           {submitting ? 'Entrando...' : mfaRequired ? 'Confirmar código' : 'Entrar'}
         </button>
 
-        <div className="flex items-center gap-2 text-xs text-gray-400">
-          <span className="h-px flex-1 bg-gray-200" />
-          ou
-          <span className="h-px flex-1 bg-gray-200" />
-        </div>
-
-        <GoogleLoginButton />
+        <SocialLoginButtons />
 
         <p className="text-center text-sm text-gray-500">
           Não tem conta?{' '}

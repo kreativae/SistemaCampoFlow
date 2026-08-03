@@ -27,7 +27,7 @@ model User {
   passwordHash           String?
   name                   String
   // Set when the account was created/linked via "Entrar com Google".
-  googleId               String?         @unique
+  oauthIdentities        OAuthIdentity[]
   refreshTokenHash       String?
   mfaSecret              String?
   mfaEnabled             Boolean         @default(false)
@@ -1028,6 +1028,39 @@ model TicketMessage {
   fromStaff Boolean  @default(false)
   message   String
   createdAt DateTime @default(now())
+}
+
+enum OAuthProvider {
+  GOOGLE
+  MICROSOFT
+  APPLE
+}
+
+// Vínculo entre um usuário e uma conta de provedor externo. Tabela em vez de uma
+// coluna por provedor (o antigo User.googleId): adicionar um quarto provedor não
+// exige migração de schema, só um valor no enum.
+model OAuthIdentity {
+  id         String        @id @default(uuid())
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  provider   OAuthProvider
+  providerId String
+  email      String?
+  createdAt  DateTime      @default(now())
+
+  @@unique([provider, providerId])
+  @@index([userId])
+}
+
+// Credenciais de login social, editáveis pelo admin sem redeploy. clientSecret é
+// cifrado em repouso via EncryptionService. Quando não há linha para o provedor,
+// o sistema cai nas variáveis de ambiente (ver OAuthService.resolveConfig).
+model OAuthProviderConfig {
+  provider     OAuthProvider @id
+  clientId     String?
+  clientSecret String?
+  enabled      Boolean       @default(false)
+  updatedAt    DateTime      @updatedAt
 }
 
 // Tabela genérica para configurações de plataforma (uma linha por provider; hoje

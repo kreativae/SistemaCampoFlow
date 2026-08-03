@@ -11,7 +11,7 @@ interface AuthResponseBody {
   accessToken?: string;
 }
 
-describe('Google OAuth (e2e)', () => {
+describe('Login social OAuth (e2e)', () => {
   let app: INestApplication<App>;
   let prisma: PrismaService;
   let authService: AuthService;
@@ -45,39 +45,54 @@ describe('Google OAuth (e2e)', () => {
   });
 
   afterAll(async () => {
+    const identities = await prisma.oAuthIdentity.findMany({
+      where: { providerId: { startsWith: 'oauth-test-' } },
+      select: { userId: true },
+    });
     await prisma.user.deleteMany({
       where: {
         OR: [
           { email: passwordUser.email },
-          { googleId: { startsWith: 'google-test-' } },
+          { id: { in: identities.map((i) => i.userId) } },
         ],
       },
     });
     await app.close();
   });
 
-  // No real Google Cloud OAuth credentials exist in this environment, so the HTTP
-  // redirect flow (/auth/google -> Google -> /auth/google/callback) can't be driven
-  // end-to-end here. What IS fully testable without those credentials:
-  // (a) the app boots and the routes are guarded correctly when not configured, and
-  // (b) AuthService.loginWithGoogle's account-linking logic, called directly with a
-  // fake decoded profile — exactly what GoogleStrategy.validate() would hand it.
+  // Não há credencial real de OAuth neste ambiente, então o fluxo de redirect
+  // (/auth/oauth/google -> provedor -> callback) não roda de ponta a ponta aqui.
+  // O que é totalmente testável sem credencial:
+  // (a) as rotas se comportam corretamente quando nada está configurado, e
+  // (b) a lógica de vínculo de conta em AuthService.loginWithOAuth, chamada direto
+  //     com um perfil decodificado — exatamente o que o callback entregaria.
 
-  it('reports Google login as disabled when no credentials are configured', async () => {
+  it('não lista nenhum provedor quando não há credenciais configuradas', async () => {
     const res = await request(app.getHttpServer())
-      .get('/auth/google/status')
+      .get('/auth/oauth/provedores')
       .expect(200);
-    expect(res.body).toEqual({ enabled: false });
+    expect(res.body).toEqual({ providers: [] });
   });
 
-  it('blocks /auth/google and /auth/google/callback with 503 when not configured', async () => {
-    await request(app.getHttpServer()).get('/auth/google').expect(503);
-    await request(app.getHttpServer()).get('/auth/google/callback').expect(503);
+  it('recusa iniciar login em provedor não configurado', async () => {
+    await request(app.getHttpServer()).get('/auth/oauth/google').expect(400);
+    await request(app.getHttpServer()).get('/auth/oauth/microsoft').expect(400);
+  });
+
+  it('recusa provedor desconhecido', async () => {
+    await request(app.getHttpServer()).get('/auth/oauth/facebook').expect(400);
+  });
+
+  it('redireciona ao login com erro quando o callback vem sem código', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/auth/oauth/google/callback')
+      .expect(302);
+    expect(res.headers.location).toContain('/entrar?erro=');
   });
 
   it('rejects password login for a Google-only account (no passwordHash)', async () => {
-    const created = await authService.loginWithGoogle({
-      googleId: 'google-test-only-account',
+    const created = await authService.loginWithOAuth('GOOGLE', {
+      providerId: 'oauth-test-only-account',
       email: `google-only-${Date.now()}@campoflow.test`,
       name: 'Google Only',
     });
@@ -90,8 +105,8 @@ describe('Google OAuth (e2e)', () => {
 
   it('creates a new account on first Google login', async () => {
     const email = `google-new-${Date.now()}@campoflow.test`;
-    const result = await authService.loginWithGoogle({
-      googleId: 'google-test-new-user',
+    const result = await authService.loginWithOAuth('GOOGLE', {
+      providerId: 'oauth-test-new-user',
       email,
       name: 'Google New User',
     });
@@ -100,13 +115,21 @@ describe('Google OAuth (e2e)', () => {
     expect(result.accessToken).toBeDefined();
 
     const dbUser = await prisma.user.findUnique({ where: { email } });
-    expect(dbUser?.googleId).toBe('google-test-new-user');
     expect(dbUser?.passwordHash).toBeNull();
+    const identity = await prisma.oAuthIdentity.findUnique({
+      where: {
+        provider_providerId: {
+          provider: 'GOOGLE',
+          providerId: 'oauth-test-new-user',
+        },
+      },
+    });
+    expect(identity?.userId).toBe(dbUser?.id);
   });
 
   it('links Google to an existing password account with the same email', async () => {
-    const result = await authService.loginWithGoogle({
-      googleId: 'google-test-link-existing',
+    const result = await authService.loginWithOAuth('GOOGLE', {
+      providerId: 'oauth-test-link-existing',
       email: passwordUser.email,
       name: passwordUser.name,
     });
@@ -118,8 +141,16 @@ describe('Google OAuth (e2e)', () => {
     const dbUser = await prisma.user.findUnique({
       where: { email: passwordUser.email },
     });
-    expect(dbUser?.googleId).toBe('google-test-link-existing');
     expect(dbUser?.passwordHash).not.toBeNull();
+    const identity = await prisma.oAuthIdentity.findUnique({
+      where: {
+        provider_providerId: {
+          provider: 'GOOGLE',
+          providerId: 'oauth-test-link-existing',
+        },
+      },
+    });
+    expect(identity?.userId).toBe(dbUser?.id);
 
     await request(app.getHttpServer())
       .post('/auth/login')
@@ -127,15 +158,15 @@ describe('Google OAuth (e2e)', () => {
       .expect(201);
   });
 
-  it('logs in the same user again on a subsequent Google login (matched by googleId)', async () => {
-    const first = await authService.loginWithGoogle({
-      googleId: 'google-test-repeat-login',
+  it('reconhece o mesmo usuário num login seguinte (casado pela identidade)', async () => {
+    const first = await authService.loginWithOAuth('GOOGLE', {
+      providerId: 'oauth-test-repeat-login',
       email: `google-repeat-${Date.now()}@campoflow.test`,
       name: 'Repeat Login',
     });
 
-    const second = await authService.loginWithGoogle({
-      googleId: 'google-test-repeat-login',
+    const second = await authService.loginWithOAuth('GOOGLE', {
+      providerId: 'oauth-test-repeat-login',
       email: 'should-be-ignored@campoflow.test',
       name: 'Repeat Login',
     });

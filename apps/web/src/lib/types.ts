@@ -38,6 +38,20 @@ export const BALANCE_PERIOD_OPTIONS: { value: BalancePeriod; label: string }[] =
   { value: 'ano', label: 'Saldo do ano' },
 ];
 
+export type OAuthProvider = 'GOOGLE' | 'MICROSOFT' | 'APPLE';
+
+export interface OAuthProviderStatus {
+  provider: OAuthProvider;
+  label: string;
+  enabled: boolean;
+  configured: boolean;
+  source: 'banco' | 'variavel_de_ambiente' | 'nenhum';
+  clientIdMasked: string | null;
+  secretSet: boolean;
+  /** URL que precisa ser cadastrada no console do provedor. */
+  redirectUri: string;
+}
+
 export interface AccountSummary {
   id: string;
   name: string;

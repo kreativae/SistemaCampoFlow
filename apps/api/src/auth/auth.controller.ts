@@ -1,15 +1,18 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { OAuthProvider } from '@prisma/client';
 import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -21,14 +24,16 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UpdateProfileDto, ChangePasswordDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { GoogleAuthEnabledGuard } from './guards/google-auth-enabled.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import type { AuthenticatedUser } from './decorators/current-user.decorator';
-import type { GoogleProfile } from './strategies/google.strategy';
+import { OAuthService, SUPPORTED_PROVIDERS } from './oauth/oauth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly oauthService: OAuthService,
+  ) {}
 
   // Tighter-than-global limits on the routes most attractive to brute-force/abuse
   // (credential stuffing on login, spam registrations, password-reset flooding).
@@ -139,34 +144,80 @@ export class AuthController {
     return { success: true };
   }
 
-  @Get('google/status')
-  googleStatus() {
-    return { enabled: this.authService.isGoogleConfigured() };
+  // Provedores que a tela de login deve exibir. Público: é consultado antes do login.
+  @Get('oauth/provedores')
+  async oauthProviders() {
+    return { providers: await this.oauthService.availableProviders() };
   }
 
-  @Get('google')
-  @UseGuards(GoogleAuthEnabledGuard, AuthGuard('google'))
-  googleAuth() {
-    // Intentionally empty: AuthGuard('google') intercepts the request and redirects
-    // to Google before this method body would ever run.
-  }
-
-  @Get('google/callback')
-  @UseGuards(GoogleAuthEnabledGuard, AuthGuard('google'))
-  async googleCallback(
-    @Req() req: { user: GoogleProfile },
+  @Get('oauth/:provider')
+  async oauthStart(
+    @Param('provider') providerParam: string,
     @Res() res: Response,
   ) {
-    const { accessToken, refreshToken } =
-      await this.authService.loginWithGoogle(req.user);
+    const provider = this.parseProvider(providerParam);
+    if (!(await this.oauthService.isAvailable(provider))) {
+      throw new BadRequestException('Provedor de login indisponível');
+    }
+    // `state` assinado protege contra CSRF: o callback só aceita um state emitido
+    // por nós e ainda válido.
+    const state = await this.oauthService.issueState(provider);
+    res.redirect(await this.oauthService.buildAuthorizeUrl(provider, state));
+  }
 
-    const webBase = process.env.WEB_BASE_URL || 'http://localhost:3100';
-    const redirectBase =
-      process.env.WEB_OAUTH_REDIRECT_URL ||
-      `${webBase}/oauth/callback`;
-    const redirectUrl = `${redirectBase}?accessToken=${encodeURIComponent(
-      accessToken,
-    )}&refreshToken=${encodeURIComponent(refreshToken)}`;
-    res.redirect(redirectUrl);
+  @Get('oauth/:provider/callback')
+  async oauthCallback(
+    @Param('provider') providerParam: string,
+    @Query('code') code: string | undefined,
+    @Query('state') state: string | undefined,
+    @Query('error') error: string | undefined,
+    @Res() res: Response,
+  ) {
+    const webBase = (process.env.WEB_BASE_URL || 'http://localhost:3100').replace(
+      /\/$/,
+      '',
+    );
+    const failRedirect = (message: string) =>
+      res.redirect(`${webBase}/entrar?erro=${encodeURIComponent(message)}`);
+
+    try {
+      const provider = this.parseProvider(providerParam);
+      // O usuário pode ter cancelado na tela do provedor.
+      if (error) return failRedirect('Login cancelado');
+      if (!code || !state) return failRedirect('Resposta inválida do provedor');
+      await this.oauthService.verifyState(provider, state);
+
+      const profile = await this.oauthService.exchangeCodeForProfile(
+        provider,
+        code,
+      );
+      const { accessToken, refreshToken } = await this.authService.loginWithOAuth(
+        provider,
+        profile,
+      );
+
+      const redirectBase =
+        process.env.WEB_OAUTH_REDIRECT_URL || `${webBase}/oauth/callback`;
+      res.redirect(
+        `${redirectBase}?accessToken=${encodeURIComponent(
+          accessToken,
+        )}&refreshToken=${encodeURIComponent(refreshToken)}`,
+      );
+    } catch (err) {
+      return failRedirect(
+        err instanceof BadRequestException
+          ? (err.getResponse() as { message?: string }).message ||
+              'Falha no login social'
+          : 'Falha no login social',
+      );
+    }
+  }
+
+  private parseProvider(value: string): OAuthProvider {
+    const upper = value.toUpperCase();
+    if (!SUPPORTED_PROVIDERS.includes(upper as OAuthProvider)) {
+      throw new BadRequestException('Provedor não suportado');
+    }
+    return upper as OAuthProvider;
   }
 }

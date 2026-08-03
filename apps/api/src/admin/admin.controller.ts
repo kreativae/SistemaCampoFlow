@@ -9,8 +9,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { OAuthProvider } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PlatformAdminGuard } from '../auth/guards/platform-admin.guard';
+import { OAuthService } from '../auth/oauth/oauth.service';
 import { AdminService } from './admin.service';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
@@ -24,7 +26,10 @@ import { ExtendTrialDto } from './dto/extend-trial.dto';
 @Controller('admin')
 @UseGuards(JwtAuthGuard, PlatformAdminGuard)
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly oauthService: OAuthService,
+  ) {}
 
   @Get('saude')
   healthCheck() {
@@ -91,6 +96,22 @@ export class AdminController {
     @Body() dto: { secretKey?: string; webhookSecret?: string },
   ) {
     return this.adminService.updateStripeConfig(dto);
+  }
+
+  @Get('oauth/config')
+  getOAuthConfig() {
+    return this.oauthService.statusList();
+  }
+
+  @Patch('oauth/config/:provider')
+  updateOAuthConfig(
+    @Param('provider') provider: string,
+    @Body() dto: { clientId?: string; clientSecret?: string; enabled?: boolean },
+  ) {
+    return this.oauthService.updateConfig(
+      provider.toUpperCase() as OAuthProvider,
+      dto,
+    );
   }
 
   @Get('notificacoes/config')
