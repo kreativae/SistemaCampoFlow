@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { apiFetch, ApiError } from '@/lib/api';
+import { toApiDate, formatDate } from '@/lib/dates';
 import type {
   CropApplication,
   CropApplicationType,
@@ -254,7 +255,7 @@ export function CropRotation({ farmId, token }: { farmId: string; token: string 
               <p className="font-medium text-gray-900">{g.label}</p>
               <p className="mt-1 text-sm text-gray-600">
                 {g.history
-                  .map((h) => `${h.cropName} (${new Date(h.plantedAt).toLocaleDateString('pt-BR')})`)
+                  .map((h) => `${h.cropName} (${formatDate(h.plantedAt)})`)
                   .join('  ←  ')}
               </p>
               <p className="mt-1 text-xs text-gray-500">{g.advice}</p>
@@ -291,6 +292,7 @@ export function CropPlanning({
   const [appliedAt, setAppliedAt] = useState('');
   const [carencia, setCarencia] = useState('');
   const [responsible, setResponsible] = useState('');
+  const [editingAppId, setEditingAppId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const load = useCallback(async () => {
@@ -318,13 +320,40 @@ export function CropPlanning({
     void load();
   }, [load]);
 
-  async function handleAddApplication(event: FormEvent) {
+  function resetApplicationForm() {
+    setEditingAppId(null);
+    setProduct('');
+    setDosePerHa('');
+    setDoseUnit('');
+    setUnitPrice('');
+    setAppliedAt('');
+    setCarencia('');
+    setResponsible('');
+  }
+
+  function startEditApplication(app: CropApplication) {
+    setEditingAppId(app.id);
+    setAppType(app.type);
+    setProduct(app.product);
+    setDosePerHa(app.dosePerHa != null ? String(app.dosePerHa) : '');
+    setDoseUnit(app.doseUnit ?? '');
+    setUnitPrice(app.unitPrice != null ? String(app.unitPrice) : '');
+    setAppliedAt(app.appliedAt ? app.appliedAt.slice(0, 10) : '');
+    setCarencia(
+      app.preHarvestIntervalDays != null ? String(app.preHarvestIntervalDays) : '',
+    );
+    setResponsible(app.responsible ?? '');
+  }
+
+  // O mesmo formulário registra e edita: com editingAppId preenchido, faz PATCH.
+  async function handleSubmitApplication(event: FormEvent) {
     event.preventDefault();
     setSaving(true);
     setError(null);
     try {
-      await apiFetch(`/fazendas/${farmId}/safras/${cycleId}/aplicacoes`, {
-        method: 'POST',
+      const base = `/fazendas/${farmId}/safras/${cycleId}/aplicacoes`;
+      await apiFetch(editingAppId ? `${base}/${editingAppId}` : base, {
+        method: editingAppId ? 'PATCH' : 'POST',
         token,
         body: {
           type: appType,
@@ -332,21 +361,21 @@ export function CropPlanning({
           dosePerHa: dosePerHa ? Number(dosePerHa) : undefined,
           doseUnit: doseUnit || undefined,
           unitPrice: unitPrice ? Number(unitPrice) : undefined,
-          appliedAt: appliedAt || undefined,
+          appliedAt: toApiDate(appliedAt),
           preHarvestIntervalDays: carencia ? Number(carencia) : undefined,
           responsible: responsible || undefined,
         },
       });
-      setProduct('');
-      setDosePerHa('');
-      setDoseUnit('');
-      setUnitPrice('');
-      setAppliedAt('');
-      setCarencia('');
-      setResponsible('');
+      resetApplicationForm();
       await load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Erro ao registrar aplicação');
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : editingAppId
+            ? 'Erro ao atualizar aplicação'
+            : 'Erro ao registrar aplicação',
+      );
     } finally {
       setSaving(false);
     }
@@ -435,7 +464,7 @@ export function CropPlanning({
       {/* #4 Caderno de campo */}
       <div className="rounded-xl border border-gray-200/70 bg-white p-3">
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Caderno de campo (aplicações)</p>
-        <form onSubmit={handleAddApplication} className="grid grid-cols-2 gap-2">
+        <form onSubmit={handleSubmitApplication} className="grid grid-cols-2 gap-2">
           <select
             value={appType}
             onChange={(e) => setAppType(e.target.value as CropApplicationType)}
@@ -498,13 +527,28 @@ export function CropPlanning({
             onChange={(e) => setResponsible(e.target.value)}
             className="col-span-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
-          <button
-            type="submit"
-            disabled={saving}
-            className="col-span-2 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {saving ? 'Salvando...' : 'Registrar aplicação'}
-          </button>
+          <div className="col-span-2 flex gap-2">
+            {editingAppId && (
+              <button
+                type="button"
+                onClick={resetApplicationForm}
+                className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+              >
+                Cancelar
+              </button>
+            )}
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
+            >
+              {saving
+                ? 'Salvando...'
+                : editingAppId
+                  ? 'Salvar aplicação'
+                  : 'Registrar aplicação'}
+            </button>
+          </div>
         </form>
 
         {applications.length === 0 ? (
@@ -515,7 +559,7 @@ export function CropPlanning({
               <li key={a.id} className="flex items-start justify-between gap-2 border-b border-gray-100 pb-2 last:border-0">
                 <span>
                   <span className="block">
-                    {new Date(a.appliedAt).toLocaleDateString('pt-BR')} —{' '}
+                    {formatDate(a.appliedAt)} —{' '}
                     <span className="font-medium">{APPLICATION_LABEL[a.type]}</span>: {a.product}
                     {a.dosePerHa != null ? ` · ${a.dosePerHa} ${a.doseUnit ?? ''}` : ''}
                   </span>
@@ -524,13 +568,22 @@ export function CropPlanning({
                     {a.responsible ? ` · ${a.responsible}` : ''}
                   </span>
                 </span>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteApplication(a.id)}
-                  className="shrink-0 text-xs font-semibold text-red-600 hover:text-red-800"
-                >
-                  Excluir
-                </button>
+                <span className="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => startEditApplication(a)}
+                    className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteApplication(a.id)}
+                    className="text-xs font-semibold text-red-600 hover:text-red-800"
+                  >
+                    Excluir
+                  </button>
+                </span>
               </li>
             ))}
           </ul>
@@ -558,6 +611,7 @@ export function CropClosing({
   const [category, setCategory] = useState<CropCostCategory>('SEMENTE');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
+  const [editingCostId, setEditingCostId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const load = useCallback(async () => {
@@ -583,21 +637,41 @@ export function CropClosing({
     void load();
   }, [load]);
 
-  async function handleAddCost(event: FormEvent) {
+  function resetCostForm() {
+    setEditingCostId(null);
+    setDescription('');
+    setAmount('');
+  }
+
+  function startEditCost(entry: CropCostEntry) {
+    setEditingCostId(entry.id);
+    setCategory(entry.category);
+    setDescription(entry.description);
+    setAmount(String(entry.amount));
+  }
+
+  // O mesmo formulário lança e edita: com editingCostId preenchido, faz PATCH.
+  async function handleSubmitCost(event: FormEvent) {
     event.preventDefault();
     setSaving(true);
     setError(null);
     try {
-      await apiFetch(`/fazendas/${farmId}/safras/${cycleId}/custos`, {
-        method: 'POST',
+      const base = `/fazendas/${farmId}/safras/${cycleId}/custos`;
+      await apiFetch(editingCostId ? `${base}/${editingCostId}` : base, {
+        method: editingCostId ? 'PATCH' : 'POST',
         token,
         body: { category, description, amount: Number(amount) },
       });
-      setDescription('');
-      setAmount('');
+      resetCostForm();
       await load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Erro ao registrar custo');
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : editingCostId
+            ? 'Erro ao atualizar custo'
+            : 'Erro ao registrar custo',
+      );
     } finally {
       setSaving(false);
     }
@@ -688,8 +762,10 @@ export function CropClosing({
       )}
 
       <div className="rounded-xl border border-gray-200/70 bg-white p-3">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">Custos manuais da safra</p>
-        <form onSubmit={handleAddCost} className="grid grid-cols-2 gap-2">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
+          {editingCostId ? 'Editando custo' : 'Custos manuais da safra'}
+        </p>
+        <form onSubmit={handleSubmitCost} className="grid grid-cols-2 gap-2">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as CropCostCategory)}
@@ -718,13 +794,24 @@ export function CropClosing({
             onChange={(e) => setDescription(e.target.value)}
             className="col-span-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
           />
-          <button
-            type="submit"
-            disabled={saving}
-            className="col-span-2 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {saving ? 'Salvando...' : 'Adicionar custo'}
-          </button>
+          <div className="col-span-2 flex gap-2">
+            {editingCostId && (
+              <button
+                type="button"
+                onClick={resetCostForm}
+                className="rounded-full bg-gray-900/5 px-4 py-2 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+              >
+                Cancelar
+              </button>
+            )}
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
+            >
+              {saving ? 'Salvando...' : editingCostId ? 'Salvar custo' : 'Adicionar custo'}
+            </button>
+          </div>
         </form>
         {entries.length === 0 ? (
           <p className="mt-3 text-sm text-gray-500">Nenhum custo manual lançado.</p>
@@ -736,13 +823,22 @@ export function CropClosing({
                   <span className="font-medium">{COST_LABEL[e.category]}</span>: {e.description}{' '}
                   — {currency(e.amount)}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteCost(e.id)}
-                  className="shrink-0 text-xs font-semibold text-red-600 hover:text-red-800"
-                >
-                  Excluir
-                </button>
+                <span className="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => startEditCost(e)}
+                    className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteCost(e.id)}
+                    className="text-xs font-semibold text-red-600 hover:text-red-800"
+                  >
+                    Excluir
+                  </button>
+                </span>
               </li>
             ))}
           </ul>
@@ -819,7 +915,7 @@ export function CropHistory({ farmId, token }: { farmId: string; token: string |
                     {r.variety ? ` (${r.variety})` : ''}
                   </td>
                   <td className="py-1.5 pr-3 text-gray-600">
-                    {new Date(r.plantedAt).toLocaleDateString('pt-BR')}
+                    {formatDate(r.plantedAt)}
                   </td>
                   <td className="py-1.5 pr-3 text-gray-600">
                     {r.productivityPerHa != null ? `${r.productivityPerHa} ${r.unitLabel}/ha` : '—'}

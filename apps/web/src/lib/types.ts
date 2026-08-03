@@ -964,6 +964,7 @@ export interface CropApplication {
   dosePerHa: number | null;
   doseUnit: string | null;
   totalQuantity: number | null;
+  unitPrice: number | null;
   appliedAt: string;
   preHarvestIntervalDays: number | null;
   responsible: string | null;
