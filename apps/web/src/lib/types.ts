@@ -20,6 +20,24 @@ export const SUBSCRIPTION_STATUS_LABEL: Record<SubscriptionStatus, string> = {
   SUSPENDED: 'Suspensa',
 };
 
+// Recortes de saldo oferecidos no card financeiro do painel. Sempre o período
+// CORRENTE (hoje, esta semana, este mês...), não os últimos N dias.
+export type BalancePeriod = 'dia' | 'semana' | 'mes' | 'semestre' | 'ano';
+
+export interface PeriodBalance {
+  receita: number;
+  despesa: number;
+  saldo: number;
+}
+
+export const BALANCE_PERIOD_OPTIONS: { value: BalancePeriod; label: string }[] = [
+  { value: 'dia', label: 'Saldo do dia' },
+  { value: 'semana', label: 'Saldo da semana' },
+  { value: 'mes', label: 'Saldo do mês' },
+  { value: 'semestre', label: 'Saldo do semestre' },
+  { value: 'ano', label: 'Saldo do ano' },
+];
+
 export interface AccountSummary {
   id: string;
   name: string;
@@ -510,6 +528,7 @@ export interface DashboardOverview {
     despesa: number;
     saldo: number;
   };
+  financeByPeriod: Record<BalancePeriod, PeriodBalance>;
   pendingAlerts: {
     id: string;
     animalEarTag: string;

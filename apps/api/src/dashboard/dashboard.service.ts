@@ -3,7 +3,12 @@ import { TaskStatus } from '@prisma/client';
 import { AnimalsService } from '../animals/animals.service';
 import { WeighingsService } from '../weighings/weighings.service';
 import { PasturesService } from '../pastures/pastures.service';
-import { FinanceService } from '../finance/finance.service';
+import {
+  BALANCE_PERIODS,
+  FinanceService,
+  type BalancePeriod,
+  type PeriodBalance,
+} from '../finance/finance.service';
 import { HealthRecordsService } from '../health-records/health-records.service';
 import { FarmsService } from '../farms/farms.service';
 import { ReproductionService } from '../reproduction/reproduction.service';
@@ -21,6 +26,12 @@ import { QuotationsService } from '../quotations/quotations.service';
 
 const MIN_WEIGHINGS_FOR_GAIN = 2;
 const RECENT_QUOTATIONS_LIMIT = 3;
+
+// Fallback usado quando a consulta financeira falha: zera todos os períodos em vez
+// de omitir o campo, para o painel não precisar tratar ausência.
+const EMPTY_PERIOD_BALANCES = Object.fromEntries(
+  BALANCE_PERIODS.map((period) => [period, { receita: 0, despesa: 0, saldo: 0 }]),
+) as Record<BalancePeriod, PeriodBalance>;
 
 @Injectable()
 export class DashboardService {
@@ -77,10 +88,11 @@ export class DashboardService {
           validGains.length
         : 0;
 
-    const [occupancy, cashFlow, pendingAlerts] = await Promise.all([
+    const [occupancy, cashFlow, pendingAlerts, financeByPeriod] = await Promise.all([
       this.safe(() => this.pasturesService.occupancyStats(farmId), { totalCapacity: 0, occupiedHeadCount: 0, occupancyRate: 0 }),
       this.safe(() => this.financeService.cashFlow(farmId, 'monthly'), []),
       this.safe(() => this.healthRecordsService.pendingAlerts(farmId), []),
+      this.safe(() => this.financeService.periodBalances(farmId), EMPTY_PERIOD_BALANCES),
     ]);
 
     const currentMonthKey = new Date().toISOString().slice(0, 7);
@@ -95,7 +107,9 @@ export class DashboardService {
       averageWeightKg: Number(averageWeightKg.toFixed(2)),
       averageDailyGainKg: Number(averageDailyGainKg.toFixed(3)),
       stockingRate: occupancy,
+      // Mantido para não quebrar o app mobile, que já consome este campo.
       currentMonthFinance: currentMonth,
+      financeByPeriod,
       pendingAlerts,
     };
   }
@@ -122,7 +136,7 @@ export class DashboardService {
       unreadNotifications,
       recentQuotations,
     ] = await Promise.all([
-      this.safe(() => this.getOverview(farmId), { totalAnimals: 0, averageWeightKg: 0, averageDailyGainKg: 0, stockingRate: { totalCapacity: 0, occupiedHeadCount: 0, occupancyRate: 0 }, currentMonthFinance: { receita: 0, despesa: 0, saldo: 0 }, pendingAlerts: [] }),
+      this.safe(() => this.getOverview(farmId), { totalAnimals: 0, averageWeightKg: 0, averageDailyGainKg: 0, stockingRate: { totalCapacity: 0, occupiedHeadCount: 0, occupancyRate: 0 }, currentMonthFinance: { receita: 0, despesa: 0, saldo: 0 }, financeByPeriod: EMPTY_PERIOD_BALANCES, pendingAlerts: [] }),
       this.safe(() => this.farmsService.listMembers(farmId), []),
       this.safe(() => this.reproductionService.stats(farmId), { breedingEvents: 0, pregnancyDiagnoses: 0, confirmedPregnant: 0, conceptionRate: 0, pregnancyRate: 0, births: 0, abortions: 0 }),
       this.safe(() => this.suppliesService.alerts(farmId), []),

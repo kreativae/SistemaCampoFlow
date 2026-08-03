@@ -6,6 +6,27 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 
 type Granularity = 'daily' | 'weekly' | 'monthly';
 
+export type BalancePeriod = 'dia' | 'semana' | 'mes' | 'semestre' | 'ano';
+
+export const BALANCE_PERIODS: BalancePeriod[] = [
+  'dia',
+  'semana',
+  'mes',
+  'semestre',
+  'ano',
+];
+
+export interface PeriodBalance {
+  receita: number;
+  despesa: number;
+  saldo: number;
+}
+
+// O Brasil não observa horário de verão desde 2019, então o deslocamento é fixo.
+// Sem isso, "saldo do dia" viraria no fim da tarde (quando o dia UTC muda), o que
+// o produtor enxergaria como erro.
+const BR_UTC_OFFSET_MS = -3 * 60 * 60 * 1000;
+
 @Injectable()
 export class FinanceService {
   constructor(private readonly prisma: PrismaService) {}
@@ -106,6 +127,65 @@ export class FinanceService {
         despesa,
         saldo: receita - despesa,
       }));
+  }
+
+  // Receita/despesa/saldo do período CORRENTE, para os cinco recortes que o painel
+  // oferece. Devolve todos de uma vez porque a troca no card é instantânea e o
+  // custo é o mesmo: a varredura das transações já acontece uma única vez.
+  async periodBalances(farmId: string): Promise<Record<BalancePeriod, PeriodBalance>> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: { farmId },
+      select: { type: true, amount: true, paidAt: true, dueDate: true },
+    });
+
+    const starts = this.periodStarts(new Date());
+    const result = {} as Record<BalancePeriod, PeriodBalance>;
+    for (const period of BALANCE_PERIODS) {
+      result[period] = { receita: 0, despesa: 0, saldo: 0 };
+    }
+
+    for (const transaction of transactions) {
+      const date = transaction.paidAt ?? transaction.dueDate;
+      for (const period of BALANCE_PERIODS) {
+        if (date < starts[period]) continue;
+        const bucket = result[period];
+        if (transaction.type === TransactionType.RECEITA) {
+          bucket.receita += transaction.amount;
+        } else {
+          bucket.despesa += transaction.amount;
+        }
+      }
+    }
+
+    for (const period of BALANCE_PERIODS) {
+      const bucket = result[period];
+      bucket.saldo = bucket.receita - bucket.despesa;
+    }
+
+    return result;
+  }
+
+  // Início de cada período corrente, em horário de Brasília, devolvido como
+  // instante UTC para comparar direto com as datas do banco.
+  private periodStarts(now: Date): Record<BalancePeriod, Date> {
+    const brNow = new Date(now.getTime() + BR_UTC_OFFSET_MS);
+    const year = brNow.getUTCFullYear();
+    const month = brNow.getUTCMonth();
+    const day = brNow.getUTCDate();
+
+    // Semana começa na segunda-feira, mesma convenção do weekKey().
+    const weekday = brNow.getUTCDay() || 7;
+
+    const toUtc = (y: number, m: number, d: number) =>
+      new Date(Date.UTC(y, m, d) - BR_UTC_OFFSET_MS);
+
+    return {
+      dia: toUtc(year, month, day),
+      semana: toUtc(year, month, day - (weekday - 1)),
+      mes: toUtc(year, month, 1),
+      semestre: toUtc(year, month < 6 ? 0 : 6, 1),
+      ano: toUtc(year, 0, 1),
+    };
   }
 
   private bucketKey(date: Date, granularity: Granularity): string {

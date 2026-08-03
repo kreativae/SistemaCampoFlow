@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import {
   BarChart3,
   Bell,
   Calendar,
+  Check,
   FileText,
   Gauge,
   Heart,
@@ -25,7 +26,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
-import type { DashboardFullOverview, DashboardOverview, Farm } from '@/lib/types';
+import type { BalancePeriod, DashboardFullOverview, DashboardOverview, Farm } from '@/lib/types';
+import { BALANCE_PERIOD_OPTIONS } from '@/lib/types';
 
 export default function FarmDashboardPage() {
   const { farmId } = useParams<{ farmId: string }>();
@@ -33,6 +35,7 @@ export default function FarmDashboardPage() {
   const router = useRouter();
   const [farm, setFarm] = useState<Farm | null>(null);
   const [dashboard, setDashboard] = useState<DashboardOverview | null>(null);
+  const [balancePeriod, setBalancePeriod] = useState<BalancePeriod>('mes');
   const [resumo, setResumo] = useState<DashboardFullOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fetching, setFetching] = useState(true);
@@ -88,6 +91,10 @@ export default function FarmDashboardPage() {
 
   const alerts = dashboard?.pendingAlerts ?? [];
   const overdueCount = alerts.filter((a) => a.overdue).length;
+  // Cai no mês corrente se a API ainda não devolver os recortes (versão antiga).
+  const balance =
+    dashboard?.financeByPeriod?.[balancePeriod] ??
+    dashboard?.currentMonthFinance ?? { receita: 0, despesa: 0, saldo: 0 };
 
   return (
     <main className="animate-fade-up mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8">
@@ -140,14 +147,22 @@ export default function FarmDashboardPage() {
               footer={`${dashboard.stockingRate.occupiedHeadCount} de ${dashboard.stockingRate.totalCapacity} cabeças`}
             />
             <MetricCard
-              label="Saldo do mês"
-              value={dashboard.currentMonthFinance.saldo.toLocaleString('pt-BR', {
+              label={
+                BALANCE_PERIOD_OPTIONS.find((o) => o.value === balancePeriod)?.label ??
+                'Saldo do mês'
+              }
+              value={balance.saldo.toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
               })}
               icon={Wallet}
-              tone={dashboard.currentMonthFinance.saldo >= 0 ? 'positive' : 'negative'}
-              footer={`${dashboard.currentMonthFinance.receita.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} receita · ${dashboard.currentMonthFinance.despesa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} despesa`}
+              tone={balance.saldo >= 0 ? 'positive' : 'negative'}
+              footer={`${balance.receita.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} receita · ${balance.despesa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} despesa`}
+              menu={{
+                options: BALANCE_PERIOD_OPTIONS,
+                value: balancePeriod,
+                onChange: (v) => setBalancePeriod(v as BalancePeriod),
+              }}
             />
             <MetricCard
               label="Alertas pendentes"
@@ -273,6 +288,7 @@ function MetricCard({
   icon: Icon,
   tone,
   footer,
+  menu,
 }: {
   label: string;
   value: string | number;
@@ -280,6 +296,12 @@ function MetricCard({
   icon: LucideIcon;
   tone?: 'positive' | 'negative' | 'warning';
   footer?: string;
+  /** Quando presente, o chip de ícone vira botão e abre a troca de recorte. */
+  menu?: {
+    options: { value: string; label: string }[];
+    value: string;
+    onChange: (value: string) => void;
+  };
 }) {
   const valueColor =
     tone === 'positive'
@@ -296,15 +318,102 @@ function MetricCard({
     <div className="rounded-2xl border border-gray-200/70 bg-white p-4 sm:p-5">
       <div className="flex items-start justify-between">
         <p className="text-[13px] font-medium text-gray-500">{label}</p>
-        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${chipColor}`}>
-          <Icon size={16} strokeWidth={2} />
-        </span>
+        {menu ? (
+          <MetricCardMenu chipColor={chipColor} icon={Icon} label={label} {...menu} />
+        ) : (
+          <span className={`flex h-8 w-8 items-center justify-center rounded-full ${chipColor}`}>
+            <Icon size={16} strokeWidth={2} />
+          </span>
+        )}
       </div>
       <p className={`mt-2 text-3xl font-bold tracking-tight tabular-nums ${valueColor}`}>
         {value}
         {unit && <span className="ml-1 text-base font-normal text-gray-400">{unit}</span>}
       </p>
       {footer && <p className="mt-2 line-clamp-2 text-xs text-gray-500">{footer}</p>}
+    </div>
+  );
+}
+
+/**
+ * Chip de ícone que abre a troca de recorte do card. Fecha ao escolher, ao clicar
+ * fora e com Escape.
+ */
+function MetricCardMenu({
+  chipColor,
+  icon: Icon,
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  chipColor: string;
+  icon: LucideIcon;
+  label: string;
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false);
+    }
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`${label} — trocar período`}
+        title="Trocar período"
+        className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-150 hover:brightness-95 ${chipColor} ${
+          open ? 'ring-2 ring-emerald-600/25' : ''
+        }`}
+      >
+        <Icon size={16} strokeWidth={2} />
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          className="animate-fade-up absolute right-0 z-20 mt-2 w-48 overflow-hidden rounded-2xl border border-gray-200/70 bg-white py-1 shadow-[0_16px_40px_-16px_rgba(6,30,20,0.28)]"
+        >
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              role="menuitemradio"
+              aria-checked={option.value === value}
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm transition-colors duration-150 hover:bg-gray-50 ${
+                option.value === value ? 'font-semibold text-emerald-700' : 'text-gray-700'
+              }`}
+            >
+              {option.label}
+              {option.value === value && <Check size={15} strokeWidth={2.4} />}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
