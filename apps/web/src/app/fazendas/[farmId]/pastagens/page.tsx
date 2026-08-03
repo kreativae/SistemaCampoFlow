@@ -3,6 +3,8 @@
 import { Leaf, X } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import Modal from '@/components/Modal';
+import NewRecordButton from '@/components/NewRecordButton';
+import FormModal from '@/components/FormModal';
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -22,7 +24,7 @@ export default function PasturesPage() {
 
   const [pastures, setPastures] = useState<Pasture[]>([]);
   // No mobile o formulário começa fechado para não empurrar a lista.
-  const [showCreateMobile, setShowCreateMobile] = useState(false);
+  const [creatingOpen, setCreatingOpen] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -91,6 +93,7 @@ export default function PasturesPage() {
       setAreaHectares('');
       setGrassType('');
       setAnimalCapacity('');
+      setCreatingOpen(false);
       await loadData();
       toastSuccess('Pasto cadastrado.');
     } catch (err) {
@@ -168,6 +171,7 @@ export default function PasturesPage() {
         title="Pastagens"
         subtitle="Pastos, áreas e capacidade"
         backHref={`/fazendas/${farmId}`}
+        actions={<NewRecordButton label="Nova pastagem" onClick={() => setCreatingOpen(true)} />}
       />
 
       {error && (
@@ -176,16 +180,16 @@ export default function PasturesPage() {
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={() => setShowCreateMobile((v) => !v)}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
-      >
-        {showCreateMobile ? 'Fechar formulário' : '+ Nova pastagem'}
-      </button>
+      {creatingOpen && (
+        <FormModal
+          icon={Leaf}
+          title="Nova pastagem"
+          subtitle="Cadastre um pasto da propriedade"
+          onClose={() => setCreatingOpen(false)}
+        >
       <form
         onSubmit={handleCreate}
-        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid sm:grid-cols-4`}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
         <div className="col-span-2">
           <label className="text-sm font-medium text-gray-700">Nome</label>
@@ -233,7 +237,14 @@ export default function PasturesPage() {
           />
         </div>
 
-        <div className="col-span-full">
+        <div className="col-span-full flex justify-end gap-2 pt-2">
+          <button
+            type="button"
+            onClick={() => setCreatingOpen(false)}
+            className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+          >
+            Cancelar
+          </button>
           <button
             type="submit"
             disabled={creating}
@@ -243,6 +254,8 @@ export default function PasturesPage() {
           </button>
         </div>
       </form>
+        </FormModal>
+      )}
 
       {fetching ? (
         <p className="text-sm text-gray-400">Carregando pastos...</p>

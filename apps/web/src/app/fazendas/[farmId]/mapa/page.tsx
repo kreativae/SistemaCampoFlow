@@ -2,6 +2,8 @@
 
 import { Map } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
+import NewRecordButton from '@/components/NewRecordButton';
+import FormModal from '@/components/FormModal';
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -65,6 +67,7 @@ export default function FarmMapPage() {
   const [geometryType, setGeometryType] = useState<GeometryType>('POLIGONO');
   const [coordinatesText, setCoordinatesText] = useState('');
   const [drawingNewFeature, setDrawingNewFeature] = useState(false);
+  const [creatingOpen, setCreatingOpen] = useState(false);
   const [drawnPoints, setDrawnPoints] = useState<[number, number][] | null>(null);
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -135,6 +138,7 @@ export default function FarmMapPage() {
       setCoordinatesText('');
       setDrawnPoints(null);
       setDrawingNewFeature(false);
+      setCreatingOpen(false);
       await loadData();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao cadastrar elemento do mapa');
@@ -282,6 +286,7 @@ export default function FarmMapPage() {
         title="Mapa e Solo"
         subtitle="Mapa da propriedade e análises de solo"
         backHref={`/fazendas/${farmId}`}
+        actions={<NewRecordButton label="Novo registro" onClick={() => setCreatingOpen(true)} />}
       />
 
       {error && (
@@ -359,9 +364,14 @@ export default function FarmMapPage() {
       </section>
 
       {/* --- Cadastrar novo registro de solo --- */}
-      <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
-        <h2 className="mb-3 font-bold tracking-tight text-gray-900">Cadastrar novo registro de solo</h2>
-
+      {creatingOpen && (
+        <FormModal
+          icon={Map}
+          title="Novo registro de solo"
+          subtitle="Talhão, cerca, cocho ou outro ponto de interesse"
+          maxWidth="max-w-3xl"
+          onClose={() => setCreatingOpen(false)}
+        >
         <form onSubmit={handleCreate} className="space-y-3">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div className="col-span-2 sm:col-span-1">
@@ -465,15 +475,25 @@ export default function FarmMapPage() {
             )}
           </div>
 
-          <button
-            type="submit"
-            disabled={creating}
-            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {creating ? 'Salvando...' : 'Adicionar ao mapa'}
-          </button>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setCreatingOpen(false)}
+              className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={creating}
+              className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
+            >
+              {creating ? 'Salvando...' : 'Adicionar ao mapa'}
+            </button>
+          </div>
         </form>
-      </section>
+        </FormModal>
+      )}
 
       {/* --- Lista de elementos --- */}
       <section>

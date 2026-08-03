@@ -2,6 +2,8 @@
 
 import { Package } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
+import NewRecordButton from '@/components/NewRecordButton';
+import FormModal from '@/components/FormModal';
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -40,7 +42,7 @@ export default function SuppliesPage() {
 
   const [supplies, setSupplies] = useState<Supply[]>([]);
   // No mobile o formulário começa fechado para não empurrar a lista.
-  const [showCreateMobile, setShowCreateMobile] = useState(false);
+  const [creatingOpen, setCreatingOpen] = useState(false);
   const [alerts, setAlerts] = useState<SupplyAlert[]>([]);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,6 +116,7 @@ export default function SuppliesPage() {
       setCustomUnit('');
       setQuantity('');
       setExpirationDate('');
+      setCreatingOpen(false);
       await loadData();
       toastSuccess('Insumo cadastrado.');
     } catch (err) {
@@ -202,6 +205,7 @@ export default function SuppliesPage() {
         title="Insumos"
         subtitle="Estoque e movimentações"
         backHref={`/fazendas/${farmId}`}
+        actions={<NewRecordButton label="Novo insumo" onClick={() => setCreatingOpen(true)} />}
       />
 
       {error && (
@@ -229,16 +233,16 @@ export default function SuppliesPage() {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => setShowCreateMobile((v) => !v)}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
-      >
-        {showCreateMobile ? 'Fechar formulário' : '+ Novo insumo'}
-      </button>
+      {creatingOpen && (
+        <FormModal
+          icon={Package}
+          title="Novo insumo"
+          subtitle="Cadastre um item de estoque"
+          onClose={() => setCreatingOpen(false)}
+        >
       <form
         onSubmit={handleCreate}
-        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid sm:grid-cols-4`}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
         <div className="col-span-2">
           <label className="text-sm font-medium text-gray-700">Nome</label>
@@ -324,7 +328,14 @@ export default function SuppliesPage() {
           />
         </div>
 
-        <div className="col-span-full">
+        <div className="col-span-full flex justify-end gap-2 pt-2">
+          <button
+            type="button"
+            onClick={() => setCreatingOpen(false)}
+            className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+          >
+            Cancelar
+          </button>
           <button
             type="submit"
             disabled={creating}
@@ -334,6 +345,8 @@ export default function SuppliesPage() {
           </button>
         </div>
       </form>
+        </FormModal>
+      )}
 
       {fetching ? (
         <p className="text-sm text-gray-400">Carregando insumos...</p>

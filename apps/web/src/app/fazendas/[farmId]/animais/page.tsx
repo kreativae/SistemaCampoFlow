@@ -3,6 +3,8 @@
 import { Beef, SlidersHorizontal, X, Search, ShoppingCart, Skull } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import Modal from '@/components/Modal';
+import NewRecordButton from '@/components/NewRecordButton';
+import FormModal from '@/components/FormModal';
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -224,7 +226,7 @@ export default function AnimalsPage() {
 
   const [animals, setAnimals] = useState<Animal[]>([]);
   // No mobile o formulário começa fechado para não empurrar a lista para baixo.
-  const [showCreateMobile, setShowCreateMobile] = useState(false);
+  const [creatingOpen, setCreatingOpen] = useState(false);
   const [pastures, setPastures] = useState<Pasture[]>([]);
   const [vaccinations, setVaccinations] = useState<VaccinationRecordSummary[]>([]);
   const [reproductiveEvents, setReproductiveEvents] = useState<ReproductiveEventSummary[]>(
@@ -366,6 +368,7 @@ export default function AnimalsPage() {
       setPastureId('');
       setBirthDate('');
       setEntryDate('');
+      setCreatingOpen(false);
       await loadData();
       toastSuccess('Animal cadastrado.');
     } catch (err) {
@@ -631,6 +634,7 @@ export default function AnimalsPage() {
         title="Rebanho"
         subtitle="Gerencie o rebanho da propriedade"
         backHref={`/fazendas/${farmId}`}
+        actions={<NewRecordButton label="Novo animal" onClick={() => setCreatingOpen(true)} />}
       />
 
       {error && (
@@ -639,16 +643,16 @@ export default function AnimalsPage() {
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={() => setShowCreateMobile((v) => !v)}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
-      >
-        {showCreateMobile ? 'Fechar formulário' : '+ Novo animal'}
-      </button>
+      {creatingOpen && (
+        <FormModal
+          icon={Beef}
+          title="Novo animal"
+          subtitle="Cadastre um animal do rebanho"
+          onClose={() => setCreatingOpen(false)}
+        >
       <form
         onSubmit={handleCreate}
-        className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid sm:grid-cols-3`}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3"
       >
         <div className="col-span-2 sm:col-span-1">
           <label className="text-sm font-medium text-gray-700">Brinco</label>
@@ -737,7 +741,14 @@ export default function AnimalsPage() {
           />
         </div>
 
-        <div className="col-span-full">
+        <div className="col-span-full flex justify-end gap-2 pt-2">
+          <button
+            type="button"
+            onClick={() => setCreatingOpen(false)}
+            className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+          >
+            Cancelar
+          </button>
           <button
             type="submit"
             disabled={creating}
@@ -747,6 +758,8 @@ export default function AnimalsPage() {
           </button>
         </div>
       </form>
+        </FormModal>
+      )}
 
       {fetching ? (
         <p className="text-sm text-gray-400">Carregando animais...</p>
@@ -754,7 +767,9 @@ export default function AnimalsPage() {
         <div className="flex flex-col items-center rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700"><Beef size={22} strokeWidth={1.9} /></span>
           <p className="mt-3 text-lg font-bold text-gray-900">Nenhum animal cadastrado</p>
-          <p className="mt-1 text-sm text-gray-500">Comece cadastrando seu primeiro animal usando o formulário acima.</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Clique em &quot;Novo animal&quot; para cadastrar o primeiro do rebanho.
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-3 lg:flex-row lg:gap-6">

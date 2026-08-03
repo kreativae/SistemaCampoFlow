@@ -3,6 +3,8 @@
 import { ArrowDownCircle, ArrowUpCircle, Check, Clock, Pencil, Undo2, Wallet, X } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import Modal from '@/components/Modal';
+import NewRecordButton from '@/components/NewRecordButton';
+import FormModal from '@/components/FormModal';
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -46,7 +48,7 @@ export default function FinancePage() {
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   // No mobile o formulário começa fechado para não empurrar a lista para baixo.
-  const [showCreateMobile, setShowCreateMobile] = useState(false);
+  const [creatingOpen, setCreatingOpen] = useState(false);
   const [cashFlow, setCashFlow] = useState<CashFlowBucket[]>([]);
   const [granularity, setGranularity] = useState<'daily' | 'weekly' | 'monthly'>('monthly');
   const [txFilter, setTxFilter] = useState<'day' | 'week' | 'month' | 'year' | 'all'>('all');
@@ -208,6 +210,7 @@ export default function FinancePage() {
       setDueDate('');
       setAlreadyPaid(false);
       setCropCycleId('');
+      setCreatingOpen(false);
       await loadData();
       toastSuccess('Lançamento criado.');
     } catch (err) {
@@ -306,6 +309,11 @@ export default function FinancePage() {
         title="Financeiro"
         subtitle="Lançamentos e fluxo de caixa"
         backHref={`/fazendas/${farmId}`}
+        actions={
+          forbidden ? undefined : (
+            <NewRecordButton label="Novo lançamento" onClick={() => setCreatingOpen(true)} />
+          )
+        }
       />
 
       {error && (
@@ -320,16 +328,16 @@ export default function FinancePage() {
         </p>
       ) : (
         <>
-          <button
-            type="button"
-            onClick={() => setShowCreateMobile((v) => !v)}
-            className="mb-4 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600/10 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20 sm:hidden"
-          >
-            {showCreateMobile ? 'Fechar formulário' : '+ Novo lançamento'}
-          </button>
+          {creatingOpen && (
+            <FormModal
+              icon={Wallet}
+              title="Novo lançamento"
+              subtitle="Registre uma receita ou despesa"
+              onClose={() => setCreatingOpen(false)}
+            >
           <form
             onSubmit={handleCreate}
-            className={`${showCreateMobile ? 'grid' : 'hidden'} mb-8 grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid sm:grid-cols-4`}
+            className="grid grid-cols-2 gap-3 sm:grid-cols-4"
           >
             <div>
               <label className="text-sm font-medium text-gray-700">Tipo</label>
@@ -429,7 +437,14 @@ export default function FinancePage() {
               </label>
             </div>
 
-            <div className="col-span-full">
+            <div className="col-span-full flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setCreatingOpen(false)}
+                className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+              >
+                Cancelar
+              </button>
               <button
                 type="submit"
                 disabled={creating}
@@ -439,6 +454,8 @@ export default function FinancePage() {
               </button>
             </div>
           </form>
+            </FormModal>
+          )}
 
           <section className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
             <div className="mb-3 flex items-center justify-between">

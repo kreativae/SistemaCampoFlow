@@ -1,13 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Handshake, Pencil } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
+import NewRecordButton from '@/components/NewRecordButton';
+import FormModal from '@/components/FormModal';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, apiDownload, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
-import type { Animal, CropCycle, Deal, DealItem, DealSummary, DealType, DealStatus } from '@/lib/types';
+import type { Animal, CropCycle, Deal, DealSummary, DealType, DealStatus } from '@/lib/types';
 
 const ARROBA_KG = 15;
 
@@ -94,7 +96,6 @@ export default function NegociosPage() {
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const formRef = useRef<HTMLElement>(null);
   const [editingDealId, setEditingDealId] = useState<string | null>(null);
   const [createTransaction, setCreateTransaction] = useState(false);
   const [filterType, setFilterType] = useState<DealType | ''>('');
@@ -133,7 +134,6 @@ export default function NegociosPage() {
   const [grainMoistureBasePercent, setGrainMoistureBasePercent] = useState('14');
   const [grainImpurityPercent, setGrainImpurityPercent] = useState('');
   const [grainGrossWeightKg, setGrainGrossWeightKg] = useState('');
-  const [grainNetWeightKg, setGrainNetWeightKg] = useState('');
   const [grainSaleModality, setGrainSaleModality] = useState('BALCAO');
   const [grainWarehouse, setGrainWarehouse] = useState('');
   const [grainTicketRef, setGrainTicketRef] = useState('');
@@ -497,7 +497,6 @@ export default function NegociosPage() {
     setGrainMoistureBasePercent('14');
     setGrainImpurityPercent('');
     setGrainGrossWeightKg('');
-    setGrainNetWeightKg('');
     setGrainSaleModality('BALCAO');
     setGrainWarehouse('');
     setGrainTicketRef('');
@@ -541,14 +540,12 @@ export default function NegociosPage() {
     setGrainMoistureBasePercent(deal.grainMoistureBasePercent != null ? String(deal.grainMoistureBasePercent) : '14');
     setGrainImpurityPercent(deal.grainImpurityPercent != null ? String(deal.grainImpurityPercent) : '');
     setGrainGrossWeightKg(deal.grainGrossWeightKg ? String(deal.grainGrossWeightKg) : '');
-    setGrainNetWeightKg(deal.grainNetWeightKg ? String(deal.grainNetWeightKg) : '');
     setGrainSaleModality(deal.grainSaleModality ?? 'BALCAO');
     setGrainWarehouse(deal.grainWarehouse ?? '');
     setGrainTicketRef(deal.grainTicketRef ?? '');
     setSelectedCropCycleId(deal.cropCycleId ?? '');
     setCreateTransaction(false);
     setShowForm(true);
-    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
   }
 
   async function handleDelete(id: string) {
@@ -640,21 +637,30 @@ export default function NegociosPage() {
         subtitle="Compra, venda e abate — custos por animal e por arroba"
         backHref={`/fazendas/${farmId}`}
         actions={
-          <button
-            onClick={() => { setShowForm(!showForm); if (showForm) resetForm(); }}
-            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {showForm ? 'Cancelar' : 'Novo negócio'}
-          </button>
+          <NewRecordButton
+            label="Novo negócio"
+            onClick={() => {
+              resetForm();
+              setShowForm(true);
+            }}
+          />
         }
       />
 
       {error && <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
 
-      {/* --- Formulário de criação --- */}
+      {/* --- Formulário de criação/edição --- */}
       {showForm && (
-        <section ref={formRef} className="mb-8 rounded-2xl border border-gray-200/70 bg-white p-5">
-          <h2 className="mb-4 text-lg font-bold tracking-tight text-gray-900">{editingDealId ? 'Editar negócio' : 'Novo negócio'}</h2>
+        <FormModal
+          icon={Handshake}
+          title={editingDealId ? 'Editar negócio' : 'Novo negócio'}
+          subtitle="Compra, venda, abate ou venda de grãos"
+          maxWidth="max-w-4xl"
+          onClose={() => {
+            setShowForm(false);
+            resetForm();
+          }}
+        >
           <form onSubmit={handleCreate} className="space-y-4">
             {/* Tipo + data */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -1562,15 +1568,27 @@ export default function NegociosPage() {
               </label>
             )}
 
-            <button
-              type="submit"
-              disabled={creating}
-              className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-            >
-              {creating ? 'Salvando...' : editingDealId ? 'Atualizar negócio' : 'Salvar negócio'}
-            </button>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForm(false);
+                  resetForm();
+                }}
+                className="rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={creating}
+                className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
+              >
+                {creating ? 'Salvando...' : editingDealId ? 'Atualizar negócio' : 'Salvar negócio'}
+              </button>
+            </div>
           </form>
-        </section>
+        </FormModal>
       )}
 
       {/* --- Filtros --- */}
