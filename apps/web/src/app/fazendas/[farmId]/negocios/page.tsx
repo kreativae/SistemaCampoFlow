@@ -9,6 +9,7 @@ import FormModal from '@/components/FormModal';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, apiDownload, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
+import { formatDate } from '@/lib/dates';
 import type { Animal, CropCycle, Deal, DealSummary, DealType, DealStatus } from '@/lib/types';
 
 const ARROBA_KG = 15;
@@ -100,6 +101,11 @@ export default function NegociosPage() {
   const [createTransaction, setCreateTransaction] = useState(false);
   const [filterType, setFilterType] = useState<DealType | ''>('');
   const [filterStatus, setFilterStatus] = useState<DealStatus | ''>('');
+  // Recorte da coluna de arquivados. Padrão em "mês": arquivo antigo raramente é
+  // o que se procura, e a coluna é estreita.
+  const [archivedPeriod, setArchivedPeriod] = useState<'semana' | 'mes' | 'custom'>('mes');
+  const [archivedFrom, setArchivedFrom] = useState('');
+  const [archivedTo, setArchivedTo] = useState('');
 
   // Form state
   const [dealType, setDealType] = useState<DealType>('VENDA');
@@ -170,6 +176,44 @@ export default function NegociosPage() {
   useEffect(() => {
     if (!loading && user) loadData();
   }, [loading, user, loadData]);
+
+  // Coluna esquerda: o que ainda está rolando. Direita: o que já passou.
+  const activeDeals = useMemo(() => deals.filter((d) => !d.archivedAt), [deals]);
+
+  const archivedDeals = useMemo(() => {
+    const all = deals.filter((d) => d.archivedAt);
+    if (archivedPeriod === 'custom') {
+      if (!archivedFrom && !archivedTo) return all;
+      const from = archivedFrom ? new Date(`${archivedFrom}T00:00:00`) : null;
+      const to = archivedTo ? new Date(`${archivedTo}T23:59:59`) : null;
+      return all.filter((d) => {
+        const when = new Date(d.dealDate);
+        if (from && when < from) return false;
+        if (to && when > to) return false;
+        return true;
+      });
+    }
+    const start = new Date();
+    if (archivedPeriod === 'semana') {
+      const weekday = start.getDay() || 7;
+      start.setDate(start.getDate() - (weekday - 1));
+    } else {
+      start.setDate(1);
+    }
+    start.setHours(0, 0, 0, 0);
+    return all.filter((d) => new Date(d.dealDate) >= start);
+  }, [deals, archivedPeriod, archivedFrom, archivedTo]);
+
+  // Agrupa a coluna ativa por tipo, como no esboço: abate, venda, compra...
+  const activeByType = useMemo(() => {
+    const groups = new Map<DealType, Deal[]>();
+    for (const deal of activeDeals) {
+      const list = groups.get(deal.type) ?? [];
+      list.push(deal);
+      groups.set(deal.type, list);
+    }
+    return [...groups.entries()];
+  }, [activeDeals]);
 
   const selectedAnimalIds = useMemo(() => new Set(draftItems.map((i) => i.animalId).filter(Boolean)), [draftItems]);
   const filteredAnimals = useMemo(() => {
@@ -571,6 +615,19 @@ export default function NegociosPage() {
     }
   }
 
+  async function handleArchive(id: string, archived: boolean) {
+    try {
+      await apiFetch(
+        `/fazendas/${farmId}/negocios/${id}/${archived ? 'arquivar' : 'desarquivar'}`,
+        { method: 'PATCH', token: accessToken },
+      );
+      await loadData();
+      toastSuccess(archived ? 'Negócio arquivado.' : 'Negócio reaberto.');
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Erro ao arquivar negócio');
+    }
+  }
+
   async function handleDownloadReport(dealId: string) {
     try {
       await apiDownload(`/fazendas/${farmId}/relatorios/negocio?format=pdf&dealId=${dealId}`, `negocio-${dealId}.pdf`, accessToken);
@@ -625,6 +682,281 @@ export default function NegociosPage() {
         <p className="text-sm text-gray-400">Carregando...</p>
       </main>
     );
+  }
+
+  function renderDealCard(deal: Deal) {
+            const isAbate = deal.type === 'ABATE';
+            const isGrainDeal = deal.type === 'VENDA_GRAO';
+            const s = !isAbate && !isGrainDeal ? dealSummary(deal) : null;
+            const sa = isAbate ? slaughterDealSummary(deal) : null;
+
+            return (
+              <li key={deal.id} className="rounded-2xl border border-gray-200/70 bg-white p-5">
+                <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TYPE_COLOR[deal.type]}`}>
+                        {TYPE_LABEL[deal.type]}
+                      </span>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLOR[deal.status]}`}>
+                        {STATUS_LABEL[deal.status]}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {new Date(deal.dealDate).toLocaleDateString('pt-BR')}
+                      </span>
+                      {isAbate && deal.slaughterFrequency && (
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
+                          {deal.slaughterFrequency === 'TRIMESTRAL' ? 'Trimestral' : 'Semestral'}
+                        </span>
+                      )}
+                    </div>
+                    {deal.counterparty && (
+                      <p className="mt-1 text-sm text-gray-600">{deal.counterparty}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => handleDownloadReport(deal.id)}
+                      className="rounded-full bg-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 transition-colors duration-150 hover:bg-blue-200"
+                    >
+                      Exportar PDF
+                    </button>
+                    <button
+                      onClick={() => startEditDeal(deal)}
+                      className="rounded-full bg-gray-900/5 px-3 py-1.5 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+                    >
+                      <Pencil size={12} className="inline mr-1" />
+                      Editar
+                    </button>
+                    {deal.status === 'RASCUNHO' && (
+                      <>
+                        <button
+                          onClick={() => handleStatusChange(deal.id, 'FINALIZADO')}
+                          className="rounded-full bg-emerald-600/10 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20"
+                        >
+                          Finalizar
+                        </button>
+                        <button
+                          onClick={() => handleStatusChange(deal.id, 'CANCELADO')}
+                          className="rounded-full bg-gray-900/5 px-3 py-1.5 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+                        >
+                          Cancelar
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={() => handleArchive(deal.id, true)}
+                      title="Move o negócio para a coluna de arquivados"
+                      className="rounded-full bg-gray-900/5 px-3 py-1.5 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
+                    >
+                      Arquivar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(deal.id)}
+                      className="rounded-full bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors duration-150 hover:bg-red-100"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </div>
+
+                {/* Deal items table */}
+                {deal.items.length > 0 && !isGrainDeal && (
+                  <div className="mb-2 overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
+                          <th className="py-1">Brinco</th>
+                          <th>Peso vivo (kg)</th>
+                          {isAbate ? (
+                            <>
+                              <th>Carcaça (kg)</th>
+                              <th>Arrobas</th>
+                            </>
+                          ) : (
+                            <th>Arrobas</th>
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {deal.items.map((item) => {
+                          const yld = isAbate ? (deal.carcassYieldPercent ?? 52) / 100 : 1;
+                          const carcKg = item.weightKg != null ? item.weightKg * yld : null;
+                          return (
+                            <tr key={item.id} className="border-b border-gray-50">
+                              <td className="py-1 font-mono">{item.earTag}</td>
+                              <td>{item.weightKg != null ? `${item.weightKg}` : <span className="text-amber-600">—</span>}</td>
+                              {isAbate ? (
+                                <>
+                                  <td>{carcKg != null ? carcKg.toFixed(1) : '—'}</td>
+                                  <td>{carcKg != null ? (carcKg / ARROBA_KG).toFixed(2) : '—'}</td>
+                                </>
+                              ) : (
+                                <td>{item.weightKg != null ? (item.weightKg / ARROBA_KG).toFixed(2) : '—'}</td>
+                              )}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* Summary numbers — ABATE */}
+                {isAbate && sa && (
+                  <>
+                    <div className="grid grid-cols-2 gap-2 rounded-xl bg-orange-50 p-3 text-xs sm:grid-cols-5">
+                      <div>
+                        <span className="text-gray-500">{sa.totalAnimals} animais</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Carcaça: </span>
+                        <span className="font-medium">{sa.carcassWeight.toFixed(1)} kg ({(((deal.carcassYieldPercent ?? 52))).toFixed(1)}%)</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Bruto: </span>
+                        <span className="font-medium">{formatCurrency(sa.grossValue)}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Deduções: </span>
+                        <span className="font-medium text-red-600">
+                          {formatCurrency(sa.funruralValue + sa.senarValue + sa.commissionValue + deal.freightCost)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Líquido: </span>
+                        <span className="font-bold text-emerald-700">{formatCurrency(sa.netTotal)}</span>
+                      </div>
+                    </div>
+                    <div className="mt-1 flex gap-4 text-xs text-gray-500">
+                      <span>Funrural: <strong className="text-gray-700">{formatCurrency(sa.funruralValue)}</strong></span>
+                      <span>SENAR: <strong className="text-gray-700">{formatCurrency(sa.senarValue)}</strong></span>
+                      <span>Comissão: <strong className="text-gray-700">{formatCurrency(sa.commissionValue)}</strong></span>
+                      <span>Frete: <strong className="text-gray-700">{formatCurrency(deal.freightCost)}</strong></span>
+                      <span>Líq/animal: <strong className="text-gray-700">{formatCurrency(sa.totalAnimals > 0 ? sa.netTotal / sa.totalAnimals : 0)}</strong></span>
+                    </div>
+                  </>
+                )}
+
+                {/* Summary numbers — VENDA_GRAO */}
+                {isGrainDeal && (() => {
+                  const qty = deal.grainQuantity ?? 0;
+                  const price = deal.pricePerUnit;
+                  const grossValue = deal.totalValue ?? qty * price;
+                  const funVal = grossValue * ((deal.funruralPercent ?? 0) / 100);
+                  const senVal = grossValue * ((deal.senarPercent ?? 0) / 100);
+                  const commVal = grossValue * (deal.commissionPercent / 100);
+                  const netTotal = grossValue - funVal - senVal - commVal - deal.freightCost;
+                  const unitLabel: Record<string, string> = { SACA60: 'sacas', KG: 'kg', TONELADA: 't' };
+                  const sacas = deal.grainNetWeightKg ? deal.grainNetWeightKg / 60 : qty;
+                  const netPerSaca = sacas > 0 ? netTotal / sacas : 0;
+                  return (
+                    <>
+                      <div className="grid grid-cols-2 gap-2 rounded-xl bg-green-50 p-3 text-xs sm:grid-cols-5">
+                        <div>
+                          <span className="text-gray-500">{deal.grainCrop}: </span>
+                          <span className="font-medium">{qty} {unitLabel[deal.grainUnit ?? ''] ?? deal.grainUnit}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Bruto: </span>
+                          <span className="font-medium">{formatCurrency(grossValue)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Deduções: </span>
+                          <span className="font-medium text-red-600">
+                            {formatCurrency(funVal + senVal + commVal + deal.freightCost)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Líquido: </span>
+                          <span className="font-bold text-emerald-700">{formatCurrency(netTotal)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">R$/saca: </span>
+                          <span className="font-medium">{formatCurrency(netPerSaca)}</span>
+                        </div>
+                      </div>
+                      <div className="mt-1 flex flex-wrap gap-4 text-xs text-gray-500">
+                        {deal.grainSaleModality && (
+                          <span>Modalidade: <strong className="text-gray-700">{{ BALCAO: 'Balcão', CONTRATO_FUTURO: 'Contrato futuro', COOPERATIVA: 'Cooperativa', BARTER: 'Barter' }[deal.grainSaleModality] ?? deal.grainSaleModality}</strong></span>
+                        )}
+                        {deal.grainMoisturePercent != null && (
+                          <span>Umidade: <strong className="text-gray-700">{deal.grainMoisturePercent}%</strong></span>
+                        )}
+                        {deal.grainNetWeightKg != null && (
+                          <span>Peso líq: <strong className="text-gray-700">{deal.grainNetWeightKg.toFixed(1)} kg</strong></span>
+                        )}
+                        {deal.grainWarehouse && (
+                          <span>Armazém: <strong className="text-gray-700">{deal.grainWarehouse}</strong></span>
+                        )}
+                      </div>
+                    </>
+                  );
+                })()}
+
+                {/* Summary numbers — COMPRA/VENDA */}
+                {!isAbate && !isGrainDeal && s && (
+                  <>
+                    <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100/60 p-3 text-xs sm:grid-cols-5">
+                      <div>
+                        <span className="text-gray-500">{s.totalAnimals} animais</span>
+                      </div>
+                      {s.totalWeightKg > 0 && (
+                        <div>
+                          <span className="text-gray-500">Peso: </span>
+                          <span className="font-medium">{s.totalWeightKg.toFixed(1)} kg</span>
+                        </div>
+                      )}
+                      <div>
+                        <span className="text-gray-500">Frete: </span>
+                        <span className="font-medium">{formatCurrency(deal.freightCost)}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Comissão: </span>
+                        <span className="font-medium">{formatCurrency(s.commissionValue)}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Total: </span>
+                        <span className="font-bold text-emerald-700">{formatCurrency(s.grandTotal)}</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-1 flex gap-4 text-xs text-gray-500">
+                      {deal.quantity || deal.totalValue ? (
+                        <>
+                          {(() => {
+                            const parcela =
+                              deal.installmentValue ||
+                              (deal.installmentCount && deal.totalValue
+                                ? deal.totalValue / deal.installmentCount
+                                : 0);
+                            if (!parcela) return null;
+                            return (
+                              <span>
+                                Parcela:{' '}
+                                <strong className="text-gray-700">
+                                  {deal.installmentCount ? `${deal.installmentCount}x de ` : ''}
+                                  {formatCurrency(parcela)}
+                                </strong>
+                              </span>
+                            );
+                          })()}
+                          <span>Custo por animal: <strong className="text-gray-700">{formatCurrency(s.pricePerAnimal)}</strong></span>
+                        </>
+                      ) : (
+                        <>
+                          <span>R$/{deal.priceUnit === 'ARROBA' ? '@' : 'cab.'}: <strong className="text-gray-700">{formatCurrency(deal.pricePerUnit)}</strong></span>
+                          <span>Custo total/animal: <strong className="text-gray-700">{formatCurrency(s.pricePerAnimal)}</strong></span>
+                          <span>Custo total/@: <strong className="text-gray-700">{formatCurrency(s.pricePerArroba)}</strong></span>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {deal.notes && <p className="mt-2 text-xs text-gray-400">{deal.notes}</p>}
+              </li>
+            );
   }
 
   const showAnimals = dealType !== 'COMPRA' && dealType !== 'VENDA_GRAO';
@@ -1616,285 +1948,122 @@ export default function NegociosPage() {
         </select>
       </div>
 
-      {/* --- Lista de negócios --- */}
-      {deals.length === 0 ? (
-        <div className="rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
-          <p className="text-lg font-bold text-gray-900">Nenhum negócio registrado.</p>
-          <p className="mt-1 text-sm text-gray-500">
-            Clique em &quot;Novo negócio&quot; para calcular uma compra, venda ou abate.
-          </p>
+      {/* --- Ativos à esquerda, arquivados à direita --- */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          {activeDeals.length === 0 ? (
+            <div className="rounded-2xl bg-gray-100/60 px-6 py-14 text-center">
+              <p className="text-lg font-bold text-gray-900">Nenhum negócio em andamento.</p>
+              <p className="mt-1 text-sm text-gray-500">
+                {deals.length === 0
+                  ? 'Clique em "Novo negócio" para calcular uma compra, venda ou abate.'
+                  : 'Tudo que existe já foi arquivado — veja a coluna ao lado.'}
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-6">
+              {activeByType.map(([type, list]) => (
+                <section key={type}>
+                  <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
+                    {TYPE_LABEL[type]}
+                    <span className="ml-1.5 text-gray-300">{list.length}</span>
+                  </h2>
+                  <ul className="space-y-4">{list.map((deal) => renderDealCard(deal))}</ul>
+                </section>
+              ))}
+            </div>
+          )}
         </div>
-      ) : (
-        <ul className="space-y-4">
-          {deals.map((deal) => {
-            const isAbate = deal.type === 'ABATE';
-            const isGrainDeal = deal.type === 'VENDA_GRAO';
-            const s = !isAbate && !isGrainDeal ? dealSummary(deal) : null;
-            const sa = isAbate ? slaughterDealSummary(deal) : null;
 
-            return (
-              <li key={deal.id} className="rounded-2xl border border-gray-200/70 bg-white p-5">
-                <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TYPE_COLOR[deal.type]}`}>
+        <aside className="lg:col-span-1">
+          <div className="rounded-2xl border border-gray-200/70 bg-white p-4">
+            <h2 className="font-bold tracking-tight text-gray-900">Negócios arquivados</h2>
+            <div className="mt-3 flex flex-wrap gap-1">
+              {([['semana', 'Semana'], ['mes', 'Mês'], ['custom', 'Personalizado']] as const).map(
+                ([val, label]) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setArchivedPeriod(val)}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors duration-150 ${
+                      archivedPeriod === val
+                        ? 'bg-emerald-700 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ),
+              )}
+            </div>
+
+            {archivedPeriod === 'custom' && (
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <input
+                  type="date"
+                  value={archivedFrom}
+                  onChange={(e) => setArchivedFrom(e.target.value)}
+                  className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
+                />
+                <input
+                  type="date"
+                  value={archivedTo}
+                  onChange={(e) => setArchivedTo(e.target.value)}
+                  className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
+                />
+              </div>
+            )}
+
+            {archivedDeals.length === 0 ? (
+              <p className="mt-4 text-sm text-gray-500">Nenhum negócio arquivado no período.</p>
+            ) : (
+              <ul className="mt-4 space-y-2">
+                {archivedDeals.map((deal) => (
+                  <li key={deal.id} className="rounded-xl border border-gray-100 p-3">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${TYPE_COLOR[deal.type]}`}>
                         {TYPE_LABEL[deal.type]}
                       </span>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLOR[deal.status]}`}>
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${STATUS_COLOR[deal.status]}`}>
                         {STATUS_LABEL[deal.status]}
                       </span>
-                      <span className="text-sm text-gray-500">
-                        {new Date(deal.dealDate).toLocaleDateString('pt-BR')}
+                      <span className="text-xs text-gray-500">
+                        {formatDate(deal.dealDate)}
                       </span>
-                      {isAbate && deal.slaughterFrequency && (
-                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
-                          {deal.slaughterFrequency === 'TRIMESTRAL' ? 'Trimestral' : 'Semestral'}
-                        </span>
-                      )}
                     </div>
                     {deal.counterparty && (
-                      <p className="mt-1 text-sm text-gray-600">{deal.counterparty}</p>
+                      <p className="mt-1 truncate text-sm text-gray-700">{deal.counterparty}</p>
                     )}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      onClick={() => handleDownloadReport(deal.id)}
-                      className="rounded-full bg-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 transition-colors duration-150 hover:bg-blue-200"
-                    >
-                      Exportar PDF
-                    </button>
-                    <button
-                      onClick={() => startEditDeal(deal)}
-                      className="rounded-full bg-gray-900/5 px-3 py-1.5 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
-                    >
-                      <Pencil size={12} className="inline mr-1" />
-                      Editar
-                    </button>
-                    {deal.status === 'RASCUNHO' && (
-                      <>
-                        <button
-                          onClick={() => handleStatusChange(deal.id, 'FINALIZADO')}
-                          className="rounded-full bg-emerald-600/10 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition-colors duration-150 hover:bg-emerald-600/20"
-                        >
-                          Finalizar
-                        </button>
-                        <button
-                          onClick={() => handleStatusChange(deal.id, 'CANCELADO')}
-                          className="rounded-full bg-gray-900/5 px-3 py-1.5 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10"
-                        >
-                          Cancelar
-                        </button>
-                      </>
-                    )}
-                    <button
-                      onClick={() => handleDelete(deal.id)}
-                      className="rounded-full bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors duration-150 hover:bg-red-100"
-                    >
-                      Excluir
-                    </button>
-                  </div>
-                </div>
-
-                {/* Deal items table */}
-                {deal.items.length > 0 && !isGrainDeal && (
-                  <div className="mb-2 overflow-x-auto">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
-                          <th className="py-1">Brinco</th>
-                          <th>Peso vivo (kg)</th>
-                          {isAbate ? (
-                            <>
-                              <th>Carcaça (kg)</th>
-                              <th>Arrobas</th>
-                            </>
-                          ) : (
-                            <th>Arrobas</th>
-                          )}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {deal.items.map((item) => {
-                          const yld = isAbate ? (deal.carcassYieldPercent ?? 52) / 100 : 1;
-                          const carcKg = item.weightKg != null ? item.weightKg * yld : null;
-                          return (
-                            <tr key={item.id} className="border-b border-gray-50">
-                              <td className="py-1 font-mono">{item.earTag}</td>
-                              <td>{item.weightKg != null ? `${item.weightKg}` : <span className="text-amber-600">—</span>}</td>
-                              {isAbate ? (
-                                <>
-                                  <td>{carcKg != null ? carcKg.toFixed(1) : '—'}</td>
-                                  <td>{carcKg != null ? (carcKg / ARROBA_KG).toFixed(2) : '—'}</td>
-                                </>
-                              ) : (
-                                <td>{item.weightKg != null ? (item.weightKg / ARROBA_KG).toFixed(2) : '—'}</td>
-                              )}
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                {/* Summary numbers — ABATE */}
-                {isAbate && sa && (
-                  <>
-                    <div className="grid grid-cols-2 gap-2 rounded-xl bg-orange-50 p-3 text-xs sm:grid-cols-5">
-                      <div>
-                        <span className="text-gray-500">{sa.totalAnimals} animais</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Carcaça: </span>
-                        <span className="font-medium">{sa.carcassWeight.toFixed(1)} kg ({(((deal.carcassYieldPercent ?? 52))).toFixed(1)}%)</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Bruto: </span>
-                        <span className="font-medium">{formatCurrency(sa.grossValue)}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Deduções: </span>
-                        <span className="font-medium text-red-600">
-                          {formatCurrency(sa.funruralValue + sa.senarValue + sa.commissionValue + deal.freightCost)}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Líquido: </span>
-                        <span className="font-bold text-emerald-700">{formatCurrency(sa.netTotal)}</span>
-                      </div>
+                    <p className="mt-0.5 text-xs text-gray-500">
+                      {deal.items.length > 0 ? `${deal.items.length} animal(is)` : 'Sem animais'}
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleDownloadReport(deal.id)}
+                        className="text-xs font-semibold text-blue-700 hover:text-blue-900"
+                      >
+                        PDF
+                      </button>
+                      <button
+                        onClick={() => handleArchive(deal.id, false)}
+                        className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
+                      >
+                        Reabrir
+                      </button>
+                      <button
+                        onClick={() => handleDelete(deal.id)}
+                        className="text-xs font-semibold text-red-600 hover:text-red-800"
+                      >
+                        Excluir
+                      </button>
                     </div>
-                    <div className="mt-1 flex gap-4 text-xs text-gray-500">
-                      <span>Funrural: <strong className="text-gray-700">{formatCurrency(sa.funruralValue)}</strong></span>
-                      <span>SENAR: <strong className="text-gray-700">{formatCurrency(sa.senarValue)}</strong></span>
-                      <span>Comissão: <strong className="text-gray-700">{formatCurrency(sa.commissionValue)}</strong></span>
-                      <span>Frete: <strong className="text-gray-700">{formatCurrency(deal.freightCost)}</strong></span>
-                      <span>Líq/animal: <strong className="text-gray-700">{formatCurrency(sa.totalAnimals > 0 ? sa.netTotal / sa.totalAnimals : 0)}</strong></span>
-                    </div>
-                  </>
-                )}
-
-                {/* Summary numbers — VENDA_GRAO */}
-                {isGrainDeal && (() => {
-                  const qty = deal.grainQuantity ?? 0;
-                  const price = deal.pricePerUnit;
-                  const grossValue = deal.totalValue ?? qty * price;
-                  const funVal = grossValue * ((deal.funruralPercent ?? 0) / 100);
-                  const senVal = grossValue * ((deal.senarPercent ?? 0) / 100);
-                  const commVal = grossValue * (deal.commissionPercent / 100);
-                  const netTotal = grossValue - funVal - senVal - commVal - deal.freightCost;
-                  const unitLabel: Record<string, string> = { SACA60: 'sacas', KG: 'kg', TONELADA: 't' };
-                  const sacas = deal.grainNetWeightKg ? deal.grainNetWeightKg / 60 : qty;
-                  const netPerSaca = sacas > 0 ? netTotal / sacas : 0;
-                  return (
-                    <>
-                      <div className="grid grid-cols-2 gap-2 rounded-xl bg-green-50 p-3 text-xs sm:grid-cols-5">
-                        <div>
-                          <span className="text-gray-500">{deal.grainCrop}: </span>
-                          <span className="font-medium">{qty} {unitLabel[deal.grainUnit ?? ''] ?? deal.grainUnit}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Bruto: </span>
-                          <span className="font-medium">{formatCurrency(grossValue)}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Deduções: </span>
-                          <span className="font-medium text-red-600">
-                            {formatCurrency(funVal + senVal + commVal + deal.freightCost)}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Líquido: </span>
-                          <span className="font-bold text-emerald-700">{formatCurrency(netTotal)}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">R$/saca: </span>
-                          <span className="font-medium">{formatCurrency(netPerSaca)}</span>
-                        </div>
-                      </div>
-                      <div className="mt-1 flex flex-wrap gap-4 text-xs text-gray-500">
-                        {deal.grainSaleModality && (
-                          <span>Modalidade: <strong className="text-gray-700">{{ BALCAO: 'Balcão', CONTRATO_FUTURO: 'Contrato futuro', COOPERATIVA: 'Cooperativa', BARTER: 'Barter' }[deal.grainSaleModality] ?? deal.grainSaleModality}</strong></span>
-                        )}
-                        {deal.grainMoisturePercent != null && (
-                          <span>Umidade: <strong className="text-gray-700">{deal.grainMoisturePercent}%</strong></span>
-                        )}
-                        {deal.grainNetWeightKg != null && (
-                          <span>Peso líq: <strong className="text-gray-700">{deal.grainNetWeightKg.toFixed(1)} kg</strong></span>
-                        )}
-                        {deal.grainWarehouse && (
-                          <span>Armazém: <strong className="text-gray-700">{deal.grainWarehouse}</strong></span>
-                        )}
-                      </div>
-                    </>
-                  );
-                })()}
-
-                {/* Summary numbers — COMPRA/VENDA */}
-                {!isAbate && !isGrainDeal && s && (
-                  <>
-                    <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100/60 p-3 text-xs sm:grid-cols-5">
-                      <div>
-                        <span className="text-gray-500">{s.totalAnimals} animais</span>
-                      </div>
-                      {s.totalWeightKg > 0 && (
-                        <div>
-                          <span className="text-gray-500">Peso: </span>
-                          <span className="font-medium">{s.totalWeightKg.toFixed(1)} kg</span>
-                        </div>
-                      )}
-                      <div>
-                        <span className="text-gray-500">Frete: </span>
-                        <span className="font-medium">{formatCurrency(deal.freightCost)}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Comissão: </span>
-                        <span className="font-medium">{formatCurrency(s.commissionValue)}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Total: </span>
-                        <span className="font-bold text-emerald-700">{formatCurrency(s.grandTotal)}</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-1 flex gap-4 text-xs text-gray-500">
-                      {deal.quantity || deal.totalValue ? (
-                        <>
-                          {(() => {
-                            const parcela =
-                              deal.installmentValue ||
-                              (deal.installmentCount && deal.totalValue
-                                ? deal.totalValue / deal.installmentCount
-                                : 0);
-                            if (!parcela) return null;
-                            return (
-                              <span>
-                                Parcela:{' '}
-                                <strong className="text-gray-700">
-                                  {deal.installmentCount ? `${deal.installmentCount}x de ` : ''}
-                                  {formatCurrency(parcela)}
-                                </strong>
-                              </span>
-                            );
-                          })()}
-                          <span>Custo por animal: <strong className="text-gray-700">{formatCurrency(s.pricePerAnimal)}</strong></span>
-                        </>
-                      ) : (
-                        <>
-                          <span>R$/{deal.priceUnit === 'ARROBA' ? '@' : 'cab.'}: <strong className="text-gray-700">{formatCurrency(deal.pricePerUnit)}</strong></span>
-                          <span>Custo total/animal: <strong className="text-gray-700">{formatCurrency(s.pricePerAnimal)}</strong></span>
-                          <span>Custo total/@: <strong className="text-gray-700">{formatCurrency(s.pricePerArroba)}</strong></span>
-                        </>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {deal.notes && <p className="mt-2 text-xs text-gray-400">{deal.notes}</p>}
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </aside>
+      </div>
     </main>
   );
 }

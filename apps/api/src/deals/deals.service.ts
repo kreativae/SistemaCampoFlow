@@ -72,7 +72,19 @@ export class DealsService {
     });
   }
 
-  findAll(farmId: string, query?: { type?: string; status?: string }) {
+  findAll(
+    farmId: string,
+    query?: { type?: string; status?: string; arquivados?: string },
+  ) {
+    // Sem o parâmetro, devolve tudo — preserva o comportamento de quem já consome
+    // este endpoint (app mobile, relatórios).
+    const archivedFilter =
+      query?.arquivados === 'true'
+        ? { archivedAt: { not: null } }
+        : query?.arquivados === 'false'
+          ? { archivedAt: null }
+          : {};
+
     return this.prisma.deal.findMany({
       where: {
         farmId,
@@ -80,9 +92,20 @@ export class DealsService {
         ...(query?.type ? { type: query.type as never } : {}),
 
         ...(query?.status ? { status: query.status as never } : {}),
+
+        ...archivedFilter,
       },
       include: DEAL_INCLUDE,
       orderBy: { dealDate: 'desc' },
+    });
+  }
+
+  async setArchived(farmId: string, id: string, archived: boolean) {
+    await this.findOne(farmId, id);
+    return this.prisma.deal.update({
+      where: { id },
+      data: { archivedAt: archived ? new Date() : null },
+      include: DEAL_INCLUDE,
     });
   }
 
@@ -121,6 +144,9 @@ export class DealsService {
         data: {
           ...data,
           ...(data.dealDate ? { dealDate: new Date(data.dealDate) } : {}),
+          // Cancelado é encerrado por definição: não há o que acompanhar, então
+          // já sai da coluna ativa sem exigir um segundo clique.
+          ...(data.status === 'CANCELADO' ? { archivedAt: new Date() } : {}),
         },
         include: DEAL_INCLUDE,
       });

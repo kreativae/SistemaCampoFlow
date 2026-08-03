@@ -1137,6 +1137,10 @@ model Deal {
   cropCycleId              String?
   notes                    String?
   dealDate                 DateTime
+  // Arquivamento é organização de tela, separado do status de negócio: um negócio
+  // FINALIZADO com parcelas a receber ainda interessa ao produtor e continua na
+  // coluna ativa até ele mandar arquivar. Cancelar arquiva automaticamente.
+  archivedAt               DateTime?
   createdBy                User          @relation(fields: [createdById], references: [id])
   createdById              String
   items                    DealItem[]
@@ -1145,6 +1149,7 @@ model Deal {
   updatedAt                DateTime      @updatedAt
 
   @@index([farmId, dealDate])
+  @@index([farmId, archivedAt])
 }
 
 model DealItem {

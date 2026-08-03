@@ -44,8 +44,23 @@ export class DealsController {
     @Param('farmId') farmId: string,
     @Query('type') type?: string,
     @Query('status') status?: string,
+    @Query('arquivados') arquivados?: string,
   ) {
-    return this.dealsService.findAll(farmId, { type, status });
+    return this.dealsService.findAll(farmId, { type, status, arquivados });
+  }
+
+  @Patch(':id/arquivar')
+  @UseGuards(RolesGuard)
+  @Roles(Role.OWNER, Role.MANAGER)
+  archive(@Param('farmId') farmId: string, @Param('id') id: string) {
+    return this.dealsService.setArchived(farmId, id, true);
+  }
+
+  @Patch(':id/desarquivar')
+  @UseGuards(RolesGuard)
+  @Roles(Role.OWNER, Role.MANAGER)
+  unarchive(@Param('farmId') farmId: string, @Param('id') id: string) {
+    return this.dealsService.setArchived(farmId, id, false);
   }
 
   @Get(':id')

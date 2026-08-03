@@ -1087,6 +1087,8 @@ export interface Deal {
   farmId: string;
   type: DealType;
   status: DealStatus;
+  /** Preenchido quando o negócio sai da coluna ativa. Independente do status. */
+  archivedAt: string | null;
   counterparty: string | null;
   pricePerUnit: number;
   priceUnit: string;
