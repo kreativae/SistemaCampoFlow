@@ -630,7 +630,7 @@ export default function NegociosPage() {
   const showAnimals = dealType !== 'COMPRA' && dealType !== 'VENDA_GRAO';
 
   return (
-    <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+    <main className="animate-fade-up mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8">
       <PageHeader
         icon={Handshake}
         title="Negócios"
