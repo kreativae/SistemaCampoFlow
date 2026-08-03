@@ -29,6 +29,17 @@ import { apiFetch, ApiError } from '@/lib/api';
 import type { BalancePeriod, DashboardFullOverview, DashboardOverview, Farm } from '@/lib/types';
 import { BALANCE_PERIOD_OPTIONS } from '@/lib/types';
 
+/**
+ * O Intl separa "R$" do número com espaço não separável (U+00A0), o que impede
+ * a quebra de linha e faz valores longos vazarem do card em telas estreitas.
+ * Trocar por espaço comum dá ao texto um ponto de quebra de último recurso.
+ */
+function formatBRL(value: number) {
+  return value
+    .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    .replace(/\u00a0/g, ' ');
+}
+
 export default function FarmDashboardPage() {
   const { farmId } = useParams<{ farmId: string }>();
   const { user, accessToken, loading } = useAuth();
@@ -151,13 +162,10 @@ export default function FarmDashboardPage() {
                 BALANCE_PERIOD_OPTIONS.find((o) => o.value === balancePeriod)?.label ??
                 'Saldo do mês'
               }
-              value={balance.saldo.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              })}
+              value={formatBRL(balance.saldo)}
               icon={Wallet}
               tone={balance.saldo >= 0 ? 'positive' : 'negative'}
-              footer={`${balance.receita.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} receita · ${balance.despesa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} despesa`}
+              footer={`${formatBRL(balance.receita)} receita · ${formatBRL(balance.despesa)} despesa`}
               menu={{
                 options: BALANCE_PERIOD_OPTIONS,
                 value: balancePeriod,
@@ -326,7 +334,9 @@ function MetricCard({
           </span>
         )}
       </div>
-      <p className={`mt-2 text-3xl font-bold tracking-tight tabular-nums ${valueColor}`}>
+      <p
+        className={`mt-2 text-2xl font-bold tracking-tight tabular-nums break-words sm:text-3xl ${valueColor}`}
+      >
         {value}
         {unit && <span className="ml-1 text-base font-normal text-gray-400">{unit}</span>}
       </p>
