@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Prisma, SubscriptionStatus, TicketStatus } from '@prisma/client';
@@ -484,8 +485,16 @@ export class AdminService {
   }
 
   // Atualização manual das cotações (global). Reaproveita o fetch da Redação Agro.
-  refreshQuotations() {
-    return this.externalQuotationsService.refresh();
+  async refreshQuotations() {
+    try {
+      return await this.externalQuotationsService.refresh();
+    } catch (err) {
+      // A fonte é um agregador gratuito sem SLA: quando ela cai ou bloqueia o
+      // IP do servidor, o admin precisa ler o motivo em vez de um 500 mudo.
+      throw new ServiceUnavailableException(
+        `Falha ao buscar cotações: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
   }
 
   // ---- Auditoria ----

@@ -109,10 +109,30 @@ export class ExternalQuotationsService implements OnModuleInit {
   }
 
   private async fetchLatest(): Promise<RedacaoAgroResponse> {
-    const response = await fetch(REDACAO_AGRO_URL);
+    let response: Response;
+    try {
+      // Sem timeout, um endpoint pendurado prendia a requisição do admin até o
+      // limite do proxy. 15s é folgado para uma resposta que leva menos de 1s.
+      response = await fetch(REDACAO_AGRO_URL, {
+        signal: AbortSignal.timeout(15_000),
+      });
+    } catch (err) {
+      // Falha de rede (DNS, saída bloqueada, TLS, timeout) não tem status HTTP:
+      // sem esta mensagem o admin recebia só "Internal server error".
+      const cause = err instanceof Error ? err.message : String(err);
+      throw new Error(`não foi possível alcançar ${REDACAO_AGRO_URL} — ${cause}`);
+    }
+
     if (!response.ok) {
       throw new Error(`Redação Agro respondeu ${response.status}`);
     }
-    return (await response.json()) as RedacaoAgroResponse;
+
+    const data = (await response.json().catch(() => null)) as
+      | RedacaoAgroResponse
+      | null;
+    if (!data?.commodities) {
+      throw new Error('resposta da Redação Agro veio sem o campo "commodities"');
+    }
+    return data;
   }
 }
