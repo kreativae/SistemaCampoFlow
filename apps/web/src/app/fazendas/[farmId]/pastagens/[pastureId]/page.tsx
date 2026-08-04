@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
+import { formatDate, toApiDate } from '@/lib/dates';
 import { useConfirm } from '@/lib/confirm-context';
 import type { Farm, Pasture, PastureOccupation } from '@/lib/types';
 
@@ -144,12 +145,8 @@ export default function PastureDetailPage() {
           token: accessToken,
           body: {
             headCount: editHeadCount ? Number(editHeadCount) : undefined,
-            enteredAt: editEnteredAt
-              ? new Date(editEnteredAt).toISOString()
-              : undefined,
-            exitedAt: editExitedAt
-              ? new Date(editExitedAt).toISOString()
-              : undefined,
+            enteredAt: toApiDate(editEnteredAt),
+            exitedAt: toApiDate(editExitedAt),
             notes: editNotes || undefined,
           },
         },
@@ -335,7 +332,7 @@ export default function PastureDetailPage() {
                 <li key={o.id} className="rounded-2xl border border-emerald-600 bg-emerald-50 p-4">
                   <p className="mb-2 text-xs font-medium text-gray-600">
                     Registrar saída do lote ({o.headCount} animais desde{' '}
-                    {new Date(o.enteredAt).toLocaleDateString('pt-BR')})
+                    {formatDate(o.enteredAt)})
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <div>
@@ -417,7 +414,7 @@ export default function PastureDetailPage() {
               ) : (
                 <li key={o.id} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                   <span>
-                    {o.headCount} animais — desde {new Date(o.enteredAt).toLocaleDateString('pt-BR')}
+                    {o.headCount} animais — desde {formatDate(o.enteredAt)}
                     {o.notes ? ` (${o.notes})` : ''}
                   </span>
                   <span className="flex gap-2">
@@ -476,8 +473,8 @@ export default function PastureDetailPage() {
               ) : (
                 <li key={o.id} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                   <span>
-                    {o.headCount} animais — {new Date(o.enteredAt).toLocaleDateString('pt-BR')} até{' '}
-                    {o.exitedAt ? new Date(o.exitedAt).toLocaleDateString('pt-BR') : '—'}
+                    {o.headCount} animais — {formatDate(o.enteredAt)} até{' '}
+                    {o.exitedAt ? formatDate(o.exitedAt) : '—'}
                     {o.notes ? ` (${o.notes})` : ''}
                   </span>
                   <span className="flex gap-2">

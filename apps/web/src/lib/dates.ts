@@ -30,6 +30,34 @@ export function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 }
 
+/**
+ * Hoje no calendário do usuário, como "2026-08-20".
+ *
+ * `new Date().toISOString().slice(0, 10)` devolve o dia em UTC: das 21h à
+ * meia-noite em Brasília isso já é o dia seguinte, e o registro nascia com
+ * data de amanhã.
+ */
+export function todayInput(): string {
+  return toLocalDateKey(new Date());
+}
+
+/**
+ * Dia de calendário de um Date local, como "2026-08-20".
+ *
+ * Diferente de `toISOString().slice(0, 10)`, que projeta para UTC e vira o dia
+ * seguinte a partir das 21h em Brasília.
+ */
+export function toLocalDateKey(date: Date): string {
+  const mes = String(date.getMonth() + 1).padStart(2, '0');
+  const dia = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${mes}-${dia}`;
+}
+
+/** Data da API → "2026-08-20", pronta para preencher um <input type="date">. */
+export function toDateInput(iso: string): string {
+  return new Date(iso).toISOString().slice(0, 10);
+}
+
 /** Compara o dia de uma data da API com um Date local (calendários). */
 export function isSameCalendarDay(iso: string, date: Date): boolean {
   const d = new Date(iso);

@@ -10,6 +10,7 @@ import FormModal from '@/components/FormModal';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { formatDate, toApiDate, toDateInput, toLocalDateKey, todayInput } from '@/lib/dates';
 import { apiFetch, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
 import type {
@@ -101,9 +102,14 @@ export default function FinancePage() {
       end.setMonth(11, 31);
       end.setHours(23, 59, 59, 999);
     }
+    // Compara dia contra dia, em texto: a data guardada é um dia de calendário
+    // (meio-dia UTC), então medi-la com limites em horário local jogava o
+    // registro para o dia anterior — o oposto do que a lista mostra.
+    const inicio = toLocalDateKey(start);
+    const fim = toLocalDateKey(end);
     return transactions.filter((t) => {
-      const ref = new Date(t.paidAt ?? t.dueDate);
-      return ref >= start && ref <= end;
+      const dia = toDateInput(t.paidAt ?? t.dueDate);
+      return dia >= inicio && dia <= fim;
     });
   }, [transactions, txFilter]);
 
@@ -193,7 +199,7 @@ export default function FinancePage() {
     setCreating(true);
     setError(null);
     try {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = todayInput();
       await apiFetch<Transaction>(`/fazendas/${farmId}/lancamentos`, {
         method: 'POST',
         token: accessToken,
@@ -202,8 +208,8 @@ export default function FinancePage() {
           category,
           description: description || undefined,
           amount: Number(amount),
-          dueDate,
-          paidAt: alreadyPaid ? today : undefined,
+          dueDate: toApiDate(dueDate),
+          paidAt: alreadyPaid ? toApiDate(today) : undefined,
           cropCycleId: cropCycleId || undefined,
         },
       });
@@ -270,7 +276,7 @@ export default function FinancePage() {
           category: editCategory,
           description: editDescription || undefined,
           amount: Number(editAmount),
-          dueDate: editDueDate,
+          dueDate: toApiDate(editDueDate),
         },
       });
       setEditingTx(null);
@@ -426,7 +432,7 @@ export default function FinancePage() {
                     <option key={c.id} value={c.id}>
                       {c.cropName}
                       {c.variety ? ` — ${c.variety}` : ''} ·{' '}
-                      {new Date(c.plantedAt).toLocaleDateString('pt-BR')}
+                      {formatDate(c.plantedAt)}
                     </option>
                   ))}
                 </select>
@@ -621,7 +627,7 @@ export default function FinancePage() {
                         </span>
                       </div>
                       <p className="mt-0.5 text-xs text-gray-500">
-                        {new Date(t.dueDate).toLocaleDateString('pt-BR')} · {t.category}
+                        {formatDate(t.dueDate)} · {t.category}
                       </p>
                     </div>
 

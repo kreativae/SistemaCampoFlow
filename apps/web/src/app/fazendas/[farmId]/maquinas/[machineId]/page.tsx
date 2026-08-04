@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
+import { formatDate, toApiDate } from '@/lib/dates';
 import { useConfirm } from '@/lib/confirm-context';
 import type { Machine, MachineMaintenance, MachineFuelRecord } from '@/lib/types';
 
@@ -151,9 +152,7 @@ export default function MachineDetailPage() {
             hourMeterAt: editMaintenanceHourMeter
               ? Number(editMaintenanceHourMeter)
               : undefined,
-            performedAt: editMaintenanceDate
-              ? new Date(editMaintenanceDate).toISOString()
-              : undefined,
+            performedAt: toApiDate(editMaintenanceDate),
           },
         },
       );
@@ -207,9 +206,7 @@ export default function MachineDetailPage() {
             liters: editFuelLiters ? Number(editFuelLiters) : undefined,
             cost: editFuelCost ? Number(editFuelCost) : undefined,
             hourMeterAt: editFuelHourMeter ? Number(editFuelHourMeter) : undefined,
-            recordedAt: editFuelDate
-              ? new Date(editFuelDate).toISOString()
-              : undefined,
+            recordedAt: toApiDate(editFuelDate),
           },
         },
       );
@@ -393,7 +390,7 @@ export default function MachineDetailPage() {
               ) : (
                 <li key={m.id} className="flex items-center justify-between">
                   <span>
-                    {new Date(m.performedAt).toLocaleDateString('pt-BR')} — {m.description}
+                    {formatDate(m.performedAt)} — {m.description}
                     {m.cost != null ? ` (R$ ${m.cost})` : ''}
                   </span>
                   <span className="flex gap-2">
@@ -520,7 +517,7 @@ export default function MachineDetailPage() {
               ) : (
                 <li key={f.id} className="flex items-center justify-between">
                   <span>
-                    {new Date(f.recordedAt).toLocaleDateString('pt-BR')} — {f.liters}L
+                    {formatDate(f.recordedAt)} — {f.liters}L
                     {f.cost != null ? ` (R$ ${f.cost})` : ''}
                   </span>
                   <span className="flex gap-2">

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
+import { formatDate, toApiDate } from '@/lib/dates';
 import { useConfirm } from '@/lib/confirm-context';
 import NewRecordButton from '@/components/NewRecordButton';
 import FormModal from '@/components/FormModal';
@@ -249,9 +250,7 @@ export default function AnimalDetailPage() {
         token: accessToken,
         body: {
           weightKg: Number(editWeighingKg),
-          weighedAt: editWeighingDate
-            ? new Date(editWeighingDate).toISOString()
-            : undefined,
+          weighedAt: toApiDate(editWeighingDate),
         },
       });
       setEditingWeighingId(null);
@@ -291,7 +290,7 @@ export default function AnimalDetailPage() {
       await apiFetch(`/fazendas/${farmId}/animais/${animalId}/vacinacoes`, {
         method: 'POST',
         token: accessToken,
-        body: { vaccineName, scheduledDate },
+        body: { vaccineName, scheduledDate: toApiDate(scheduledDate) },
       });
       setVaccineName('');
       setScheduledDate('');
@@ -344,9 +343,7 @@ export default function AnimalDetailPage() {
         body: {
           type: editReproType,
           result: editReproType === 'DIAGNOSTICO_PRENHEZ' && editReproResult ? editReproResult : undefined,
-          eventDate: editReproDate
-            ? new Date(editReproDate).toISOString()
-            : undefined,
+          eventDate: toApiDate(editReproDate),
         },
       });
       setEditingReproId(null);
@@ -409,12 +406,8 @@ export default function AnimalDetailPage() {
           method: 'PATCH',
           token: accessToken,
           body: {
-            scheduledDate: editVaccinationScheduledDate
-              ? new Date(editVaccinationScheduledDate).toISOString()
-              : undefined,
-            administeredAt: editVaccinationAdministeredAt
-              ? new Date(editVaccinationAdministeredAt).toISOString()
-              : undefined,
+            scheduledDate: toApiDate(editVaccinationScheduledDate),
+            administeredAt: toApiDate(editVaccinationAdministeredAt),
           },
         },
       );
@@ -540,7 +533,7 @@ export default function AnimalDetailPage() {
                   ) : (
                     <li key={w.id} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                       <span>
-                        {new Date(w.weighedAt).toLocaleDateString('pt-BR')} —{' '}
+                        {formatDate(w.weighedAt)} —{' '}
                         {w.weightKg} kg
                       </span>
                       <span className="flex gap-2">
@@ -625,7 +618,7 @@ export default function AnimalDetailPage() {
               ) : (
                 <li key={v.id} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                   <span>
-                    {v.vaccineName} — {new Date(v.scheduledDate).toLocaleDateString('pt-BR')}
+                    {v.vaccineName} — {formatDate(v.scheduledDate)}
                     {v.administeredAt ? ' (aplicada)' : ' (pendente)'}
                   </span>
                   <span className="flex gap-2">
@@ -709,7 +702,7 @@ export default function AnimalDetailPage() {
               ) : (
                 <li key={e.id} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                   <span>
-                    {new Date(e.eventDate).toLocaleDateString('pt-BR')} —{' '}
+                    {formatDate(e.eventDate)} —{' '}
                     {REPRODUCTIVE_EVENT_OPTIONS.find((opt) => opt.value === e.type)?.label ?? e.type}
                     {e.result ? ` (${e.result === 'PRENHE' ? 'Prenhe' : 'Vazia'})` : ''}
                   </span>
@@ -747,7 +740,7 @@ export default function AnimalDetailPage() {
                 .slice(0, showAllHistory ? undefined : VISIBLE_RECORDS)
                 .map((e) => (
                   <li key={e.id}>
-                    {new Date(e.occurredAt).toLocaleDateString('pt-BR')} —{' '}
+                    {formatDate(e.occurredAt)} —{' '}
                     {ANIMAL_EVENT_TYPE_LABEL[e.type] ?? e.type}
                     {e.description ? `: ${e.description}` : ''}
                   </li>
@@ -784,7 +777,7 @@ export default function AnimalDetailPage() {
                   const updated = await apiFetch<Animal>(`/fazendas/${farmId}/animais/${animalId}`, {
                     method: 'PATCH',
                     token: accessToken,
-                    body: { birthDate: v || undefined },
+                    body: { birthDate: toApiDate(v) },
                   });
                   setAnimal(updated);
                 } catch (err) {
@@ -805,7 +798,7 @@ export default function AnimalDetailPage() {
                   const updated = await apiFetch<Animal>(`/fazendas/${farmId}/animais/${animalId}`, {
                     method: 'PATCH',
                     token: accessToken,
-                    body: { entryDate: v || undefined },
+                    body: { entryDate: toApiDate(v) },
                   });
                   setAnimal(updated);
                 } catch (err) {
@@ -1237,7 +1230,7 @@ function WeightEvolutionChart({ weighings }: { weighings: WeighingRecord[] }) {
         {minWeight.toFixed(1)} kg
       </text>
       <text x={coords[0].x} y={height - 6} fontSize={7} fill="#9ca3af">
-        {new Date(coords[0].weighedAt).toLocaleDateString('pt-BR')}
+        {formatDate(coords[0].weighedAt)}
       </text>
       <text
         x={coords[coords.length - 1].x}
@@ -1246,7 +1239,7 @@ function WeightEvolutionChart({ weighings }: { weighings: WeighingRecord[] }) {
         fill="#9ca3af"
         textAnchor="end"
       >
-        {new Date(coords[coords.length - 1].weighedAt).toLocaleDateString('pt-BR')}
+        {formatDate(coords[coords.length - 1].weighedAt)}
       </text>
     </svg>
   );

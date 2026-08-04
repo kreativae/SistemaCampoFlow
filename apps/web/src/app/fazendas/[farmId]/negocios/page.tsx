@@ -9,7 +9,7 @@ import FormModal from '@/components/FormModal';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, apiDownload, ApiError } from '@/lib/api';
 import { useToast } from '@/lib/toast-context';
-import { formatDate } from '@/lib/dates';
+import { formatDate, toApiDate, toDateInput, toLocalDateKey, todayInput } from '@/lib/dates';
 import type { Animal, CropCycle, Deal, DealSummary, DealType, DealStatus } from '@/lib/types';
 
 const ARROBA_KG = 15;
@@ -114,7 +114,7 @@ export default function NegociosPage() {
   const [priceUnit, setPriceUnit] = useState<'ANIMAL' | 'ARROBA'>('ARROBA');
   const [freightCost, setFreightCost] = useState('');
   const [commissionPercent, setCommissionPercent] = useState('');
-  const [dealDate, setDealDate] = useState(new Date().toISOString().slice(0, 10));
+  const [dealDate, setDealDate] = useState(todayInput());
   const [notes, setNotes] = useState('');
   const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
 
@@ -184,12 +184,12 @@ export default function NegociosPage() {
     const all = deals.filter((d) => d.archivedAt);
     if (archivedPeriod === 'custom') {
       if (!archivedFrom && !archivedTo) return all;
-      const from = archivedFrom ? new Date(`${archivedFrom}T00:00:00`) : null;
-      const to = archivedTo ? new Date(`${archivedTo}T23:59:59`) : null;
       return all.filter((d) => {
-        const when = new Date(d.dealDate);
-        if (from && when < from) return false;
-        if (to && when > to) return false;
+        // Dia contra dia: dealDate é data de calendário, comparar com limites
+        // em horário local jogaria o negócio para o dia anterior.
+        const dia = toDateInput(d.dealDate);
+        if (archivedFrom && dia < archivedFrom) return false;
+        if (archivedTo && dia > archivedTo) return false;
         return true;
       });
     }
@@ -201,7 +201,7 @@ export default function NegociosPage() {
       start.setDate(1);
     }
     start.setHours(0, 0, 0, 0);
-    return all.filter((d) => new Date(d.dealDate) >= start);
+    return all.filter((d) => toDateInput(d.dealDate) >= toLocalDateKey(start));
   }, [deals, archivedPeriod, archivedFrom, archivedTo]);
 
   // Agrupa a coluna ativa por tipo, como no esboço: abate, venda, compra...
@@ -441,7 +441,7 @@ export default function NegociosPage() {
             }
           : {}),
         notes: notes || undefined,
-        dealDate,
+        dealDate: toApiDate(dealDate),
         items: draftItems.map((i) => ({
           animalId: i.animalId || undefined,
           earTag: i.earTag,
@@ -491,7 +491,7 @@ export default function NegociosPage() {
                 category: 'OUTROS',
                 description: `${TYPE_LABEL[dealType]} — ${counterparty || 'Sem contraparte'} — ${dealDate}`,
                 amount: Number(txAmount.toFixed(2)),
-                dueDate: dealDate,
+                dueDate: toApiDate(dealDate),
                 dealId: createdDealId,
               },
             });
@@ -519,7 +519,7 @@ export default function NegociosPage() {
     setPriceUnit('ARROBA');
     setFreightCost('');
     setCommissionPercent('');
-    setDealDate(new Date().toISOString().slice(0, 10));
+    setDealDate(todayInput());
     setNotes('');
     setDraftItems([]);
     setShowAnimalPicker(false);
@@ -557,7 +557,7 @@ export default function NegociosPage() {
     setPriceUnit(deal.priceUnit as 'ANIMAL' | 'ARROBA');
     setFreightCost(deal.freightCost ? String(deal.freightCost) : '');
     setCommissionPercent(deal.commissionPercent ? String(deal.commissionPercent) : '');
-    setDealDate(new Date(deal.dealDate).toISOString().slice(0, 10));
+    setDealDate(toDateInput(deal.dealDate));
     setNotes(deal.notes ?? '');
     setDraftItems(
       deal.items.map((i) => ({
@@ -702,7 +702,7 @@ export default function NegociosPage() {
                         {STATUS_LABEL[deal.status]}
                       </span>
                       <span className="text-sm text-gray-500">
-                        {new Date(deal.dealDate).toLocaleDateString('pt-BR')}
+                        {formatDate(deal.dealDate)}
                       </span>
                       {isAbate && deal.slaughterFrequency && (
                         <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">

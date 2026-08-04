@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
+import { formatDate, toApiDate } from '@/lib/dates';
 import { useToast } from '@/lib/toast-context';
 import { useConfirm } from '@/lib/confirm-context';
 import type { Supply, SupplyAlert, SupplyCategory } from '@/lib/types';
@@ -108,7 +109,7 @@ export default function SuppliesPage() {
           customCategory: category === 'OUTROS' ? customCategory || undefined : undefined,
           unit: unitSelect === CUSTOM_UNIT ? customUnit : unitSelect,
           initialQuantity: quantity ? Number(quantity) : undefined,
-          expirationDate: expirationDate || undefined,
+          expirationDate: toApiDate(expirationDate),
         },
       });
       setName('');
@@ -156,7 +157,7 @@ export default function SuppliesPage() {
             editCategory === 'OUTROS' ? editCustomCategory || undefined : undefined,
           unit: editUnitSelect === CUSTOM_UNIT ? editCustomUnit : editUnitSelect,
           minimumQuantity: Number(editMinimumQuantity),
-          expirationDate: editExpirationDate || undefined,
+          expirationDate: toApiDate(editExpirationDate),
         },
       });
       setEditingId(null);

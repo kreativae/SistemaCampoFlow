@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, apiUpload, apiDownload, ApiError } from '@/lib/api';
+import { formatDate, toApiDate } from '@/lib/dates';
 import type {
   MapFeature,
   SoilAnalysis,
@@ -165,7 +166,7 @@ export default function SoilAnalysisPage() {
     setError(null);
     try {
       const body: Record<string, unknown> = {
-        collectedAt: editCollectedAt,
+        collectedAt: toApiDate(editCollectedAt),
         areaLabel: editAreaLabel || undefined,
         notes: editNotes || undefined,
       };
@@ -453,7 +454,7 @@ export default function SoilAnalysisPage() {
                     <>
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <p className="font-medium text-gray-900">
-                          {new Date(a.collectedAt).toLocaleDateString('pt-BR')}
+                          {formatDate(a.collectedAt)}
                           {a.areaLabel ? ` — ${a.areaLabel}` : ''}
                         </p>
                         <div className="flex flex-wrap gap-3">
@@ -731,7 +732,7 @@ function SoilEvolutionChart({
         {minValue.toFixed(2)}
       </text>
       <text x={coords[0].x} y={height - 6} fontSize={7} fill="#9ca3af">
-        {new Date(coords[0].collectedAt).toLocaleDateString('pt-BR')}
+        {formatDate(coords[0].collectedAt)}
       </text>
       <text
         x={coords[coords.length - 1].x}
@@ -740,7 +741,7 @@ function SoilEvolutionChart({
         fill="#9ca3af"
         textAnchor="end"
       >
-        {new Date(coords[coords.length - 1].collectedAt).toLocaleDateString('pt-BR')}
+        {formatDate(coords[coords.length - 1].collectedAt)}
       </text>
     </svg>
   );

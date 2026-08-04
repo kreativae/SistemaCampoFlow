@@ -8,6 +8,7 @@ import ToolButton from '@/components/ToolButton';
 import FormModal from '@/components/FormModal';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
+import { formatDate, toApiDate } from '@/lib/dates';
 import { useToast } from '@/lib/toast-context';
 import { useConfirm } from '@/lib/confirm-context';
 import type { Employee, EmployeeType, TimeEntry } from '@/lib/types';
@@ -264,7 +265,7 @@ export default function TeamPage() {
           description: entryDescription,
           hours: Number(entryHours),
           paid: entryPaid,
-          workDate: entryDate || undefined,
+          workDate: toApiDate(entryDate),
         },
       });
       setEntryDescription('');
@@ -315,7 +316,7 @@ export default function TeamPage() {
           description: editEntryDescription,
           hours: Number(editEntryHours),
           paid: editEntryPaid,
-          workDate: editEntryDate || undefined,
+          workDate: toApiDate(editEntryDate),
         },
       });
       setEditingEntryId(null);
@@ -817,7 +818,7 @@ export default function TeamPage() {
                           >
                             <span className="min-w-0">
                               <span className="block">
-                                {new Date(entry.workDate).toLocaleDateString('pt-BR')} —{' '}
+                                {formatDate(entry.workDate)} —{' '}
                                 <strong className={entry.hours < 0 ? 'text-red-600' : ''}>
                                   {entry.hours > 0 ? '+' : ''}
                                   {entry.hours}h

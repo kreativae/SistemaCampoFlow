@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
+import { formatDate, toApiDate } from '@/lib/dates';
 import { useConfirm } from '@/lib/confirm-context';
 import type { Supply, SupplyMovement, SupplyMovementType } from '@/lib/types';
 
@@ -96,7 +97,7 @@ export default function SupplyDetailPage() {
           body: {
             type: editMovementType,
             quantity: Number(editQuantity),
-            occurredAt: editOccurredAt || undefined,
+            occurredAt: toApiDate(editOccurredAt),
             notes: editNotes || undefined,
           },
         },
@@ -256,7 +257,7 @@ export default function SupplyDetailPage() {
               ) : (
                 <li key={m.id} className="flex items-center justify-between">
                   <span>
-                    {new Date(m.occurredAt).toLocaleDateString('pt-BR')} —{' '}
+                    {formatDate(m.occurredAt)} —{' '}
                     {m.type === 'ENTRADA' ? '+' : '-'}
                     {m.quantity} {supply.unit}
                     {m.notes ? ` (${m.notes})` : ''}

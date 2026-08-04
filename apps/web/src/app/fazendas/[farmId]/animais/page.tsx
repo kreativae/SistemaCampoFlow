@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, ApiError } from '@/lib/api';
+import { formatDate, toApiDate, todayInput } from '@/lib/dates';
 import { useConfirm } from '@/lib/confirm-context';
 import { useToast } from '@/lib/toast-context';
 import type {
@@ -269,7 +270,7 @@ export default function AnimalsPage() {
   const [dealPriceUnit, setDealPriceUnit] = useState<'ANIMAL' | 'ARROBA'>('ARROBA');
   const [dealFreightCost, setDealFreightCost] = useState('');
   const [dealCommission, setDealCommission] = useState('');
-  const [dealDate, setDealDate] = useState(new Date().toISOString().slice(0, 10));
+  const [dealDate, setDealDate] = useState(todayInput());
   const [dealNotes, setDealNotes] = useState('');
   const [dealCarcassYield, setDealCarcassYield] = useState('52');
   const [dealLiveWeightPrice, setDealLiveWeightPrice] = useState('');
@@ -359,8 +360,8 @@ export default function AnimalsPage() {
           category,
           breed: breed || undefined,
           pastureId: pastureId || undefined,
-          birthDate: birthDate || undefined,
-          entryDate: entryDate || undefined,
+          birthDate: toApiDate(birthDate),
+          entryDate: toApiDate(entryDate),
         },
       });
       setEarTag('');
@@ -410,12 +411,12 @@ export default function AnimalsPage() {
           name: editName || undefined,
           rfid: editRfid || undefined,
           sex: editSex,
-          birthDate: editBirthDate || undefined,
+          birthDate: toApiDate(editBirthDate),
           currentWeightKg: editCurrentWeightKg
             ? Number(editCurrentWeightKg)
             : undefined,
           performance: editPerformance || undefined,
-          entryDate: editEntryDate || undefined,
+          entryDate: toApiDate(editEntryDate),
         },
       });
       setEditingId(null);
@@ -572,7 +573,7 @@ export default function AnimalsPage() {
     setDealPriceUnit('ARROBA');
     setDealFreightCost('');
     setDealCommission('');
-    setDealDate(new Date().toISOString().slice(0, 10));
+    setDealDate(todayInput());
     setDealNotes('');
     setDealCarcassYield('52');
     setDealLiveWeightPrice('');

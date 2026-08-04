@@ -614,7 +614,7 @@ export default function CropsPage() {
                   ) : soilPreview ? (
                     <div className="text-xs text-gray-700">
                       <p>
-                        Coletada em {new Date(soilPreview.collectedAt).toLocaleDateString('pt-BR')}
+                        Coletada em {formatDate(soilPreview.collectedAt)}
                       </p>
                       <p className="mt-1">
                         {soilPreview.ph != null ? `pH ${soilPreview.ph} · ` : ''}
