@@ -55,7 +55,7 @@ function fmtBRL(n: number | null | undefined): string {
 }
 
 function fmtDate(d: string): string {
-  return new Date(d).toLocaleDateString('pt-BR');
+  return new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 }
 
 function fmtNumber(n: number | null | undefined, digits = 1): string {

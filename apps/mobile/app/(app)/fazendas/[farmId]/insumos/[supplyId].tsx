@@ -30,6 +30,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDateOrNull, todayInput } from '../../../../../src/lib/dates';
 import { theme } from '../../../../../src/lib/theme';
 import type {
   Supply,
@@ -81,16 +82,18 @@ interface EditForm {
 }
 
 function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  return todayInput();
 }
 
 function emptyMovementForm(): MovementForm {
   return { type: 'ENTRADA', quantity: '', notes: '', occurredAt: todayISO() };
 }
 
+// Datas de calendário: formatar em UTC evita mostrar o dia anterior e
+// corrige os registros gravados à meia-noite antes da varredura de fuso.
 function formatDate(d: string | null | undefined): string {
   if (!d) return '—';
-  return new Date(d).toLocaleDateString('pt-BR');
+  return new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 }
 
 export default function SupplyDetailScreen() {
@@ -242,7 +245,7 @@ export default function SupplyDetailScreen() {
       unit: editForm.unit.trim() || 'un',
       currentQuantity: Number.isFinite(currentQuantity) ? currentQuantity : undefined,
       minimumQuantity: Number.isFinite(minimumQuantity) ? minimumQuantity : undefined,
-      expirationDate: editForm.expirationDate || null,
+      expirationDate: toApiDateOrNull(editForm.expirationDate),
       notes: editForm.notes || null,
     });
   };

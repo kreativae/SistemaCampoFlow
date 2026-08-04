@@ -31,6 +31,7 @@ const haptic = (style?: string) => {
 };
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate, todayInput } from '../../../../../src/lib/dates';
 import { EmptyState } from '../../../../../src/components/EmptyState';
 import { theme } from '../../../../../src/lib/theme';
 import type { Deal, DealType, DealStatus, CropCycle } from '../../../../../src/lib/types';
@@ -71,7 +72,7 @@ const GRAIN_MODALITIES = ['BALCAO', 'CONTRATO_FUTURO', 'COOPERATIVA', 'BARTER'] 
 const GRAIN_MOD_LABEL: Record<string, string> = { BALCAO: 'Balcão', CONTRATO_FUTURO: 'Contrato futuro', COOPERATIVA: 'Cooperativa', BARTER: 'Barter' };
 const SLAUGHTER_FREQ = ['TRIMESTRAL', 'SEMESTRAL'] as const;
 
-const today = () => new Date().toISOString().slice(0, 10);
+const today = todayInput;
 
 interface DealForm {
   type: DealType;
@@ -290,7 +291,7 @@ export default function DealsScreen() {
 
     const base: Record<string, unknown> = {
       type: form.type,
-      dealDate: form.dealDate,
+      dealDate: toApiDate(form.dealDate),
       counterparty: form.counterparty || undefined,
       freightCost: n(form.freightCost),
       commissionPercent: n(form.commissionPercent),
@@ -381,7 +382,7 @@ export default function DealsScreen() {
   };
 
   const fmt = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR');
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
   const isSaving = createDeal.isPending || updateDeal.isPending;
   const setF = (patch: Partial<DealForm>) => setForm((f) => ({ ...f, ...patch }));
 

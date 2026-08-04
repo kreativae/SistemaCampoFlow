@@ -20,6 +20,7 @@ import * as Haptics from 'expo-haptics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { theme } from '../../../../../src/lib/theme';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate, todayInput } from '../../../../../src/lib/dates';
 import type { Machine, MachineType, MachineMaintenance, MachineFuelRecord } from '../../../../../src/lib/types';
 
 const TYPES: MachineType[] = ['TRATOR', 'CAMINHAO', 'IMPLEMENTO', 'OUTRO'];
@@ -40,17 +41,21 @@ function formatBRL(value: number | null | undefined): string {
   return (value ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+// Datas de calendário: formatar em UTC evita mostrar o dia anterior e
+// corrige os registros gravados à meia-noite antes da varredura de fuso.
 function formatDate(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR');
+  return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 }
 
 function toISODate(dateStr: string): string {
-  // dateStr expected as DD/MM/AAAA, converts to ISO for API
+  // Aqui o usuário digita DD/MM/AAAA. Montar um Date local e serializar deixava
+  // o dia à mercê do fuso do aparelho; toApiDate fixa meio-dia UTC, como no
+  // resto do app.
   const parts = dateStr.split('/');
-  if (parts.length !== 3) return new Date().toISOString();
+  if (parts.length !== 3) return toApiDate(todayInput())!;
   const [day, month, year] = parts;
-  return new Date(Number(year), Number(month) - 1, Number(day)).toISOString();
+  return toApiDate(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`)!;
 }
 
 function todayBR(): string {

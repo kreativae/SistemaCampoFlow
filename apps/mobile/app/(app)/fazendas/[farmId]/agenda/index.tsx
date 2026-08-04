@@ -9,6 +9,7 @@ import { theme } from '../../../../../src/lib/theme';
 import { Fab } from '../../../../../src/components/UI';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate } from '../../../../../src/lib/dates';
 import { EmptyState } from '../../../../../src/components/EmptyState';
 
 interface AgendaEvent {
@@ -137,7 +138,7 @@ export default function AgendaScreen() {
     const body = {
       title: form.title,
       type: form.type,
-      scheduledDate: new Date(form.scheduledDate + 'T12:00:00').toISOString(),
+      scheduledDate: toApiDate(form.scheduledDate),
       notes: form.notes || undefined,
     };
     if (editingEvent) {
@@ -206,7 +207,9 @@ export default function AgendaScreen() {
     if (!data?.length) return [];
     const grouped: Record<string, AgendaEvent[]> = {};
     data.forEach((e: AgendaEvent) => {
-      const key = new Date(e.scheduledDate).toLocaleDateString('pt-BR');
+      // Mesma regra da exibição: agrupar em UTC evita jogar o evento para o
+      // dia anterior e mantém a chave igual ao que o card mostra.
+      const key = new Date(e.scheduledDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
       (grouped[key] ??= []).push(e);
     });
     return Object.entries(grouped)

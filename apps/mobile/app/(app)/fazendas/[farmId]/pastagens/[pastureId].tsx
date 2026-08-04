@@ -9,10 +9,12 @@ import { apiFetch } from '../../../../../src/lib/api';
 import { theme } from '../../../../../src/lib/theme';
 import type { Pasture, PastureOccupation, Animal } from '../../../../../src/lib/types';
 
+// Datas de calendário: formatar em UTC evita mostrar o dia anterior e
+// corrige os registros gravados à meia-noite antes da varredura de fuso.
 function formatDate(iso: string | null | undefined): string {
   if (!iso) return '-';
   const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR');
+  return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 }
 
 const CATEGORY_LABELS: Record<string, string> = {

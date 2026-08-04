@@ -8,6 +8,7 @@ import Svg, { Path, Circle, Line, Text as SvgText } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate, todayInput } from '../../../../../src/lib/dates';
 import { DateInput } from '../../../../../src/components/DateInput';
 import { useAnimal } from '../../../../../src/hooks/use-animals';
 import { theme } from '../../../../../src/lib/theme';
@@ -156,8 +157,8 @@ export default function AnimalDetailScreen() {
 
   if (isLoading || !animal) return <View style={s.center}><ActivityIndicator size="large" color={theme.colors.primary} /></View>;
 
-  const fmtDate = (d?: string) => d ? new Date(d).toLocaleDateString('pt-BR') : '—';
-  const today = () => new Date().toISOString().slice(0, 10);
+  const fmtDate = (d?: string) => d ? new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '—';
+  const today = todayInput;
   const age = calcAnimalAge(animal);
   const currentPasture = pastures?.find((p: Pasture) => p.id === animal.pastureId);
 
@@ -456,7 +457,7 @@ export default function AnimalDetailScreen() {
               <TouchableOpacity style={s.cancelBtn} onPress={() => { setShowWeighingForm(false); setEditingWeighing(null); }}><Text style={s.cancelText}>Cancelar</Text></TouchableOpacity>
               <TouchableOpacity style={s.saveBtn} onPress={() => {
                 if (!wForm.weightKg) { Alert.alert('Erro', 'Peso é obrigatório'); return; }
-                const body = { weightKg: Number(wForm.weightKg), weighedAt: wForm.weighedAt || undefined };
+                const body = { weightKg: Number(wForm.weightKg), weighedAt: toApiDate(wForm.weighedAt) };
                 if (editingWeighing) updateWeighing.mutate({ id: editingWeighing.id, ...body });
                 else createWeighing.mutate(body);
               }}>
@@ -523,7 +524,7 @@ export default function AnimalDetailScreen() {
             <View style={s.modalActions}>
               <TouchableOpacity style={s.cancelBtn} onPress={() => { setShowReproForm(false); setEditingRepro(null); }}><Text style={s.cancelText}>Cancelar</Text></TouchableOpacity>
               <TouchableOpacity style={s.saveBtn} onPress={() => {
-                const body = { type: rForm.type, eventDate: rForm.eventDate || undefined, result: rForm.result || undefined, notes: rForm.notes || undefined };
+                const body = { type: rForm.type, eventDate: toApiDate(rForm.eventDate), result: rForm.result || undefined, notes: rForm.notes || undefined };
                 if (editingRepro) updateRepro.mutate({ id: editingRepro.id, ...body });
                 else createRepro.mutate(body);
               }}>

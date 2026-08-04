@@ -23,6 +23,7 @@ import { theme } from '../../../../../src/lib/theme';
 import { Fab } from '../../../../../src/components/UI';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate, todayInput } from '../../../../../src/lib/dates';
 import { EmptyState } from '../../../../../src/components/EmptyState';
 import type { Employee, EmployeeType, TimeEntry } from '../../../../../src/lib/types';
 
@@ -72,7 +73,7 @@ interface TimeEntryForm {
 }
 
 const emptyTimeEntryForm: TimeEntryForm = {
-  workDate: new Date().toISOString().slice(0, 10),
+  workDate: todayInput(),
   hours: '',
   description: '',
   paid: false,
@@ -82,10 +83,12 @@ function formatBRL(value: number): string {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+// Datas de calendário: formatar em UTC evita mostrar o dia anterior e
+// corrige os registros gravados à meia-noite antes da varredura de fuso.
 function formatDate(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('pt-BR');
+  return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 }
 
 export default function TeamScreen() {
@@ -268,7 +271,7 @@ export default function TeamScreen() {
     }
     createTimeEntry.mutate({
       employeeId: entryEmployeeId,
-      workDate: entryForm.workDate,
+      workDate: toApiDate(entryForm.workDate),
       hours: Number(entryForm.hours),
       description: entryForm.description.trim() || undefined,
       paid: entryForm.paid,

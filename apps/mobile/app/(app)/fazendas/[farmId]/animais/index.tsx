@@ -25,6 +25,7 @@ import { useAnimals, useCreateAnimal, useDeleteAnimal } from '../../../../../src
 import { EmptyState } from '../../../../../src/components/EmptyState';
 import { ConfirmModal } from '../../../../../src/components/ConfirmModal';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate } from '../../../../../src/lib/dates';
 import type { Animal, AnimalPerformance, AnimalSex, AnimalCategory, Pasture } from '../../../../../src/lib/types';
 import { ANIMAL_PERFORMANCE_LABEL, calcAnimalAge } from '../../../../../src/lib/types';
 import { DateInput } from '../../../../../src/components/DateInput';
@@ -130,7 +131,7 @@ export default function AnimalsScreen() {
   const handleCreate = () => {
     if (!form.earTag) { Alert.alert('Erro', 'Brinco é obrigatório'); return; }
     createAnimal.mutate(
-      { earTag: form.earTag, name: form.name || undefined, sex: form.sex as AnimalSex, breed: form.breed || undefined, category: form.category as AnimalCategory, currentWeightKg: form.currentWeightKg ? Number(form.currentWeightKg) : undefined, birthDate: form.birthDate || undefined },
+      { earTag: form.earTag, name: form.name || undefined, sex: form.sex as AnimalSex, breed: form.breed || undefined, category: form.category as AnimalCategory, currentWeightKg: form.currentWeightKg ? Number(form.currentWeightKg) : undefined, birthDate: toApiDate(form.birthDate) },
       {
         onSuccess: () => { setShowForm(false); setForm({ earTag: '', name: '', sex: 'MALE', breed: '', category: 'BEZERRO', currentWeightKg: '', birthDate: '' }); },
         onError: (err: any) => Alert.alert('Erro', err.message),

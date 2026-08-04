@@ -21,6 +21,7 @@ import * as Haptics from 'expo-haptics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { theme } from '../../../../../src/lib/theme';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate } from '../../../../../src/lib/dates';
 import { EmptyState } from '../../../../../src/components/EmptyState';
 import type { CropCycle, CropCycleStatus, CropSaleUnit } from '../../../../../src/lib/types';
 
@@ -198,8 +199,8 @@ export default function CropCyclesScreen() {
       cropName: form.cropName.trim(),
       variety: form.variety.trim() || undefined,
       areaHectares: form.areaHectares ? Number(form.areaHectares) : undefined,
-      plantedAt: form.plantedAt.trim(),
-      expectedHarvestAt: form.expectedHarvestAt.trim() || undefined,
+      plantedAt: toApiDate(form.plantedAt),
+      expectedHarvestAt: toApiDate(form.expectedHarvestAt),
       yieldKg: form.yieldKg ? Number(form.yieldKg) : undefined,
       salePricePerUnit: form.salePricePerUnit ? Number(form.salePricePerUnit) : undefined,
       saleUnit: form.saleUnit ?? undefined,

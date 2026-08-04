@@ -24,6 +24,7 @@ import { theme } from '../../../../../src/lib/theme';
 import { Fab } from '../../../../../src/components/UI';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate, todayInput } from '../../../../../src/lib/dates';
 import { EmptyState } from '../../../../../src/components/EmptyState';
 import type { Transaction, CashFlowBucket } from '../../../../../src/lib/types';
 
@@ -47,7 +48,7 @@ const GRANULARITY_LABELS: Record<Granularity, string> = {
   monthly: 'Mensal',
 };
 
-const todayISO = () => new Date().toISOString().slice(0, 10);
+const todayISO = todayInput;
 
 const emptyForm = {
   type: 'DESPESA' as 'RECEITA' | 'DESPESA',
@@ -374,10 +375,10 @@ export default function FinanceScreen() {
       category: form.category,
       description: form.description || undefined,
       amount: Number(form.amount),
-      dueDate: form.dueDate || todayISO(),
+      dueDate: toApiDate(form.dueDate || todayISO()),
     };
     if (form.alreadyPaid && !editing) {
-      body.paidAt = new Date().toISOString();
+      body.paidAt = toApiDate(todayInput());
     }
     if (editing) {
       updateItem.mutate({ id: editing.id, ...body });
@@ -406,7 +407,7 @@ export default function FinanceScreen() {
     0,
   );
   const fmt = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR');
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 
   if (isLoading) {
     return (

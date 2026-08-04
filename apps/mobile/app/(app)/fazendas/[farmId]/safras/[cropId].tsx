@@ -19,6 +19,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate, todayInput } from '../../../../../src/lib/dates';
 import { theme } from '../../../../../src/lib/theme';
 import type {
   CropCycle,
@@ -31,7 +32,7 @@ import type {
   PlantingCalcResult,
 } from '../../../../../src/lib/types';
 
-const today = () => new Date().toISOString().slice(0, 10);
+const today = todayInput;
 
 const STATUS_INFO: Record<CropCycleStatus, { label: string; color: string; bg: string }> = {
   PLANEJADA: { label: 'Planejada', color: theme.colors.info, bg: '#EAF4FF' },
@@ -64,7 +65,7 @@ const APPLICATION_TYPES: { value: CropApplicationType; label: string }[] = [
 
 function fmtDate(d: string | null): string {
   if (!d) return '—';
-  return new Date(d).toLocaleDateString('pt-BR');
+  return new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 }
 
 function fmtMoney(v: number | null | undefined): string {
@@ -157,7 +158,7 @@ export default function CropCycleDetailScreen() {
       category: costForm.category,
       description: costForm.description,
       amount: Number(costForm.amount),
-      incurredAt: costForm.incurredAt,
+      incurredAt: toApiDate(costForm.incurredAt),
     });
   };
 
@@ -220,7 +221,7 @@ export default function CropCycleDetailScreen() {
       dosePerHa: appForm.dosePerHa ? Number(appForm.dosePerHa) : undefined,
       doseUnit: appForm.doseUnit || undefined,
       totalQuantity: appForm.totalQuantity ? Number(appForm.totalQuantity) : undefined,
-      appliedAt: appForm.appliedAt,
+      appliedAt: toApiDate(appForm.appliedAt),
       responsible: appForm.responsible || undefined,
       notes: appForm.notes || undefined,
     });

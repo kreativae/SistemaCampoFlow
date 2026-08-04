@@ -6,6 +6,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../../../../../src/lib/api';
+import { toApiDate, todayInput } from '../../../../../src/lib/dates';
 import { EmptyState } from '../../../../../src/components/EmptyState';
 import { theme } from '../../../../../src/lib/theme';
 import { DateInput } from '../../../../../src/components/DateInput';
@@ -16,7 +17,7 @@ const REPRO_TYPES = ['IATF', 'MONTA_NATURAL', 'INSEMINACAO', 'DIAGNOSTICO_PRENHE
 const REPRO_LABELS: Record<string, string> = { IATF: 'IATF', MONTA_NATURAL: 'Monta natural', INSEMINACAO: 'Inseminação', DIAGNOSTICO_PRENHEZ: 'Diagnóstico', PARTO: 'Parto', ABORTO: 'Aborto' };
 const RESULT_OPTIONS = ['PRENHE', 'VAZIA'] as const;
 
-const today = () => new Date().toISOString().slice(0, 10);
+const today = todayInput;
 
 export default function ReproductionScreen() {
   const { farmId } = useLocalSearchParams<{ farmId: string }>();
@@ -44,13 +45,13 @@ export default function ReproductionScreen() {
     if (!form.type || !form.eventDate) return Alert.alert('Erro', 'Tipo e data são obrigatórios');
     createEvent.mutate({
       type: form.type,
-      eventDate: form.eventDate,
+      eventDate: toApiDate(form.eventDate),
       result: form.type === 'DIAGNOSTICO_PRENHEZ' && form.result ? form.result : undefined,
       notes: form.notes || undefined,
     });
   };
 
-  const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR');
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 
   if (isLoading) return <View style={s.center}><ActivityIndicator size="large" color={theme.colors.primary} /></View>;
 
