@@ -16,6 +16,7 @@ import { ReportsService, ReportType } from './reports.service';
 import { toCsv } from './exporters/csv.exporter';
 import { toXlsx } from './exporters/xlsx.exporter';
 import { toPdf } from './exporters/pdf.exporter';
+import { ReportQueryDto } from './dto/report-query.dto';
 
 const VALID_TYPES: ReportType[] = [
   'rebanho',
@@ -45,20 +46,10 @@ export class ReportsController {
   async download(
     @Param('farmId') farmId: string,
     @Param('type') type: string,
-    @Query('format') format: string | undefined,
-    @Query('dealId') dealId: string | undefined,
-    @Query('birthMonth') birthMonth: string | undefined,
-    @Query('performance') performance: string | undefined,
-    @Query('sortByGain') sortByGain: string | undefined,
-    @Query('category') category: string | undefined,
-    @Query('sex') sex: string | undefined,
-    @Query('pastureId') pastureId: string | undefined,
-    @Query('vaccination') vaccination: string | undefined,
-    @Query('reproStatus') reproStatus: string | undefined,
-    @Query('startDate') startDate: string | undefined,
-    @Query('endDate') endDate: string | undefined,
+    @Query() query: ReportQueryDto,
     @Res() res: Response,
   ) {
+    const { format, ...filters } = query;
     if (!VALID_TYPES.includes(type as ReportType)) {
       throw new BadRequestException(
         `Tipo de relatório inválido. Use: ${VALID_TYPES.join(', ')}`,
@@ -71,19 +62,11 @@ export class ReportsController {
       );
     }
 
-    const table = await this.reportsService.build(farmId, type as ReportType, {
-      dealId,
-      birthMonth: birthMonth ? parseInt(birthMonth, 10) : undefined,
-      performance,
-      sortByGain: sortByGain as 'asc' | 'desc' | undefined,
-      category,
-      sex,
-      pastureId,
-      vaccination,
-      reproStatus,
-      startDate,
-      endDate,
-    });
+    const table = await this.reportsService.build(
+      farmId,
+      type as ReportType,
+      filters,
+    );
 
     const buffer =
       resolvedFormat === 'csv'

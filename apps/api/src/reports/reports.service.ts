@@ -15,6 +15,45 @@ function formatDate(date: Date | null): string {
   return date ? date.toISOString().slice(0, 10) : '';
 }
 
+export interface ReportFilters {
+  dealId?: string;
+  birthMonth?: number;
+  performance?: string;
+  sortByGain?: 'asc' | 'desc';
+  category?: string;
+  sex?: string;
+  pastureId?: string;
+  vaccination?: string;
+  reproStatus?: string;
+  startDate?: string;
+  endDate?: string;
+  transactionType?: string;
+  paymentStatus?: 'pago' | 'pendente';
+  healthKind?: 'vacinacao' | 'tratamento';
+  vaccinationStatus?: 'aplicada' | 'pendente';
+  eventType?: string;
+  eventResult?: string;
+  costSource?: 'despesa' | 'manutencao' | 'combustivel';
+}
+
+/**
+ * Recorte de datas para o Prisma.
+ *
+ * As datas guardadas são dias de calendário fixados ao meio-dia UTC, então o
+ * limite superior vai até o fim do dia em UTC — senão o próprio dia escolhido
+ * em "até" ficaria de fora.
+ */
+function dateRange(
+  startDate?: string,
+  endDate?: string,
+): { gte?: Date; lte?: Date } | undefined {
+  if (!startDate && !endDate) return undefined;
+  const range: { gte?: Date; lte?: Date } = {};
+  if (startDate) range.gte = new Date(`${startDate}T00:00:00.000Z`);
+  if (endDate) range.lte = new Date(`${endDate}T23:59:59.999Z`);
+  return range;
+}
+
 @Injectable()
 export class ReportsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -22,19 +61,7 @@ export class ReportsService {
   async build(
     farmId: string,
     type: ReportType,
-    options?: {
-      dealId?: string;
-      birthMonth?: number;
-      performance?: string;
-      sortByGain?: 'asc' | 'desc';
-      category?: string;
-      sex?: string;
-      pastureId?: string;
-      vaccination?: string;
-      reproStatus?: string;
-      startDate?: string;
-      endDate?: string;
-    },
+    options?: ReportFilters,
   ): Promise<ReportTable> {
     switch (type) {
       case 'rebanho':
@@ -51,13 +78,13 @@ export class ReportsService {
           endDate: options?.endDate,
         });
       case 'financeiro':
-        return this.buildFinanceReport(farmId);
+        return this.buildFinanceReport(farmId, options);
       case 'sanidade':
-        return this.buildHealthReport(farmId);
+        return this.buildHealthReport(farmId, options);
       case 'reproducao':
-        return this.buildReproductionReport(farmId);
+        return this.buildReproductionReport(farmId, options);
       case 'custos':
-        return this.buildCostsReport(farmId);
+        return this.buildCostsReport(farmId, options);
       case 'abate':
         if (!options?.dealId)
           throw new BadRequestException(
@@ -203,9 +230,23 @@ export class ReportsService {
     };
   }
 
-  private async buildFinanceReport(farmId: string): Promise<ReportTable> {
+  private async buildFinanceReport(
+    farmId: string,
+    filters?: ReportFilters,
+  ): Promise<ReportTable> {
+    const dueDate = dateRange(filters?.startDate, filters?.endDate);
     const transactions = await this.prisma.transaction.findMany({
-      where: { farmId },
+      where: {
+        farmId,
+        ...(dueDate ? { dueDate } : {}),
+        ...(filters?.transactionType
+          ? { type: filters.transactionType as never }
+          : {}),
+        ...(filters?.category ? { category: filters.category as never } : {}),
+        // "Pago" é ter data de pagamento; pendente é não ter.
+        ...(filters?.paymentStatus === 'pago' ? { paidAt: { not: null } } : {}),
+        ...(filters?.paymentStatus === 'pendente' ? { paidAt: null } : {}),
+      },
       orderBy: { dueDate: 'desc' },
     });
 
@@ -230,18 +271,39 @@ export class ReportsService {
     };
   }
 
-  private async buildHealthReport(farmId: string): Promise<ReportTable> {
+  private async buildHealthReport(
+    farmId: string,
+    filters?: ReportFilters,
+  ): Promise<ReportTable> {
+    const range = dateRange(filters?.startDate, filters?.endDate);
+    const kind = filters?.healthKind;
     const [vaccinations, treatments] = await Promise.all([
-      this.prisma.vaccinationRecord.findMany({
-        where: { animal: { farmId } },
-        include: { animal: { select: { earTag: true } } },
-        orderBy: { scheduledDate: 'desc' },
-      }),
-      this.prisma.treatmentRecord.findMany({
-        where: { animal: { farmId } },
-        include: { animal: { select: { earTag: true } } },
-        orderBy: { treatmentDate: 'desc' },
-      }),
+      kind === 'tratamento'
+        ? []
+        : this.prisma.vaccinationRecord.findMany({
+            where: {
+              animal: { farmId },
+              ...(range ? { scheduledDate: range } : {}),
+              ...(filters?.vaccinationStatus === 'aplicada'
+                ? { administeredAt: { not: null } }
+                : {}),
+              ...(filters?.vaccinationStatus === 'pendente'
+                ? { administeredAt: null }
+                : {}),
+            },
+            include: { animal: { select: { earTag: true } } },
+            orderBy: { scheduledDate: 'desc' },
+          }),
+      kind === 'vacinacao'
+        ? []
+        : this.prisma.treatmentRecord.findMany({
+            where: {
+              animal: { farmId },
+              ...(range ? { treatmentDate: range } : {}),
+            },
+            include: { animal: { select: { earTag: true } } },
+            orderBy: { treatmentDate: 'desc' },
+          }),
     ]);
 
     const rows: (string | number)[][] = [
@@ -268,9 +330,20 @@ export class ReportsService {
     };
   }
 
-  private async buildReproductionReport(farmId: string): Promise<ReportTable> {
+  private async buildReproductionReport(
+    farmId: string,
+    filters?: ReportFilters,
+  ): Promise<ReportTable> {
+    const eventDate = dateRange(filters?.startDate, filters?.endDate);
     const events = await this.prisma.reproductiveEvent.findMany({
-      where: { animal: { farmId } },
+      where: {
+        animal: { farmId },
+        ...(eventDate ? { eventDate } : {}),
+        ...(filters?.eventType ? { type: filters.eventType as never } : {}),
+        ...(filters?.eventResult
+          ? { result: filters.eventResult as never }
+          : {}),
+      },
       include: { animal: { select: { earTag: true } } },
       orderBy: { eventDate: 'desc' },
     });
@@ -549,17 +622,43 @@ export class ReportsService {
     };
   }
 
-  private async buildCostsReport(farmId: string): Promise<ReportTable> {
+  private async buildCostsReport(
+    farmId: string,
+    filters?: ReportFilters,
+  ): Promise<ReportTable> {
+    const range = dateRange(filters?.startDate, filters?.endDate);
+    const source = filters?.costSource;
     const [expenses, maintenances, fuelRecords] = await Promise.all([
-      this.prisma.transaction.findMany({ where: { farmId, type: 'DESPESA' } }),
-      this.prisma.machineMaintenance.findMany({
-        where: { machine: { farmId } },
-        include: { machine: { select: { name: true } } },
-      }),
-      this.prisma.machineFuelRecord.findMany({
-        where: { machine: { farmId } },
-        include: { machine: { select: { name: true } } },
-      }),
+      source && source !== 'despesa'
+        ? []
+        : this.prisma.transaction.findMany({
+            where: {
+              farmId,
+              type: 'DESPESA',
+              ...(range ? { dueDate: range } : {}),
+              ...(filters?.category
+                ? { category: filters.category as never }
+                : {}),
+            },
+          }),
+      source && source !== 'manutencao'
+        ? []
+        : this.prisma.machineMaintenance.findMany({
+            where: {
+              machine: { farmId },
+              ...(range ? { performedAt: range } : {}),
+            },
+            include: { machine: { select: { name: true } } },
+          }),
+      source && source !== 'combustivel'
+        ? []
+        : this.prisma.machineFuelRecord.findMany({
+            where: {
+              machine: { farmId },
+              ...(range ? { recordedAt: range } : {}),
+            },
+            include: { machine: { select: { name: true } } },
+          }),
     ]);
 
     const rows: (string | number)[][] = [
