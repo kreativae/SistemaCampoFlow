@@ -115,6 +115,14 @@ export class ExternalQuotationsService implements OnModuleInit {
       // limite do proxy. 15s é folgado para uma resposta que leva menos de 1s.
       response = await fetch(REDACAO_AGRO_URL, {
         signal: AbortSignal.timeout(15_000),
+        // Requisição sem User-Agent é a assinatura mais óbvia de bot e costuma
+        // ser barrada por proteção de borda. Identificar-se é também cortesia
+        // com uma fonte gratuita: dá a quem hospeda um contato para reclamar
+        // antes de simplesmente bloquear.
+        headers: {
+          'User-Agent': 'CampoFlow/1.0 (+https://campoflow.com.br)',
+          Accept: 'application/json',
+        },
       });
     } catch (err) {
       // Falha de rede (DNS, saída bloqueada, TLS, timeout) não tem status HTTP:
