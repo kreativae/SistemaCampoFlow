@@ -13,6 +13,35 @@ interface RequestOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
   body?: unknown;
   token?: string | null;
+  /** Uso interno: impede que a própria retentativa dispare outra renovação. */
+  skipRefresh?: boolean;
+}
+
+/**
+ * O access token dura 15 minutos. Sem renovar, o usuário era desconectado nesse
+ * intervalo mesmo com a sessão guardada — o AuthProvider registra aqui como
+ * trocar o refresh token por um novo par, e o apiFetch repete a requisição.
+ */
+type TokenRefresher = () => Promise<string | null>;
+
+let refreshHandler: TokenRefresher | null = null;
+let inFlightRefresh: Promise<string | null> | null = null;
+
+export function setTokenRefresher(handler: TokenRefresher | null) {
+  refreshHandler = handler;
+}
+
+/**
+ * Uma renovação por vez: as telas disparam várias requisições em paralelo e
+ * todas tomam 401 juntas — sem isso, cada uma queimaria o refresh token, e
+ * como a API rotaciona o token a cada uso, as demais falhariam.
+ */
+function refreshAccessToken(): Promise<string | null> {
+  if (!refreshHandler) return Promise.resolve(null);
+  inFlightRefresh ??= refreshHandler().finally(() => {
+    inFlightRefresh = null;
+  });
+  return inFlightRefresh;
 }
 
 export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -26,6 +55,13 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     headers,
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
+
+  if (response.status === 401 && options.token && !options.skipRefresh) {
+    const renewed = await refreshAccessToken();
+    if (renewed) {
+      return apiFetch<T>(path, { ...options, token: renewed, skipRefresh: true });
+    }
+  }
 
   if (response.status === 204) {
     return undefined as T;

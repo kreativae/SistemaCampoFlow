@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Leaf } from 'lucide-react';
+import { Eye, EyeOff, Leaf } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { ApiError } from '@/lib/api';
 import SocialLoginButtons from '@/components/SocialLoginButtons';
@@ -31,6 +31,8 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [mfaCode, setMfaCode] = useState('');
   const [mfaRequired, setMfaRequired] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -50,7 +52,7 @@ function LoginForm() {
     setError(null);
     setSubmitting(true);
     try {
-      const result = await login(email, password, mfaRequired ? mfaCode : undefined);
+      const result = await login(email, password, mfaRequired ? mfaCode : undefined, remember);
       if (result.mfaRequired) {
         setMfaRequired(true);
         return;
@@ -106,15 +108,28 @@ function LoginForm() {
           <label htmlFor="password" className="text-sm font-medium text-gray-700">
             Senha
           </label>
-          <input
-            id="password"
-            type="password"
-            required
-            disabled={mfaRequired}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={inputClass}
-          />
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              required
+              disabled={mfaRequired}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${inputClass} pr-11`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              disabled={mfaRequired}
+              aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+              aria-pressed={showPassword}
+              title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+              className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-xl text-gray-400 transition-colors duration-150 hover:text-gray-700 disabled:text-gray-300"
+            >
+              {showPassword ? <EyeOff size={17} strokeWidth={1.9} /> : <Eye size={17} strokeWidth={1.9} />}
+            </button>
+          </div>
           {!mfaRequired && (
             <p className="text-right">
               <Link
@@ -145,6 +160,16 @@ function LoginForm() {
             />
           </div>
         )}
+
+        <label className="flex cursor-pointer items-center gap-2.5 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+            className="h-4 w-4 shrink-0 cursor-pointer rounded border-gray-300 text-emerald-700 accent-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-600/10"
+          />
+          Lembrar-me neste dispositivo
+        </label>
 
         <button
           type="submit"
