@@ -61,7 +61,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex flex-1 flex-col">
       <header className="bg-sidebar text-white">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3">
           <span className="flex shrink-0 items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-600/90">
               <Leaf size={15} strokeWidth={2} className="text-white" />
@@ -72,7 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </span>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 sm:flex">
+          <nav className="hidden items-center gap-1 lg:flex">
             {NAV_ITEMS.map((item) => {
               const active = pathname === item.href;
               const Icon = item.icon;
@@ -96,7 +96,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-3 text-sm">
             <button
               onClick={logout}
-              className="hidden items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-white/60 transition-colors duration-150 hover:bg-sidebar-hover hover:text-white sm:flex"
+              className="hidden items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-white/60 transition-colors duration-150 hover:bg-sidebar-hover hover:text-white lg:flex"
             >
               <LogOut size={15} strokeWidth={1.8} />
               Sair
@@ -106,7 +106,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Menu"
-              className="rounded-lg p-1.5 text-white/60 transition-colors hover:text-white sm:hidden"
+              className="rounded-lg p-1.5 text-white/60 transition-colors hover:text-white lg:hidden"
             >
               {menuOpen ? <X size={20} strokeWidth={1.8} /> : <Menu size={20} strokeWidth={1.8} />}
             </button>
@@ -115,7 +115,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <nav className="animate-fade-in border-t border-white/10 px-4 pb-3 pt-1 sm:hidden">
+          <nav className="animate-fade-in border-t border-white/10 px-4 pb-3 pt-1 lg:hidden">
             {NAV_ITEMS.map((item) => {
               const active = pathname === item.href;
               const Icon = item.icon;

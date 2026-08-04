@@ -276,7 +276,9 @@ export default function AdminAccountsPage() {
   const allSelected = accounts.length > 0 && selected.size === accounts.length;
 
   return (
-    <main className="animate-fade-up mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    // max-w-7xl: a tabela de contas tem 8 colunas e não cabia em 5xl, obrigando
+    // a rolar de lado mesmo em tela cheia.
+    <main className="animate-fade-up mx-auto w-full max-w-7xl flex-1 px-4 py-10">
       <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-[28px] font-bold tracking-[-0.02em] text-gray-900">Contas e assinaturas</h1>
@@ -424,7 +426,7 @@ export default function AdminAccountsPage() {
       ) : (
         <>
         {/* Lista em cards — mobile */}
-        <div className="space-y-3 sm:hidden">
+        <div className="space-y-3 lg:hidden">
           {accounts.map((account) => (
             <div key={account.id} className="rounded-2xl border border-gray-200/70 bg-white p-5">
               <div className="flex items-start justify-between gap-2">
@@ -536,7 +538,7 @@ export default function AdminAccountsPage() {
         </div>
 
         {/* Tabela — desktop/tablet */}
-        <div className="hidden overflow-x-auto rounded-2xl border border-gray-200/70 bg-white sm:block">
+        <div className="hidden overflow-x-auto rounded-2xl border border-gray-200/70 bg-white lg:block">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
@@ -552,7 +554,7 @@ export default function AdminAccountsPage() {
               <th className="hidden px-3 py-3 sm:table-cell">Fazendas</th>
               <th className="px-3 py-3">Plano</th>
               <th className="px-3 py-3">Status</th>
-              <th className="hidden px-3 py-3 lg:table-cell">Criada em</th>
+              <th className="hidden px-3 py-3 xl:table-cell">Criada em</th>
               <th className="px-3 py-3" />
             </tr>
           </thead>
@@ -576,14 +578,21 @@ export default function AdminAccountsPage() {
                     </Link>
                     <p className="text-xs text-gray-400">{account.billingEmail}</p>
                   </td>
-                  <td className="hidden px-3 py-3 text-gray-600 md:table-cell">{account.owner?.email ?? '—'}</td>
+                  {/* E-mails longos esticavam a coluna e empurravam o resto da
+                      tabela para fora da tela; o title mostra o valor inteiro. */}
+                  <td
+                    className="hidden max-w-[180px] truncate px-3 py-3 text-gray-600 md:table-cell"
+                    title={account.owner?.email ?? undefined}
+                  >
+                    {account.owner?.email ?? '—'}
+                  </td>
                   <td className="hidden px-3 py-3 sm:table-cell">{account.farmsUsed}</td>
                   <td className="px-3 py-3">
                     <select
                       value={account.planTier ?? ''}
                       disabled={savingId === account.id}
                       onChange={(e) => handleUpdate(account.id, 'planTier', e.target.value)}
-                      className="rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
+                      className="rounded-xl border border-gray-200 bg-white px-2.5 py-2 text-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
                     >
                       {PLAN_OPTIONS.map((opt) => (
                         <option key={opt} value={opt}>
@@ -597,7 +606,7 @@ export default function AdminAccountsPage() {
                       value={account.status ?? ''}
                       disabled={savingId === account.id}
                       onChange={(e) => handleUpdate(account.id, 'status', e.target.value)}
-                      className={`rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:opacity-50 ${statusBadgeClass(account.status)}`}
+                      className={`rounded-xl border border-gray-200 px-2.5 py-2 text-xs transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:opacity-50 ${statusBadgeClass(account.status)}`}
                     >
                       {STATUS_OPTIONS.map((opt) => (
                         <option key={opt} value={opt}>
@@ -606,7 +615,7 @@ export default function AdminAccountsPage() {
                       ))}
                     </select>
                   </td>
-                  <td className="hidden px-3 py-3 text-gray-500 lg:table-cell">
+                  <td className="hidden px-3 py-3 text-gray-500 xl:table-cell">
                     {new Date(account.createdAt).toLocaleDateString('pt-BR')}
                   </td>
                   <td className="px-3 py-3">

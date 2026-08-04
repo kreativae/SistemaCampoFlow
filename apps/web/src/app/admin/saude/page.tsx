@@ -58,25 +58,57 @@ export default function AdminSaudePage() {
   const [health, setHealth] = useState<PlatformHealth | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshingQuotations, setRefreshingQuotations] = useState(false);
+  const [quotationsMsg, setQuotationsMsg] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await apiFetch<PlatformHealth>('/admin/saude', {
-        token: accessToken,
-      });
-      setHealth(data);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Erro ao carregar status');
-    } finally {
-      setLoading(false);
-    }
-  }, [accessToken]);
+  // `silent` recarrega sem trocar a tela pelo "Carregando...", para atualizar o
+  // painel depois de uma ação do próprio usuário.
+  const load = useCallback(
+    async (silent = false) => {
+      if (!silent) setLoading(true);
+      setError(null);
+      try {
+        const data = await apiFetch<PlatformHealth>('/admin/saude', {
+          token: accessToken,
+        });
+        setHealth(data);
+      } catch (err) {
+        setError(err instanceof ApiError ? err.message : 'Erro ao carregar status');
+      } finally {
+        if (!silent) setLoading(false);
+      }
+    },
+    [accessToken],
+  );
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  /**
+   * Dispara a busca externa de cotações fora da hora do cron. Recarrega o
+   * status depois para que "Última busca" reflita o resultado na hora.
+   */
+  async function handleRefreshQuotations() {
+    setRefreshingQuotations(true);
+    setQuotationsMsg(null);
+    try {
+      const res = await apiFetch<{ created: number; skipped: number }>(
+        '/admin/cotacoes/atualizar',
+        { method: 'POST', token: accessToken },
+      );
+      setQuotationsMsg(
+        `${res.created} nova(s), ${res.skipped} sem alteração.`,
+      );
+      await load(true);
+    } catch (err) {
+      setQuotationsMsg(
+        err instanceof ApiError ? err.message : 'Erro ao buscar cotações',
+      );
+    } finally {
+      setRefreshingQuotations(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -197,14 +229,28 @@ export default function AdminSaudePage() {
             <h3 className="mb-1 text-sm font-bold tracking-tight text-gray-900">
               Cotações
             </h3>
+            {/* O campo vem do último registro gravado, e o serviço descarta
+                preço repetido — então "última busca" dava a impressão de
+                scraping parado quando ele só não achou variação. */}
             <p className="text-xs text-gray-600">
-              Última busca:{' '}
+              Última cotação nova:{' '}
               <strong>{formatAgo(data.lastQuotationFetch)}</strong>
             </p>
             {data.lastQuotationFetch && (
               <p className="mt-1 text-xs text-gray-400">
                 {new Date(data.lastQuotationFetch).toLocaleString('pt-BR')}
               </p>
+            )}
+            <button
+              type="button"
+              onClick={handleRefreshQuotations}
+              disabled={refreshingQuotations}
+              className="mt-3 rounded-full bg-gray-900/5 px-4 py-2 text-xs font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10 disabled:opacity-40"
+            >
+              {refreshingQuotations ? 'Buscando...' : 'Buscar cotações agora'}
+            </button>
+            {quotationsMsg && (
+              <p className="mt-2 text-xs text-gray-600">{quotationsMsg}</p>
             )}
           </div>
 
