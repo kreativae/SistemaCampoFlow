@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PlatformAdminGuard } from '../auth/guards/platform-admin.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../auth/decorators/current-user.decorator';
 import { QuotationsService } from './quotations.service';
@@ -15,7 +16,10 @@ export class QuotationsController {
     private readonly externalQuotationsService: ExternalQuotationsService,
   ) {}
 
+  // Cotação é dado nacional: alimenta a valoração do rebanho de todas as contas,
+  // então só a equipe da plataforma escreve. Leitura segue liberada.
   @Post()
+  @UseGuards(PlatformAdminGuard)
   create(
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: CreateQuotationDto,
@@ -26,6 +30,7 @@ export class QuotationsController {
   // Manual trigger for the same automatic fetch the cron job runs every 3h —
   // lets the web UI offer an "atualizar agora" button instead of waiting.
   @Post('atualizar')
+  @UseGuards(PlatformAdminGuard)
   refresh() {
     return this.externalQuotationsService.refresh();
   }

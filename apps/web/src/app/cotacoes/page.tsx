@@ -131,14 +131,7 @@ export default function QuotationsPage() {
   const [history, setHistory] = useState<Quotation[]>([]);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const [formCommodity, setFormCommodity] = useState<Commodity>('BOI_GORDO');
-  const [formState, setFormState] = useState<BrazilianState | ''>('');
-  const [price, setPrice] = useState('');
-  const [unit, setUnit] = useState('R$/@');
-  const [source, setSource] = useState('');
 
   const loadHistory = useCallback(
     async (commodity: Commodity, filter: StateFilter) => {
@@ -199,44 +192,7 @@ export default function QuotationsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCommodity, stateFilter]);
 
-  async function handleRefresh() {
-    setRefreshing(true);
-    setError(null);
-    try {
-      await apiFetch('/cotacoes/atualizar', { method: 'POST', token: accessToken });
-      await loadData();
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Erro ao atualizar cotações automáticas');
-    } finally {
-      setRefreshing(false);
-    }
-  }
 
-  async function handleCreate(event: FormEvent) {
-    event.preventDefault();
-    setCreating(true);
-    setError(null);
-    try {
-      await apiFetch<Quotation>('/cotacoes', {
-        method: 'POST',
-        token: accessToken,
-        body: {
-          commodity: formCommodity,
-          state: formState || undefined,
-          price: Number(price),
-          unit,
-          source: source || undefined,
-        },
-      });
-      setPrice('');
-      setSource('');
-      await loadData();
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Erro ao lançar cotação');
-    } finally {
-      setCreating(false);
-    }
-  }
 
   if (loading || !user || fetching) {
     return (
@@ -271,17 +227,10 @@ export default function QuotationsPage() {
           <p className="text-sm text-gray-500">
             Soja, milho e boi gordo são atualizados automaticamente a cada poucas horas (fonte:
             Redação Agro, referência CEPEA/ESALQ — gratuita e não-oficial, sem garantia de
-            disponibilidade). Os demais produtos, a quebra por estado e qualquer correção ficam
-            por lançamento manual — Scot Consultoria e CEPEA não oferecem API pública para isso.
+            disponibilidade). Os demais produtos e a quebra por estado são lançados pela equipe
+            do CampoFlow: são valores nacionais, iguais para todas as propriedades.
           </p>
         </div>
-        <button
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="shrink-0 rounded-full bg-gray-900/5 px-5 py-2.5 text-sm font-semibold text-gray-800 transition-colors duration-150 hover:bg-gray-900/10 disabled:opacity-50"
-        >
-          {refreshing ? 'Atualizando...' : 'Atualizar agora'}
-        </button>
       </header>
 
       {error && (
@@ -290,84 +239,6 @@ export default function QuotationsPage() {
         </p>
       )}
 
-      <form
-        onSubmit={handleCreate}
-        className="mb-8 grid grid-cols-2 gap-3 rounded-2xl border border-gray-200/70 bg-white p-5 sm:grid-cols-5"
-      >
-        <div>
-          <label className="text-sm font-medium text-gray-700">Produto</label>
-          <select
-            value={formCommodity}
-            onChange={(e) => setFormCommodity(e.target.value as Commodity)}
-            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          >
-            {COMMODITY_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium text-gray-700">Estado (opcional)</label>
-          <select
-            value={formState}
-            onChange={(e) => setFormState(e.target.value as BrazilianState | '')}
-            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          >
-            <option value="">Nacional</option>
-            {STATE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium text-gray-700">Preço</label>
-          <input
-            type="number"
-            step="0.01"
-            required
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          />
-        </div>
-
-        <div>
-          <label className="text-sm font-medium text-gray-700">Unidade</label>
-          <input
-            type="text"
-            required
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          />
-        </div>
-
-        <div>
-          <label className="text-sm font-medium text-gray-700">Fonte (opcional)</label>
-          <input
-            type="text"
-            value={source}
-            onChange={(e) => setSource(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm transition-all duration-150 hover:border-gray-300 focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-600/10 disabled:bg-gray-50 disabled:text-gray-400"
-          />
-        </div>
-
-        <div className="col-span-full">
-          <button
-            type="submit"
-            disabled={creating}
-            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-50"
-          >
-            {creating ? 'Salvando...' : 'Lançar cotação'}
-          </button>
-        </div>
-      </form>
 
       <section className="mb-8">
         <h2 className="mb-3 font-bold tracking-tight text-gray-900">Últimos preços</h2>
