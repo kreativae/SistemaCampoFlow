@@ -7,6 +7,7 @@ import {
   Bell,
   CreditCard,
   HeartPulse,
+  TrendingUp,
   KeyRound,
   Leaf,
   LogOut,
@@ -26,6 +27,7 @@ const NAV_ITEMS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/admin/login-social', label: 'Login social', icon: KeyRound },
   { href: '/admin/notificacoes', label: 'Notificações', icon: Bell },
   { href: '/admin/auditoria', label: 'Auditoria', icon: ScrollText },
+  { href: '/admin/cotacoes', label: 'Cotações', icon: TrendingUp },
   { href: '/admin/saude', label: 'Saúde', icon: HeartPulse },
 ];
 

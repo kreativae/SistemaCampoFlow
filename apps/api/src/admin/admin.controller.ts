@@ -22,6 +22,9 @@ import { UpdateNotificationConfigDto } from './dto/update-notification-config.dt
 import { ListAccountsDto } from './dto/list-accounts.dto';
 import { ListAuditLogsDto } from './dto/list-audit-logs.dto';
 import { ExtendTrialDto } from './dto/extend-trial.dto';
+import { CreateQuotationDto } from '../quotations/dto/create-quotation.dto';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthenticatedUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, PlatformAdminGuard)
@@ -141,6 +144,19 @@ export class AdminController {
   @Post('cotacoes/atualizar')
   refreshQuotations() {
     return this.adminService.refreshQuotations();
+  }
+
+  @Get('cotacoes')
+  latestQuotations() {
+    return this.adminService.latestQuotations();
+  }
+
+  @Post('cotacoes')
+  createQuotation(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: CreateQuotationDto,
+  ) {
+    return this.adminService.createQuotation(user.id, dto);
   }
 
   // Auditoria

@@ -18,6 +18,8 @@ import { ListAccountsDto } from './dto/list-accounts.dto';
 import { ListAuditLogsDto } from './dto/list-audit-logs.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ExternalQuotationsService } from '../quotations/external-quotations.service';
+import { QuotationsService } from '../quotations/quotations.service';
+import { CreateQuotationDto } from '../quotations/dto/create-quotation.dto';
 import { EmailService } from '../common/email/email.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
@@ -33,6 +35,7 @@ export class AdminService {
     private readonly farmsService: FarmsService,
     private readonly notificationsService: NotificationsService,
     private readonly externalQuotationsService: ExternalQuotationsService,
+    private readonly quotationsService: QuotationsService,
     private readonly emailService: EmailService,
     @InjectQueue(EMAIL_DIGEST_QUEUE) private readonly emailQueue: Queue,
   ) {}
@@ -482,6 +485,22 @@ export class AdminService {
       created += res.created;
     }
     return { farms: farms.length, created };
+  }
+
+  /**
+   * Cotação lançada à mão pela equipe da plataforma.
+   *
+   * Existe para as commodities que a fonte automática não cobre e para os
+   * períodos em que ela sai do ar ou recusa o servidor — sem isso, a valoração
+   * do rebanho congela no último valor buscado.
+   */
+  createQuotation(userId: string, dto: CreateQuotationDto) {
+    return this.quotationsService.create(userId, dto);
+  }
+
+  /** Último valor de cada commodity, para o painel mostrar o que está vigente. */
+  latestQuotations() {
+    return this.quotationsService.latest();
   }
 
   // Atualização manual das cotações (global). Reaproveita o fetch da Redação Agro.
