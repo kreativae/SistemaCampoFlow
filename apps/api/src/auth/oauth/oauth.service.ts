@@ -99,6 +99,28 @@ const PROVIDERS: Record<OAuthProvider, ProviderDefinition> = {
 /** Provedores efetivamente disponíveis para login hoje. */
 export const SUPPORTED_PROVIDERS: OAuthProvider[] = ['GOOGLE', 'MICROSOFT'];
 
+/**
+ * Extrai o código de erro que o provedor devolveu, para o login parar de falhar
+ * de forma muda.
+ *
+ * Só o código sai daqui — `invalid_client`, `AADSTS7000215` — nunca a descrição
+ * inteira, que traz trace id e às vezes ecoa parâmetros da requisição. É o
+ * suficiente para o administrador saber que errou o segredo em vez de ficar
+ * caçando no log do servidor.
+ */
+function describeProviderError(body: string): string {
+  const aadsts = body.match(/AADSTS\d+/)?.[0];
+  let code: string | undefined;
+  try {
+    const parsed = JSON.parse(body) as { error?: unknown };
+    if (typeof parsed.error === 'string') code = parsed.error;
+  } catch {
+    // Provedor respondeu texto puro; o código AADSTS ainda pode estar lá.
+  }
+  const partes = [code, aadsts].filter(Boolean);
+  return partes.length ? ` (${partes.join(' · ')})` : '';
+}
+
 function maskClientId(value: string): string {
   if (value.length <= 10) return '••••';
   return `${value.slice(0, 6)}••••${value.slice(-4)}`;
@@ -307,6 +329,8 @@ export class OAuthService {
         code,
         grant_type: 'authorization_code',
         redirect_uri: this.redirectUri(provider),
+        // A Microsoft exige `scope` também na troca do código; o Google ignora.
+        scope: def.scope,
       }).toString(),
     });
 
@@ -316,7 +340,7 @@ export class OAuthService {
         `Falha ao trocar código por token (${def.label}): ${tokenResponse.status} ${detail}`,
       );
       throw new BadRequestException(
-        `Não foi possível concluir o login com ${def.label}`,
+        `Não foi possível concluir o login com ${def.label}${describeProviderError(detail)}`,
       );
     }
 
